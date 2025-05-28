@@ -2,7 +2,7 @@ import { LightningElement } from 'lwc';
 import { navigationItems, navigationElements } from './navigation';
 
 export default class App extends LightningElement {
-    currentNavigationItem = 'hello';
+    currentNavigationItem = 'accounts';
     navigationItems = navigationItems;
     nextNavigationItem;
     previousNavigationItem;
@@ -131,5 +131,48 @@ export default class App extends LightningElement {
         gtag('config', 'UA-45076517-19', {
             page_path: '#'.concat(newPage)
         });
+    }
+
+    // Handle events from components
+    handleViewAccount(event) {
+        const accountId = event.detail.accountId;
+        // Switch to account view and load this account
+        this.navigationItems[this.currentNavigationItem].visible = false;
+        this.currentNavigationItem = 'accounts';
+        this.navigationItems[this.currentNavigationItem].visible = true;
+
+        // Get the account manager component and call a method to view the account
+        const accountManager = this.template.querySelector('c-account-manager');
+        if (accountManager) {
+            accountManager.loadAccountDetails(accountId);
+        }
+    }
+
+    handleNewContact(event) {
+        const accountId = event.detail.accountId;
+        // Switch to contacts view to create a new contact for this account
+        this.navigationItems[this.currentNavigationItem].visible = false;
+        this.currentNavigationItem = 'contacts';
+        this.navigationItems[this.currentNavigationItem].visible = true;
+
+        // Get the contact manager component and call a method to create a new contact
+        const contactManager = this.template.querySelector('c-contact-manager');
+        if (contactManager) {
+            contactManager.handleNewContactForAccount(accountId);
+        }
+    }
+
+    handleEditContact(event) {
+        const contactId = event.detail.contactId;
+        // Switch to contacts view to edit this contact
+        this.navigationItems[this.currentNavigationItem].visible = false;
+        this.currentNavigationItem = 'contacts';
+        this.navigationItems[this.currentNavigationItem].visible = true;
+
+        // Get the contact manager component and call a method to edit the contact
+        const contactManager = this.template.querySelector('c-contact-manager');
+        if (contactManager) {
+            contactManager.handleEditContactById(contactId);
+        }
     }
 }
