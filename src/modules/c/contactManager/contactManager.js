@@ -1,12 +1,6 @@
 import { LightningElement, track, api } from 'lwc';
-import {
-    getContacts,
-    getContact,
-    createContact,
-    updateContact,
-    deleteContact
-} from '../../data/contactService/contactService';
-import { getAccounts } from '../../data/accountService/accountService';
+import * as contactService from 'data/services/contactService';
+import * as accountService from 'data/services/accountService';
 
 const VIEW_STATES = {
     LIST: 'list',
@@ -45,7 +39,8 @@ export default class ContactManager extends LightningElement {
     handleEditContactById(contactId) {
         this.isLoading = true;
 
-        getContact(contactId)
+        contactService
+            .getContact(contactId)
             .then((contact) => {
                 this.currentContact = contact;
                 this.selectedAccountId = contact.accountId;
@@ -64,7 +59,8 @@ export default class ContactManager extends LightningElement {
         this.isLoading = true;
         this.error = null;
 
-        getContact(contactId)
+        contactService
+            .getContact(contactId)
             .then((contact) => {
                 this.currentContact = contact;
                 this.viewState = VIEW_STATES.DETAIL;
@@ -122,7 +118,8 @@ export default class ContactManager extends LightningElement {
         this.isLoading = true;
         this.error = null;
 
-        getContacts()
+        contactService
+            .getContacts()
             .then((result) => {
                 this.contacts = result.map((contact) => ({
                     ...contact,
@@ -140,7 +137,8 @@ export default class ContactManager extends LightningElement {
     loadAccounts() {
         this.isLoading = true;
 
-        getAccounts()
+        accountService
+            .getAccounts()
             .then((result) => {
                 this.accounts = result;
                 // Create a map of account ids to names for quick lookup
@@ -187,8 +185,8 @@ export default class ContactManager extends LightningElement {
         this.error = null;
 
         const saveOperation = this.isNew
-            ? createContact(this.currentContact)
-            : updateContact(this.currentContact);
+            ? contactService.createContact(this.currentContact)
+            : contactService.updateContact(this.currentContact);
 
         saveOperation
             .then(() => {
@@ -226,7 +224,8 @@ export default class ContactManager extends LightningElement {
         const contactId = event.target.dataset.id;
         this.isLoading = true;
 
-        getContact(contactId)
+        contactService
+            .getContact(contactId)
             .then((contact) => {
                 this.currentContact = contact;
                 this.isNew = false;
@@ -260,7 +259,8 @@ export default class ContactManager extends LightningElement {
         this.isLoading = true;
         this.error = null;
 
-        deleteContact(contactId)
+        contactService
+            .deleteContact(contactId)
             .then(() => {
                 this.loadContacts();
 

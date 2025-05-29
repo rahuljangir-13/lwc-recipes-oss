@@ -1,15 +1,6 @@
 import { LightningElement, track, api } from 'lwc';
-import {
-    getAccounts,
-    getAccount,
-    createAccount,
-    updateAccount,
-    deleteAccount
-} from '../../data/accountService/accountService';
-import {
-    getContactsByAccountId,
-    deleteContact
-} from '../../data/contactService/contactService';
+import * as accountService from 'data/services/accountService';
+import * as contactService from 'data/services/contactService';
 
 const VIEW_STATES = {
     LIST: 'list',
@@ -39,7 +30,10 @@ export default class AccountManager extends LightningElement {
         this.isLoading = true;
         this.error = null;
 
-        Promise.all([getAccount(accountId), getContactsByAccountId(accountId)])
+        Promise.all([
+            accountService.getAccount(accountId),
+            contactService.getContactsByAccountId(accountId)
+        ])
             .then(([account, contacts]) => {
                 this.currentAccount = account;
                 this.relatedContacts = contacts.map((contact) => ({
@@ -87,7 +81,8 @@ export default class AccountManager extends LightningElement {
         this.isLoading = true;
         this.error = null;
 
-        getAccounts()
+        accountService
+            .getAccounts()
             .then((result) => {
                 this.accounts = result;
                 this.isLoading = false;
@@ -122,8 +117,8 @@ export default class AccountManager extends LightningElement {
         this.error = null;
 
         const saveOperation = this.isNew
-            ? createAccount(this.currentAccount)
-            : updateAccount(this.currentAccount);
+            ? accountService.createAccount(this.currentAccount)
+            : accountService.updateAccount(this.currentAccount);
 
         saveOperation
             .then(() => {
@@ -161,7 +156,8 @@ export default class AccountManager extends LightningElement {
         const accountId = event.target.dataset.id;
         this.isLoading = true;
 
-        getAccount(accountId)
+        accountService
+            .getAccount(accountId)
             .then((account) => {
                 this.currentAccount = account;
                 this.isNew = false;
@@ -204,7 +200,8 @@ export default class AccountManager extends LightningElement {
         this.isLoading = true;
         this.error = null;
 
-        deleteAccount(accountId)
+        accountService
+            .deleteAccount(accountId)
             .then(() => {
                 this.loadAccounts();
                 // Dispatch delete success event
@@ -263,10 +260,13 @@ export default class AccountManager extends LightningElement {
         this.isLoading = true;
         this.error = null;
 
-        deleteContact(contactId)
+        contactService
+            .deleteContact(contactId)
             .then(() => {
                 // Refresh the related contacts
-                return getContactsByAccountId(this.currentAccount.id);
+                return contactService.getContactsByAccountId(
+                    this.currentAccount.id
+                );
             })
             .then((contacts) => {
                 this.relatedContacts = contacts.map((contact) => ({
