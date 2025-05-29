@@ -76,6 +76,11 @@ export default class AccountManager extends LightningElement {
             : 'Are you sure you want to delete this contact?';
     }
 
+    // Add a getter for empty accounts check
+    get hasNoAccounts() {
+        return this.accounts.length === 0;
+    }
+
     // DATA LOADING METHODS
     loadAccounts() {
         this.isLoading = true;
