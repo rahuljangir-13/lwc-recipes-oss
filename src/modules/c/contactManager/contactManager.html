@@ -10,10 +10,7 @@
                     </h2>
                 </div>
                 <div class="slds-no-flex">
-                    <template lwc:if={hideNewButton}>
-                        <!-- New button hidden -->
-                    </template>
-                    <template lwc:else>
+                    <template lwc:if={isNew}>
                         <button
                             class="slds-button slds-button_neutral"
                             onclick={handleNewContact}
