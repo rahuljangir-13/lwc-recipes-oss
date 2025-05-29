@@ -210,7 +210,8 @@ export default class ContactManager extends LightningElement {
             : contactService.updateContact(this.currentContact);
 
         saveOperation
-            .then(() => {
+            .then((result) => {
+                console.log('Contact saved successfully:', result);
                 this.loadContacts();
                 this.viewState = VIEW_STATES.LIST;
 
@@ -219,20 +220,28 @@ export default class ContactManager extends LightningElement {
                     new CustomEvent('editsuccess', {
                         detail: {
                             type: 'contact',
+                            action: this.isNew ? 'create' : 'update',
                             id: this.currentContact.id,
                             isNew: this.isNew
                         }
                     })
                 );
+
+                // Reset isNew flag
+                this.isNew = false;
             })
             .catch((error) => {
                 this.error = error.message || 'Error saving contact';
+                this.isLoading = false;
+            })
+            .finally(() => {
                 this.isLoading = false;
             });
     }
 
     handleCancel() {
         this.viewState = VIEW_STATES.LIST;
+        this.error = null;
     }
 
     handleViewContact(event) {

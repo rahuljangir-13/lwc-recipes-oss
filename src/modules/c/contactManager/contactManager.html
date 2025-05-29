@@ -27,19 +27,28 @@
         <div class="slds-card__body slds-card__body_inner">
             <!-- Loading spinner -->
             <template lwc:if={isLoading}>
-                <div class="slds-spinner_container">
-                    <div class="slds-spinner slds-spinner_medium" role="status">
-                        <span class="slds-assistive-text">Loading</span>
-                        <div class="slds-spinner__dot-a"></div>
-                        <div class="slds-spinner__dot-b"></div>
+                <div class="slds-is-relative slds-p-around_medium">
+                    <div class="slds-spinner_container">
+                        <div
+                            class="slds-spinner slds-spinner_medium"
+                            role="status"
+                        >
+                            <span class="slds-assistive-text">Loading</span>
+                            <div class="slds-spinner__dot-a"></div>
+                            <div class="slds-spinner__dot-b"></div>
+                        </div>
                     </div>
                 </div>
             </template>
 
             <!-- Error message -->
             <template lwc:if={error}>
-                <div class="slds-text-color_error slds-m-vertical_small">
-                    {error}
+                <div
+                    class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error"
+                    role="alert"
+                >
+                    <span class="slds-assistive-text">Error</span>
+                    <h2>{error}</h2>
                 </div>
             </template>
 
@@ -55,10 +64,7 @@
                 >
                     <div class="slds-modal__container">
                         <header class="slds-modal__header">
-                            <h2
-                                id="modal-heading-01"
-                                class="slds-modal__title slds-hyphenate"
-                            >
+                            <h2 class="slds-text-heading_medium">
                                 Confirm Delete
                             </h2>
                         </header>

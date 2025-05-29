@@ -32,9 +32,12 @@
                 </div>
 
                 <div class="card-list">
+                    <!-- Hiding the large create button as requested -->
+                    <!-- 
                     <button class="create-button" onclick={handleNewAccount}>
                         <span class="plus-icon">+</span> Create New Account
                     </button>
+                    -->
 
                     <div class="accounts-list">
                         <template lwc:if={isLoading}>
@@ -53,7 +56,7 @@
                         </template>
                         <template lwc:else>
                             <c-account-manager
-                                hide-new-button="true"
+                                hide-new-button="false"
                                 onnewedit={handleEditSuccess}
                                 oneditsuccess={handleEditSuccess}
                                 onnewcontact={handleNewContactFromAccount}
@@ -83,9 +86,12 @@
                 </div>
 
                 <div class="card-list">
+                    <!-- Hiding the large create button as requested -->
+                    <!-- 
                     <button class="create-button" onclick={handleNewContact}>
                         <span class="plus-icon">+</span> Create New Contact
                     </button>
+                    -->
 
                     <div class="contacts-list">
                         <template lwc:if={isLoading}>
@@ -104,7 +110,7 @@
                         </template>
                         <template lwc:else>
                             <c-contact-manager
-                                hide-new-button="true"
+                                hide-new-button="false"
                                 onnewcontact={handleNewContact}
                                 oneditcontact={handleEditContact}
                                 oneditsuccess={handleEditSuccess}
