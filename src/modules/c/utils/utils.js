@@ -61,3 +61,249 @@ export function formatDate(dateString) {
 export function generateId() {
     return Date.now().toString() + Math.random().toString(36).substring(2, 9);
 }
+
+/**
+ * Combined utilities for offline functionality
+ */
+
+// --------------- IndexedDB Storage ---------------
+
+const DB_NAME = 'salesforceOfflineDB';
+const DB_VERSION = 1;
+export const STORE_NAMES = {
+    ACCOUNTS: 'accounts',
+    CONTACTS: 'contacts',
+    PENDING_OPERATIONS: 'pendingOperations'
+};
+
+let dbInstance = null;
+
+// Initialize the database
+function initDB() {
+    return new Promise((resolve, reject) => {
+        if (dbInstance) {
+            resolve(dbInstance);
+            return;
+        }
+
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+        request.onerror = (event) => {
+            reject(new Error('Error opening IndexedDB: ' + event.target.error));
+        };
+
+        request.onsuccess = (event) => {
+            dbInstance = event.target.result;
+            resolve(dbInstance);
+        };
+
+        request.onupgradeneeded = (event) => {
+            const db = event.target.result;
+
+            // Create object stores for accounts and contacts
+            if (!db.objectStoreNames.contains(STORE_NAMES.ACCOUNTS)) {
+                db.createObjectStore(STORE_NAMES.ACCOUNTS, { keyPath: 'id' });
+            }
+
+            if (!db.objectStoreNames.contains(STORE_NAMES.CONTACTS)) {
+                db.createObjectStore(STORE_NAMES.CONTACTS, { keyPath: 'id' });
+            }
+
+            // Create object store for pending operations (offline actions)
+            if (!db.objectStoreNames.contains(STORE_NAMES.PENDING_OPERATIONS)) {
+                const pendingStore = db.createObjectStore(
+                    STORE_NAMES.PENDING_OPERATIONS,
+                    {
+                        keyPath: 'id',
+                        autoIncrement: true
+                    }
+                );
+                pendingStore.createIndex('timestamp', 'timestamp', {
+                    unique: false
+                });
+                pendingStore.createIndex('type', 'type', { unique: false });
+            }
+        };
+    });
+}
+
+// Common function to perform database operations
+function performOperation(storeName, mode, operation) {
+    return initDB().then((db) => {
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(storeName, mode);
+            const store = transaction.objectStore(storeName);
+
+            transaction.oncomplete = () => resolve();
+            transaction.onerror = (event) => reject(event.target.error);
+
+            operation(store, resolve, reject);
+        });
+    });
+}
+
+// Get all items from a store
+export function getAll(storeName) {
+    return performOperation(storeName, 'readonly', (store, resolve) => {
+        const request = store.getAll();
+        request.onsuccess = () => resolve(request.result);
+    });
+}
+
+// Get a single item by ID
+export function getById(storeName, id) {
+    return performOperation(storeName, 'readonly', (store, resolve, reject) => {
+        const request = store.get(id);
+        request.onsuccess = () => {
+            if (request.result) {
+                resolve(request.result);
+            } else {
+                reject(
+                    new Error(`Item with id ${id} not found in ${storeName}`)
+                );
+            }
+        };
+    });
+}
+
+// Add or update an item
+export function saveItem(storeName, item) {
+    return performOperation(storeName, 'readwrite', (store, resolve) => {
+        store.put(item);
+        resolve(item);
+    });
+}
+
+// Add multiple items at once
+export function saveItems(storeName, items) {
+    return performOperation(storeName, 'readwrite', (store, resolve) => {
+        items.forEach((item) => store.put(item));
+        resolve(items);
+    });
+}
+
+// Delete an item
+export function deleteItem(storeName, id) {
+    return performOperation(storeName, 'readwrite', (store, resolve) => {
+        store.delete(id);
+        resolve({ success: true, id });
+    });
+}
+
+// Add a pending operation for offline sync
+export function addPendingOperation(operation) {
+    const pendingOp = {
+        ...operation,
+        timestamp: new Date().toISOString()
+    };
+
+    return performOperation(
+        STORE_NAMES.PENDING_OPERATIONS,
+        'readwrite',
+        (store, resolve) => {
+            const request = store.add(pendingOp);
+            request.onsuccess = () => resolve(pendingOp);
+        }
+    );
+}
+
+// Get all pending operations
+export function getPendingOperations() {
+    return getAll(STORE_NAMES.PENDING_OPERATIONS);
+}
+
+// Delete a pending operation
+export function deletePendingOperation(id) {
+    return deleteItem(STORE_NAMES.PENDING_OPERATIONS, id);
+}
+
+// Clear all pending operations
+export function clearPendingOperations() {
+    return performOperation(
+        STORE_NAMES.PENDING_OPERATIONS,
+        'readwrite',
+        (store, resolve) => {
+            store.clear();
+            resolve();
+        }
+    );
+}
+
+// --------------- Connectivity Service ---------------
+
+// Event names for online/offline notifications
+export const CONNECTIVITY_EVENTS = {
+    ONLINE: 'app_online',
+    OFFLINE: 'app_offline',
+    STATUS_CHANGE: 'connectivity_status_change'
+};
+
+// Custom event dispatcher
+function dispatchStatusEvent(isOnline) {
+    const event = new CustomEvent(CONNECTIVITY_EVENTS.STATUS_CHANGE, {
+        detail: { isOnline },
+        bubbles: true,
+        composed: true
+    });
+    document.body.dispatchEvent(event);
+
+    // Also dispatch specific events
+    const specificEvent = new CustomEvent(
+        isOnline ? CONNECTIVITY_EVENTS.ONLINE : CONNECTIVITY_EVENTS.OFFLINE,
+        {
+            bubbles: true,
+            composed: true
+        }
+    );
+    document.body.dispatchEvent(specificEvent);
+}
+
+// Initialize listeners
+export function initConnectivityListeners() {
+    // Set initial state
+    const initialStatus = navigator.onLine;
+
+    // Update state when online/offline status changes
+    window.addEventListener('online', () => dispatchStatusEvent(true));
+    window.addEventListener('offline', () => dispatchStatusEvent(false));
+
+    // Return current status
+    return initialStatus;
+}
+
+// Get current online status
+export function isOnline() {
+    return navigator.onLine;
+}
+
+// Test connection with a lightweight ping
+export function testConnection() {
+    // Simple fetch to test connectivity - use a minimal endpoint
+    return fetch('/ping', {
+        method: 'HEAD',
+        cache: 'no-store',
+        headers: {
+            'Cache-Control': 'no-cache'
+        }
+    })
+        .then(() => true)
+        .catch(() => false);
+}
+
+// Register for connectivity status changes
+export function addConnectivityListener(callback) {
+    document.body.addEventListener(
+        CONNECTIVITY_EVENTS.STATUS_CHANGE,
+        (event) => {
+            callback(event.detail.isOnline);
+        }
+    );
+}
+
+// Remove connectivity listener
+export function removeConnectivityListener(callback) {
+    document.body.removeEventListener(
+        CONNECTIVITY_EVENTS.STATUS_CHANGE,
+        callback
+    );
+}

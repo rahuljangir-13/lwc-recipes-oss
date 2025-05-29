@@ -1,13 +1,60 @@
 {
-    "background_color": "#fff",
+    "name": "Salesforce LWC Mobile",
+    "short_name": "SF LWC",
+    "icons": [
+        {
+            "src": "/assets/images/favicon-16x16.png",
+            "sizes": "16x16",
+            "type": "image/png"
+        },
+        {
+            "src": "/assets/images/favicon-32x32.png",
+            "sizes": "32x32",
+            "type": "image/png"
+        },
+        {
+            "src": "/assets/images/apple-touch-icon.png",
+            "sizes": "180x180",
+            "type": "image/png"
+        },
+        {
+            "src": "/assets/images/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/assets/images/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "/assets/images/maskable_icon.png",
+            "sizes": "1024x1024",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ],
+    "theme_color": "#0070d2",
+    "background_color": "#ffffff",
     "display": "standalone",
-    "icons": [{
-        "src": "/assets/images/apple-touch-icon.png",
-        "type": "image/png",
-        "sizes": "512x512"
-    }],
-    "name": "Lightning Web Components Recipes",
-    "short_name": "LWC Recipes",
-    "start_url": "/#hello",
-    "theme_color": "#fff"
+    "start_url": "/",
+    "scope": "/",
+    "description": "Salesforce-like CRM built with Lightning Web Components Open Source",
+    "orientation": "portrait-primary",
+    "lang": "en-US",
+    "dir": "ltr",
+    "prefer_related_applications": false,
+    "categories": ["business", "productivity"],
+    "shortcuts": [
+        {
+            "name": "View Accounts",
+            "url": "/?view=accounts",
+            "description": "View your accounts"
+        },
+        {
+            "name": "View Contacts",
+            "url": "/?view=contacts",
+            "description": "View your contacts"
+        }
+    ]
 }

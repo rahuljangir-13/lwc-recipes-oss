@@ -59,14 +59,14 @@
         "npm": ">=8.0.0"
     },
     "lint-staged": {
-        "**/*.{cls,cmp,component,css,html,js,mjs,json,md,page,trigger,xml,yaml,yml}": [
+        "**/*.{cls,cmp,component,css,html,js,mjs,json,md,page,trigger,yaml,yml}": [
             "prettier --write"
         ],
         "**/src/**/*.js": [
             "eslint"
         ],
-        "**/src/**": [
-            "jest --bail --findRelatedTests --passWithNoTests"
+        "**/src/**/*.{js,html,css}": [
+            "jest --bail --findRelatedTests --passWithNoTests --forceExit"
         ]
     },
     "volta": {

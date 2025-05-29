@@ -1,64 +1,55 @@
+import * as utils from 'c/utils';
+import { isOnline } from 'c/utils';
+
 // Mock data for contacts
 const mockContacts = [
     {
         id: '1',
-        firstName: 'John',
-        lastName: 'Doe',
-        title: 'CEO',
-        email: 'john.doe@globalmedia.com',
-        phone: '(415) 555-1213',
-        mobilePhone: '(415) 555-1214',
         accountId: '1',
+        firstName: 'John',
+        lastName: 'Smith',
+        title: 'CEO',
+        email: 'john.smith@globalmedia.com',
+        phone: '(415) 555-1234',
+        department: 'Executive',
         createdDate: '2023-01-12T10:30:00.000Z',
-        lastModifiedDate: '2023-01-16T09:45:00.000Z'
+        lastModifiedDate: '2023-01-16T09:15:00.000Z'
     },
     {
         id: '2',
-        firstName: 'Jane',
-        lastName: 'Smith',
-        title: 'CTO',
-        email: 'jane.smith@globalmedia.com',
-        phone: '(415) 555-1215',
-        mobilePhone: '(415) 555-1216',
         accountId: '1',
-        createdDate: '2023-01-13T14:20:00.000Z',
-        lastModifiedDate: '2023-01-17T16:30:00.000Z'
+        firstName: 'Sarah',
+        lastName: 'Johnson',
+        title: 'CTO',
+        email: 'sarah.johnson@globalmedia.com',
+        phone: '(415) 555-5678',
+        department: 'Technology',
+        createdDate: '2023-01-14T11:20:00.000Z',
+        lastModifiedDate: '2023-01-18T14:30:00.000Z'
     },
     {
         id: '3',
-        firstName: 'Robert',
-        lastName: 'Johnson',
-        title: 'VP of Sales',
-        email: 'robert.johnson@acme.com',
-        phone: '(212) 555-5556',
-        mobilePhone: '(212) 555-5557',
         accountId: '2',
-        createdDate: '2023-02-06T11:45:00.000Z',
-        lastModifiedDate: '2023-02-11T13:20:00.000Z'
+        firstName: 'Mike',
+        lastName: 'Wilson',
+        title: 'VP Sales',
+        email: 'mike.wilson@acme.com',
+        phone: '(212) 555-7890',
+        department: 'Sales',
+        createdDate: '2023-02-07T13:45:00.000Z',
+        lastModifiedDate: '2023-02-12T16:20:00.000Z'
     },
     {
         id: '4',
-        firstName: 'Sarah',
-        lastName: 'Williams',
-        title: 'VP of Marketing',
-        email: 'sarah.williams@acme.com',
-        phone: '(212) 555-5558',
-        mobilePhone: '(212) 555-5559',
-        accountId: '2',
-        createdDate: '2023-02-07T10:15:00.000Z',
-        lastModifiedDate: '2023-02-12T09:30:00.000Z'
-    },
-    {
-        id: '5',
-        firstName: 'Michael',
-        lastName: 'Brown',
-        title: 'Managing Partner',
-        email: 'michael.brown@universalservices.com',
-        phone: '(650) 555-3334',
-        mobilePhone: '(650) 555-3335',
         accountId: '3',
-        createdDate: '2023-03-16T09:00:00.000Z',
-        lastModifiedDate: '2023-03-21T11:45:00.000Z'
+        firstName: 'Lisa',
+        lastName: 'Brown',
+        title: 'Director',
+        email: 'lisa.brown@universalservices.com',
+        phone: '(650) 555-4321',
+        department: 'Consulting',
+        createdDate: '2023-03-18T10:10:00.000Z',
+        lastModifiedDate: '2023-03-22T11:30:00.000Z'
     }
 ];
 
@@ -70,26 +61,61 @@ function generateId() {
     return Date.now().toString() + Math.random().toString(36).substring(2, 9);
 }
 
+// Initialize the local storage with mock data if empty
+export function initializeOfflineStorage() {
+    return utils.getAll(utils.STORE_NAMES.CONTACTS).then((storedContacts) => {
+        if (!storedContacts || storedContacts.length === 0) {
+            return utils.saveItems(utils.STORE_NAMES.CONTACTS, mockContacts);
+        }
+        return storedContacts;
+    });
+}
+
 // Get all contacts
 export function getContacts() {
-    return Promise.resolve([...contacts]);
+    if (isOnline()) {
+        // Online: get from server and update local storage
+        return Promise.resolve([...contacts]).then((result) => {
+            utils.saveItems(utils.STORE_NAMES.CONTACTS, result);
+            return result;
+        });
+    } else {
+        // Offline: get from local storage
+        return utils.getAll(utils.STORE_NAMES.CONTACTS);
+    }
 }
 
 // Get contact by ID
 export function getContact(id) {
-    const foundContact = contacts.find((cont) => cont.id === id);
-    if (foundContact) {
-        return Promise.resolve({ ...foundContact });
+    if (isOnline()) {
+        // Online: get from server
+        const foundContact = contacts.find((contact) => contact.id === id);
+        if (foundContact) {
+            return Promise.resolve({ ...foundContact });
+        }
+        return Promise.reject(new Error(`Contact with id ${id} not found`));
+    } else {
+        // Offline: get from local storage
+        return utils.getById(utils.STORE_NAMES.CONTACTS, id);
     }
-    return Promise.reject(new Error(`Contact with id ${id} not found`));
 }
 
-// Get contacts by account ID
+// Get contacts by Account ID
 export function getContactsByAccountId(accountId) {
-    const filteredContacts = contacts.filter(
-        (cont) => cont.accountId === accountId
-    );
-    return Promise.resolve(filteredContacts.map((cont) => ({ ...cont })));
+    if (isOnline()) {
+        // Online: get from server
+        const filteredContacts = contacts.filter(
+            (contact) => contact.accountId === accountId
+        );
+        return Promise.resolve([...filteredContacts]);
+    } else {
+        // Offline: get from local storage and filter
+        return utils.getAll(utils.STORE_NAMES.CONTACTS).then((allContacts) => {
+            return allContacts.filter(
+                (contact) => contact.accountId === accountId
+            );
+        });
+    }
 }
 
 // Create a new contact
@@ -100,33 +126,187 @@ export function createContact(contactData) {
         createdDate: new Date().toISOString(),
         lastModifiedDate: new Date().toISOString()
     };
-    contacts.push(newContact);
-    return Promise.resolve({ ...newContact });
+
+    if (isOnline()) {
+        // Online: create on server and update local storage
+        contacts.push(newContact);
+        return Promise.resolve({ ...newContact }).then((result) => {
+            utils.saveItem(utils.STORE_NAMES.CONTACTS, result);
+            return result;
+        });
+    } else {
+        // Offline: save to local storage and queue for sync
+        return utils
+            .saveItem(utils.STORE_NAMES.CONTACTS, newContact)
+            .then((result) => {
+                // Add to pending operations queue
+                return utils
+                    .addPendingOperation({
+                        type: 'CREATE_CONTACT',
+                        data: result
+                    })
+                    .then(() => result);
+            });
+    }
 }
 
 // Update an existing contact
 export function updateContact(contactData) {
-    const index = contacts.findIndex((cont) => cont.id === contactData.id);
-    if (index !== -1) {
-        const updatedContact = {
-            ...contacts[index],
-            ...contactData,
-            lastModifiedDate: new Date().toISOString()
-        };
-        contacts[index] = updatedContact;
-        return Promise.resolve({ ...updatedContact });
+    if (isOnline()) {
+        // Online: update on server
+        const index = contacts.findIndex(
+            (contact) => contact.id === contactData.id
+        );
+        if (index !== -1) {
+            const updatedContact = {
+                ...contacts[index],
+                ...contactData,
+                lastModifiedDate: new Date().toISOString()
+            };
+            contacts[index] = updatedContact;
+
+            // Also update in local storage
+            return Promise.resolve({ ...updatedContact }).then((result) => {
+                utils.saveItem(utils.STORE_NAMES.CONTACTS, result);
+                return result;
+            });
+        }
+        return Promise.reject(
+            new Error(`Contact with id ${contactData.id} not found`)
+        );
+    } else {
+        // Offline: update in local storage and queue for sync
+        return utils
+            .getById(utils.STORE_NAMES.CONTACTS, contactData.id)
+            .then((existingContact) => {
+                const updatedContact = {
+                    ...existingContact,
+                    ...contactData,
+                    lastModifiedDate: new Date().toISOString()
+                };
+
+                return utils
+                    .saveItem(utils.STORE_NAMES.CONTACTS, updatedContact)
+                    .then((result) => {
+                        // Add to pending operations queue
+                        return utils
+                            .addPendingOperation({
+                                type: 'UPDATE_CONTACT',
+                                data: result
+                            })
+                            .then(() => result);
+                    });
+            });
     }
-    return Promise.reject(
-        new Error(`Contact with id ${contactData.id} not found`)
-    );
 }
 
 // Delete a contact
 export function deleteContact(id) {
-    const index = contacts.findIndex((cont) => cont.id === id);
-    if (index !== -1) {
-        contacts.splice(index, 1);
-        return Promise.resolve({ success: true, id });
+    if (isOnline()) {
+        // Online: delete from server
+        const index = contacts.findIndex((contact) => contact.id === id);
+        if (index !== -1) {
+            contacts.splice(index, 1);
+
+            // Also delete from local storage
+            return Promise.resolve({ success: true, id }).then((result) => {
+                utils.deleteItem(utils.STORE_NAMES.CONTACTS, id);
+                return result;
+            });
+        }
+        return Promise.reject(new Error(`Contact with id ${id} not found`));
+    } else {
+        // Offline: mark as deleted in local storage and queue for sync
+        return utils.getById(utils.STORE_NAMES.CONTACTS, id).then((contact) => {
+            // Add to pending operations queue for later deletion
+            return utils
+                .addPendingOperation({
+                    type: 'DELETE_CONTACT',
+                    data: { id }
+                })
+                .then(() => {
+                    // Remove from local storage
+                    return utils.deleteItem(utils.STORE_NAMES.CONTACTS, id);
+                });
+        });
     }
-    return Promise.reject(new Error(`Contact with id ${id} not found`));
+}
+
+// Sync pending contact operations when online
+export function syncPendingOperations() {
+    if (!isOnline()) {
+        return Promise.reject(new Error('Cannot sync while offline'));
+    }
+
+    return utils.getPendingOperations().then((operations) => {
+        // Filter contact operations
+        const contactOps = operations.filter((op) =>
+            ['CREATE_CONTACT', 'UPDATE_CONTACT', 'DELETE_CONTACT'].includes(
+                op.type
+            )
+        );
+
+        if (!contactOps || contactOps.length === 0) {
+            return { synced: 0 };
+        }
+
+        // Sort operations by timestamp
+        const sortedOps = [...contactOps].sort(
+            (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+        );
+
+        // Process each operation in sequence
+        return sortedOps.reduce(
+            (promise, operation) => {
+                return promise.then((result) => {
+                    // Process the operation based on type
+                    let processPromise;
+
+                    switch (operation.type) {
+                        case 'CREATE_CONTACT':
+                            // Create contact on server
+                            const createData = { ...operation.data };
+                            delete createData.id; // Let server assign ID
+                            processPromise = createContact(createData);
+                            break;
+
+                        case 'UPDATE_CONTACT':
+                            // Update contact on server
+                            processPromise = updateContact(operation.data);
+                            break;
+
+                        case 'DELETE_CONTACT':
+                            // Delete contact on server
+                            processPromise = deleteContact(operation.data.id);
+                            break;
+
+                        default:
+                            processPromise = Promise.resolve();
+                    }
+
+                    return processPromise
+                        .then(() => {
+                            // Remove from pending operations
+                            return utils.deletePendingOperation(operation.id);
+                        })
+                        .catch((error) => {
+                            console.error(
+                                'Error processing operation:',
+                                operation,
+                                error
+                            );
+                            // Continue with next operation
+                        })
+                        .then(() => {
+                            // Increment counter
+                            return {
+                                synced: result.synced + 1,
+                                total: sortedOps.length
+                            };
+                        });
+                });
+            },
+            Promise.resolve({ synced: 0, total: sortedOps.length })
+        );
+    });
 }

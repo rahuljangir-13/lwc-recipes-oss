@@ -8,7 +8,10 @@
                 <div>
                     <h1 class="slds-text-heading_large">Salesforce CRM</h1>
                 </div>
-                <div>
+                <div class="slds-grid slds-grid_align-end">
+                    <c-connectivity-status
+                        class="slds-m-right_small"
+                    ></c-connectivity-status>
                     <span class="slds-badge slds-badge_lightest"
                         >Lightning Web Components OSS</span
                     >
@@ -30,9 +33,9 @@
                         role="tab"
                         tabindex={accountsTabIndex}
                         aria-selected={isAccountView}
-                        aria-controls="tab-accounts"
-                        id="tab-accounts-link"
-                        onclick={handleAccountsClick}
+                        aria-controls="accounts-tab-content"
+                        id="accounts-tab"
+                        onclick={handleTabSelect}
                     >
                         <span class="slds-tabs__left-icon">
                             <span
@@ -63,9 +66,9 @@
                         role="tab"
                         tabindex={contactsTabIndex}
                         aria-selected={isContactView}
-                        aria-controls="tab-contacts"
-                        id="tab-contacts-link"
-                        onclick={handleContactsClick}
+                        aria-controls="contacts-tab-content"
+                        id="contacts-tab"
+                        onclick={handleTabSelect}
                     >
                         <span class="slds-tabs__left-icon">
                             <span
@@ -87,37 +90,34 @@
                 </li>
             </ul>
 
-            <!-- Content Area -->
+            <!-- Account Tab Content -->
             <div
-                id="tab-accounts"
-                class={accountsContentClass}
+                id="accounts-tab-content"
+                class="slds-tabs_default__content"
                 role="tabpanel"
-                aria-labelledby="tab-accounts-link"
+                aria-labelledby="accounts-tab"
+                hidden={isContactView}
             >
-                <div class="slds-m-around_medium">
+                <div class={contentClass}>
                     <c-account-manager
-                        onviewaccount={handleViewAccount}
-                        onviewcontact={handleViewContact}
-                        onviewcontacts={handleViewContacts}
-                        onviewaccounts={handleViewAccounts}
-                        oneditsuccess={handleEditSuccess}
-                        oneditcontact={handleEditContact}
                         onnewcontact={handleNewContact}
+                        oneditcontact={handleEditContact}
+                        onviewcontacts={handleViewContacts}
+                        oneditsuccess={handleEditSuccess}
                     ></c-account-manager>
                 </div>
             </div>
 
+            <!-- Contact Tab Content -->
             <div
-                id="tab-contacts"
-                class={contactsContentClass}
+                id="contacts-tab-content"
+                class="slds-tabs_default__content"
                 role="tabpanel"
-                aria-labelledby="tab-contacts-link"
+                aria-labelledby="contacts-tab"
+                hidden={isAccountView}
             >
-                <div class="slds-m-around_medium">
+                <div class={contentClass}>
                     <c-contact-manager
-                        onviewaccount={handleViewAccount}
-                        onviewcontact={handleViewContact}
-                        onviewcontacts={handleViewContacts}
                         onviewaccounts={handleViewAccounts}
                         oneditsuccess={handleEditSuccess}
                     ></c-contact-manager>
@@ -125,4 +125,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Register Service Worker (no UI) -->
+    <c-service-worker-registration
+        onsyncpendingoperations={handleSyncOperations}
+    ></c-service-worker-registration>
 </template>
