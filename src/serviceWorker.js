@@ -4,7 +4,7 @@
  */
 
 // Service worker version - increment this when service worker logic changes
-const CACHE_VERSION = 'v1';
+const CACHE_VERSION = 'v2';
 
 // Cache names
 const STATIC_CACHE_NAME = `lwc-oss-static-${CACHE_VERSION}`;
@@ -19,7 +19,12 @@ const STATIC_ASSETS = [
     '/assets/css/normalize.css',
     '/assets/icons/standard-sprite/svg/symbols.svg',
     '/assets/icons/utility-sprite/svg/symbols.svg',
-    '/lwc.js'
+    '/lwc.js',
+    '/assets/offline.html',
+    '/assets/images/android-chrome-192x192.png',
+    '/assets/images/android-chrome-512x512.png',
+    '/assets/images/apple-touch-icon.png',
+    '/assets/site.webmanifest'
 ];
 
 // Install event handler - cache static assets
@@ -60,6 +65,7 @@ self.addEventListener('activate', (event) => {
                             );
                             return caches.delete(key);
                         }
+                        return Promise.resolve();
                     })
                 );
             })
@@ -72,107 +78,92 @@ self.addEventListener('activate', (event) => {
 
 // Fetch event handler - serve from cache or network
 self.addEventListener('fetch', (event) => {
-    // Skip for API calls and IndexedDB operations
-    if (
-        event.request.url.includes('/api/') ||
-        event.request.url.includes('indexeddb')
-    ) {
+    // Skip non-GET requests
+    if (event.request.method !== 'GET') return;
+
+    // Skip browser-extension requests and non-http(s) requests
+    if (!event.request.url.startsWith('http')) return;
+
+    // Handle API requests differently
+    if (event.request.url.includes('/api/')) {
+        handleApiRequest(event);
         return;
     }
 
+    // For static assets, use cache-first strategy
     event.respondWith(
-        caches.match(event.request).then((cachedResponse) => {
-            if (cachedResponse) {
-                return cachedResponse;
+        caches.match(event.request).then((response) => {
+            if (response) {
+                // Found in cache
+                return response;
             }
 
+            // Not in cache, fetch from network
             return fetch(event.request)
-                .then((response) => {
-                    // Don't cache responses that aren't successful
-                    if (
-                        !response ||
-                        response.status !== 200 ||
-                        response.type !== 'basic'
-                    ) {
-                        return response;
+                .then((networkResponse) => {
+                    // Clone the response as it can only be consumed once
+                    const responseToCache = networkResponse.clone();
+
+                    // Cache the fetched resource if it's a valid response
+                    if (networkResponse.status === 200) {
+                        caches.open(DYNAMIC_CACHE_NAME).then((cache) => {
+                            cache.put(event.request, responseToCache);
+                        });
                     }
 
-                    // Clone the response since it can only be consumed once
-                    const responseToCache = response.clone();
-                    caches.open(DYNAMIC_CACHE_NAME).then((cache) => {
-                        cache.put(event.request, responseToCache);
-                    });
-
-                    return response;
+                    return networkResponse;
                 })
-                .catch((error) => {
-                    console.log('[Service Worker] Fetch failed:', error);
+                .catch((err) => {
+                    console.error('[Service Worker] Fetch failed:', err);
                     // If it's an HTML request, return the offline page
                     if (
+                        event.request.headers.get('accept') &&
                         event.request.headers
                             .get('accept')
                             .includes('text/html')
                     ) {
-                        return caches.match('/offline.html');
+                        return caches.match('/assets/offline.html');
                     }
+                    return Promise.reject(err);
                 });
         })
     );
 });
 
-// Background sync for pending operations
-self.addEventListener('sync', (event) => {
-    console.log('[Service Worker] Background Sync:', event);
-    if (event.tag === 'sync-pending-operations') {
-        event.waitUntil(syncPendingOperations());
-    }
-});
-
-// Periodic sync (if supported)
-self.addEventListener('periodicsync', (event) => {
-    console.log('[Service Worker] Periodic Sync:', event);
-    if (event.tag === 'sync-pending-operations') {
-        event.waitUntil(syncPendingOperations());
-    }
-});
-
-// Function to sync pending operations
-function syncPendingOperations() {
-    console.log('[Service Worker] Syncing pending operations');
-
-    // Notify all clients about the sync
-    return self.clients.matchAll().then((clients) => {
-        if (clients.length === 0) {
-            console.log(
-                '[Service Worker] No active clients found, will retry later'
-            );
-            // If no clients are active, register another sync
-            return self.registration.sync.register('sync-pending-operations');
-        }
-
-        clients.forEach((client) => {
-            console.log(
-                '[Service Worker] Notifying client about sync:',
-                client.id
-            );
-            client.postMessage({
-                type: 'SYNC_PENDING_OPERATIONS'
-            });
-        });
-
-        return Promise.resolve();
-    });
+// Handle API requests with network-first strategy
+function handleApiRequest(event) {
+    event.respondWith(
+        fetch(event.request)
+            .then((response) => {
+                return response;
+            })
+            .catch((err) => {
+                console.log(
+                    '[Service Worker] API fetch failed, serving from cache',
+                    err
+                );
+                return caches.match(event.request);
+            })
+    );
 }
 
-// Listen for messages from clients
-self.addEventListener('message', (event) => {
-    console.log('[Service Worker] Message received:', event.data);
+// Background sync for pending operations
+self.addEventListener('sync', (event) => {
+    console.log('[Service Worker] Background Sync', event);
 
-    if (event.data && event.data.type === 'SKIP_WAITING') {
-        self.skipWaiting();
-    } else if (event.data && event.data.type === 'CHECK_PENDING_OPERATIONS') {
-        // Client is requesting to check for pending operations
-        event.waitUntil(syncPendingOperations());
+    if (event.tag === 'sync-pending-operations') {
+        event.waitUntil(
+            // Send message to clients to perform sync
+            self.clients.matchAll().then((clients) => {
+                if (clients && clients.length) {
+                    // Send to the first active client
+                    clients[0].postMessage({
+                        type: 'SYNC_PENDING_OPERATIONS'
+                    });
+                }
+                return Promise.resolve();
+            })
+        );
     }
 });
 
@@ -188,7 +179,7 @@ self.addEventListener('push', (event) => {
 
     const options = {
         body: data.body,
-        icon: '/assets/images/logo.svg',
+        icon: '/assets/images/android-chrome-192x192.png',
         badge: '/assets/images/favicon-32x32.png'
     };
 
