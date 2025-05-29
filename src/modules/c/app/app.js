@@ -22,6 +22,14 @@ export default class App extends LightningElement {
         // Listen for connectivity status changes
         this.addEventListener('sync-needed', this.handleSyncNeeded);
 
+        // Initialize connectivity listeners
+        import('c/utils').then((utils) => {
+            utils.initConnectivityListeners();
+            utils.addConnectivityListener(
+                this.handleConnectivityChange.bind(this)
+            );
+        });
+
         // Set loading to false after a short delay
         setTimeout(() => {
             this.isLoading = false;
@@ -34,20 +42,58 @@ export default class App extends LightningElement {
             this.handleSyncOperations
         );
         this.removeEventListener('sync-needed', this.handleSyncNeeded);
+
+        // Remove connectivity listener
+        import('c/utils').then((utils) => {
+            utils.removeConnectivityListener(
+                this.handleConnectivityChange.bind(this)
+            );
+        });
     }
 
     // Initialize offline storage with mock data if empty
     initializeOfflineStorage() {
-        console.log('Initializing offline storage...');
-        Promise.all([
+        console.log('🔄 Initializing offline storage...');
+
+        // First ensure IndexedDB is supported
+        if (!window.indexedDB) {
+            console.error("❌ Your browser doesn't support IndexedDB");
+            return Promise.reject(new Error('IndexedDB not supported'));
+        }
+
+        return Promise.all([
             accountService.initializeOfflineStorage(),
             contactService.initializeOfflineStorage()
         ])
-            .then(() => {
-                console.log('✅ Offline storage initialized successfully');
+            .then((results) => {
+                const [accounts, contacts] = results;
+                console.log(
+                    `✅ Offline storage initialized successfully with ${accounts.length} accounts and ${contacts.length} contacts`
+                );
+
+                // After initialization, check for pending operations
+                return import('c/utils').then((utils) => {
+                    return utils.getPendingOperations().then((operations) => {
+                        if (operations && operations.length > 0) {
+                            console.log(
+                                `🔄 Found ${operations.length} pending operations to sync`
+                            );
+                            // If we're online, trigger a sync
+                            if (utils.isOnline()) {
+                                this.handleSyncOperations();
+                            }
+                        }
+                        return {
+                            accounts,
+                            contacts,
+                            pendingOperations: operations || []
+                        };
+                    });
+                });
             })
             .catch((error) => {
                 console.error('❌ Error initializing offline storage:', error);
+                throw error;
             });
     }
 
@@ -142,10 +188,12 @@ export default class App extends LightningElement {
 
     // Handle new account
     handleNewAccount() {
-        console.log('➕ Creating new account');
+        console.log('➕ Creating new account from app component');
         const accountManager = this.template.querySelector('c-account-manager');
         if (accountManager) {
             accountManager.handleNewAccount();
+        } else {
+            console.error('Could not find account manager component');
         }
     }
 
@@ -160,22 +208,16 @@ export default class App extends LightningElement {
         }
     }
 
-    // Handle new contact creation from account view
-    handleNewContact(event) {
-        console.log(
-            '➕ Creating new contact for account:',
-            event.detail.accountId
-        );
-        this.currentView = 'contacts';
-
-        // Allow the DOM to update
-        setTimeout(() => {
-            const contactManager =
-                this.template.querySelector('c-contact-manager');
-            if (contactManager) {
-                contactManager.createContactForAccount(event.detail.accountId);
-            }
-        }, 0);
+    // Handle new contact button click from contacts tab
+    handleNewContact() {
+        console.log('➕ Creating new contact');
+        const contactManager = this.template.querySelector('c-contact-manager');
+        if (contactManager) {
+            // If no account is specified, create a contact without an account
+            contactManager.createContactForAccount(null);
+        } else {
+            console.error('Could not find contact manager component');
+        }
     }
 
     // Handle contact edit from account view
@@ -243,6 +285,24 @@ export default class App extends LightningElement {
         }
     }
 
+    // Handle new contact from account view
+    handleNewContactFromAccount(event) {
+        console.log(
+            '➕ Creating new contact for account:',
+            event.detail.accountId
+        );
+        this.currentView = 'contacts';
+
+        // Allow the DOM to update
+        setTimeout(() => {
+            const contactManager =
+                this.template.querySelector('c-contact-manager');
+            if (contactManager) {
+                contactManager.createContactForAccount(event.detail.accountId);
+            }
+        }, 0);
+    }
+
     // Computed properties for conditional rendering
     get isAccountView() {
         return this.currentView === 'accounts';
@@ -254,15 +314,11 @@ export default class App extends LightningElement {
 
     // Computed classes for tabs
     get accountsTabClass() {
-        return this.isAccountView
-            ? 'slds-tabs_default__item slds-is-active'
-            : 'slds-tabs_default__item';
+        return this.isAccountView ? 'nav-item active' : 'nav-item';
     }
 
     get contactsTabClass() {
-        return this.isContactView
-            ? 'slds-tabs_default__item slds-is-active'
-            : 'slds-tabs_default__item';
+        return this.isContactView ? 'nav-item active' : 'nav-item';
     }
 
     get accountsTabIndex() {
@@ -285,5 +341,25 @@ export default class App extends LightningElement {
 
     get currentViewIcon() {
         return this.isAccountView ? 'standard:account' : 'standard:contact';
+    }
+
+    // Handle connectivity changes
+    handleConnectivityChange(isOnline) {
+        console.log(`🌐 Connectivity changed. Online: ${isOnline}`);
+
+        // Get connectivity status component
+        const connectivityStatus = this.template.querySelector(
+            'c-connectivity-status'
+        );
+
+        if (connectivityStatus) {
+            if (isOnline) {
+                connectivityStatus.handleOnline();
+                // Trigger sync when coming back online
+                this.handleSyncOperations();
+            } else {
+                connectivityStatus.handleOffline();
+            }
+        }
     }
 }

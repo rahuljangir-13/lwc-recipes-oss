@@ -83,27 +83,36 @@
                 <div class="slds-backdrop slds-backdrop_open"></div>
             </template>
 
-            <!-- Account form -->
+            <!-- Account Form Modal -->
             <template lwc:if={showAccountForm}>
-                <div class="account-form">
-                    <div class="slds-grid slds-grid_vertical">
-                        <div class="slds-col slds-m-bottom_medium">
+                <section
+                    role="dialog"
+                    tabindex="-1"
+                    aria-modal="true"
+                    class="slds-modal slds-fade-in-open"
+                >
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header">
+                            <h2 class="slds-text-heading_medium">
+                                {formTitle}
+                            </h2>
                             <button
-                                class="slds-button slds-button_neutral"
-                                onclick={handleBackToList}
+                                class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                                onclick={handleCancel}
+                                title="Close"
                             >
                                 <svg
-                                    class="slds-button__icon slds-button__icon_left"
+                                    class="slds-button__icon slds-button__icon_large"
                                     aria-hidden="true"
                                 >
                                     <use
-                                        xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#back"
+                                        xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"
                                     ></use>
                                 </svg>
-                                Cancel
+                                <span class="slds-assistive-text">Close</span>
                             </button>
-                        </div>
-                        <div class="slds-col">
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium">
                             <div class="slds-form">
                                 <div
                                     class="slds-form-element slds-m-bottom_medium"
@@ -260,18 +269,23 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="slds-col slds-m-top_medium">
-                            <div class="slds-grid slds-grid_align-end">
-                                <button
-                                    class="slds-button slds-button_brand"
-                                    onclick={handleSaveAccount}
-                                >
-                                    Save
-                                </button>
-                            </div>
-                        </div>
+                        <footer class="slds-modal__footer">
+                            <button
+                                class="slds-button slds-button_neutral"
+                                onclick={handleCancel}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                class="slds-button slds-button_brand"
+                                onclick={handleSave}
+                            >
+                                Save
+                            </button>
+                        </footer>
                     </div>
-                </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
             </template>
 
             <!-- Account list -->

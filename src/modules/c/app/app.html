@@ -38,11 +38,24 @@
 
                     <div class="accounts-list">
                         <template lwc:if={isLoading}>
-                            <div class="loading-spinner">Loading...</div>
+                            <div class="slds-spinner_container">
+                                <div
+                                    role="status"
+                                    class="slds-spinner slds-spinner_medium"
+                                >
+                                    <span class="slds-assistive-text"
+                                        >Loading</span
+                                    >
+                                    <div class="slds-spinner__dot-a"></div>
+                                    <div class="slds-spinner__dot-b"></div>
+                                </div>
+                            </div>
                         </template>
                         <template lwc:else>
                             <c-account-manager
                                 onnewedit={handleEditSuccess}
+                                oneditsuccess={handleEditSuccess}
+                                onnewcontact={handleNewContactFromAccount}
                             ></c-account-manager>
                         </template>
                     </div>
@@ -69,15 +82,30 @@
                 </div>
 
                 <div class="card-list">
+                    <button class="create-button" onclick={handleNewContact}>
+                        <span class="plus-icon">+</span> Create New Contact
+                    </button>
+
                     <div class="contacts-list">
                         <template lwc:if={isLoading}>
-                            <div class="loading-spinner">Loading...</div>
+                            <div class="slds-spinner_container">
+                                <div
+                                    role="status"
+                                    class="slds-spinner slds-spinner_medium"
+                                >
+                                    <span class="slds-assistive-text"
+                                        >Loading</span
+                                    >
+                                    <div class="slds-spinner__dot-a"></div>
+                                    <div class="slds-spinner__dot-b"></div>
+                                </div>
+                            </div>
                         </template>
                         <template lwc:else>
                             <c-contact-manager
                                 onnewcontact={handleNewContact}
                                 oneditcontact={handleEditContact}
-                                onnewedit={handleEditSuccess}
+                                oneditsuccess={handleEditSuccess}
                             ></c-contact-manager>
                         </template>
                     </div>
@@ -87,11 +115,11 @@
 
         <!-- Bottom navigation -->
         <footer class="app-footer">
-            <div class="nav-item" onclick={handleViewAccounts}>
+            <div class={accountsTabClass} onclick={handleViewAccounts}>
                 <div class="nav-icon accounts-icon"></div>
                 <div class="nav-label">Accounts</div>
             </div>
-            <div class="nav-item" onclick={handleViewContacts}>
+            <div class={contactsTabClass} onclick={handleViewContacts}>
                 <div class="nav-icon contacts-icon"></div>
                 <div class="nav-label">Contacts</div>
             </div>

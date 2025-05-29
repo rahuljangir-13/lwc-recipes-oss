@@ -72,41 +72,41 @@ self.addEventListener('activate', (event) => {
 
 // Fetch event handler - serve from cache or network
 self.addEventListener('fetch', (event) => {
-    // Skip non-GET requests
-    if (event.request.method !== 'GET') return;
-
-    // Skip browser-extension requests and non-http(s) requests
-    if (!event.request.url.startsWith('http')) return;
-
-    // Handle API requests differently
-    if (event.request.url.includes('/api/')) {
-        handleApiRequest(event);
+    // Skip for API calls and IndexedDB operations
+    if (
+        event.request.url.includes('/api/') ||
+        event.request.url.includes('indexeddb')
+    ) {
         return;
     }
 
-    // For static assets, use cache-first strategy
     event.respondWith(
-        caches.match(event.request).then((response) => {
-            if (response) {
-                // Found in cache
-                return response;
+        caches.match(event.request).then((cachedResponse) => {
+            if (cachedResponse) {
+                return cachedResponse;
             }
 
-            // Not in cache, fetch from network
             return fetch(event.request)
-                .then((networkResponse) => {
-                    // Clone the response as it can only be consumed once
-                    const responseToCache = networkResponse.clone();
+                .then((response) => {
+                    // Don't cache responses that aren't successful
+                    if (
+                        !response ||
+                        response.status !== 200 ||
+                        response.type !== 'basic'
+                    ) {
+                        return response;
+                    }
 
-                    // Cache the fetched resource
+                    // Clone the response since it can only be consumed once
+                    const responseToCache = response.clone();
                     caches.open(DYNAMIC_CACHE_NAME).then((cache) => {
                         cache.put(event.request, responseToCache);
                     });
 
-                    return networkResponse;
+                    return response;
                 })
-                .catch((err) => {
-                    console.error('[Service Worker] Fetch failed:', err);
+                .catch((error) => {
+                    console.log('[Service Worker] Fetch failed:', error);
                     // If it's an HTML request, return the offline page
                     if (
                         event.request.headers
@@ -120,39 +120,42 @@ self.addEventListener('fetch', (event) => {
     );
 });
 
-// Handle API requests with network-first strategy
-function handleApiRequest(event) {
-    event.respondWith(
-        fetch(event.request)
-            .then((response) => {
-                return response;
-            })
-            .catch((err) => {
-                console.log(
-                    '[Service Worker] API fetch failed, serving from cache',
-                    err
-                );
-                return caches.match(event.request);
-            })
-    );
-}
-
 // Background sync for pending operations
 self.addEventListener('sync', (event) => {
-    console.log('[Service Worker] Background Sync', event);
-
+    console.log('[Service Worker] Background Sync:', event);
     if (event.tag === 'sync-pending-operations') {
-        event.waitUntil(
-            // Send message to clients to perform sync
-            self.clients.matchAll().then((clients) => {
-                if (clients && clients.length) {
-                    // Send to the first active client
-                    clients[0].postMessage({
-                        type: 'SYNC_PENDING_OPERATIONS'
-                    });
-                }
-            })
-        );
+        event.waitUntil(syncPendingOperations());
+    }
+});
+
+// Periodic sync (if supported)
+self.addEventListener('periodicsync', (event) => {
+    console.log('[Service Worker] Periodic Sync:', event);
+    if (event.tag === 'sync-pending-operations') {
+        event.waitUntil(syncPendingOperations());
+    }
+});
+
+// Function to sync pending operations
+function syncPendingOperations() {
+    console.log('[Service Worker] Syncing pending operations');
+
+    // Notify all clients about the sync
+    return self.clients.matchAll().then((clients) => {
+        clients.forEach((client) => {
+            client.postMessage({
+                type: 'SYNC_PENDING_OPERATIONS'
+            });
+        });
+    });
+}
+
+// Listen for messages from clients
+self.addEventListener('message', (event) => {
+    console.log('[Service Worker] Message received:', event.data);
+
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
     }
 });
 

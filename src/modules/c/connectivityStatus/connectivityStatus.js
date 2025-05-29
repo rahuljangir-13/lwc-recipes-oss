@@ -17,9 +17,12 @@ export default class ConnectivityStatus extends LightningElement {
     @track showToast = false;
     @track pendingOperationsCount = 0;
 
+    // Timer for checking pending operations
+    pendingCheckInterval = null;
+
     connectedCallback() {
         // Initialize with current status
-        this.isOnline = initConnectivityListeners();
+        this.isOnline = isOnline();
 
         // Listen for connectivity changes
         this._onConnectivityChange = this.handleConnectivityChange.bind(this);
@@ -27,35 +30,62 @@ export default class ConnectivityStatus extends LightningElement {
 
         // Check for pending operations
         this.checkPendingOperations();
+
+        // Set up interval to check pending operations
+        this.pendingCheckInterval = setInterval(() => {
+            this.checkPendingOperations();
+        }, 30000); // Check every 30 seconds
     }
 
     disconnectedCallback() {
         removeConnectivityListener(this._onConnectivityChange);
+
+        // Clear interval
+        if (this.pendingCheckInterval) {
+            clearInterval(this.pendingCheckInterval);
+        }
+    }
+
+    // Explicitly handle going online
+    handleOnline() {
+        this.isOnline = true;
+        this.showToast = true;
+        this.syncMessage = 'You are back online. Syncing changes...';
+
+        // Hide toast after 5 seconds
+        setTimeout(() => {
+            this.showToast = false;
+        }, 5000);
+
+        // Check pending operations
+        this.checkPendingOperations();
+    }
+
+    // Explicitly handle going offline
+    handleOffline() {
+        this.isOnline = false;
+        this.showToast = true;
+        this.syncMessage =
+            'You are offline. Changes will be saved locally and synced when you reconnect.';
+
+        // Keep offline message visible longer
+        setTimeout(() => {
+            this.showToast = false;
+        }, 5000);
+
+        // Check pending operations
+        this.checkPendingOperations();
     }
 
     handleConnectivityChange(isOnline) {
         this.isOnline = isOnline;
 
         if (isOnline) {
-            this.showToast = true;
-            this.syncMessage = 'You are back online. Syncing changes...';
-
+            this.handleOnline();
             // Dispatch event to trigger sync
             this.dispatchEvent(new CustomEvent('sync-needed'));
-
-            // Hide toast after 5 seconds
-            setTimeout(() => {
-                this.showToast = false;
-            }, 5000);
         } else {
-            this.showToast = true;
-            this.syncMessage =
-                'You are offline. Changes will be saved locally and synced when you reconnect.';
-
-            // Keep offline message visible
-            setTimeout(() => {
-                this.showToast = false;
-            }, 5000);
+            this.handleOffline();
         }
     }
 
@@ -66,12 +96,31 @@ export default class ConnectivityStatus extends LightningElement {
     }
 
     handleSyncComplete(event) {
-        const { synced, total } = event.detail || { synced: 0, total: 0 };
+        const { synced, total, message, variant } = event.detail || {
+            synced: 0,
+            total: 0
+        };
+
+        // If message is provided, use it as a custom notification
+        if (message) {
+            this.syncStatus = variant || 'completed';
+            this.syncMessage = message;
+            this.showToast = true;
+
+            // Hide toast after delay
+            setTimeout(() => {
+                this.showToast = false;
+                this.syncStatus = 'idle';
+            }, 3000);
+            return;
+        }
 
         this.syncStatus = 'completed';
         this.syncMessage = `Successfully synced ${synced} of ${total} changes.`;
         this.showToast = true;
-        this.pendingOperationsCount = 0;
+
+        // Refresh pending operations count
+        this.checkPendingOperations();
 
         // Hide toast after 3 seconds
         setTimeout(() => {

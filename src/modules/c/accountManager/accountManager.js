@@ -24,6 +24,47 @@ export default class AccountManager extends LightningElement {
     @track selectedAccountId;
     @track offlineAccountIds = [];
 
+    // Getters for form and UI
+    get formTitle() {
+        return this.isNew ? 'New Account' : 'Edit Account';
+    }
+
+    get showAccountList() {
+        return this.viewState === VIEW_STATES.LIST;
+    }
+
+    get showAccountForm() {
+        return this.viewState === VIEW_STATES.FORM;
+    }
+
+    get showAccountDetail() {
+        return this.viewState === VIEW_STATES.DETAIL;
+    }
+
+    get formattedCreatedDate() {
+        return this.formatDate(this.currentAccount.createdDate);
+    }
+
+    get formattedModifiedDate() {
+        return this.formatDate(this.currentAccount.lastModifiedDate);
+    }
+
+    get deleteConfirmationMessage() {
+        return this.deleteType === 'account'
+            ? 'Are you sure you want to delete this account? This will also delete all related contacts.'
+            : 'Are you sure you want to delete this contact?';
+    }
+
+    // Add a getter for empty accounts check
+    get hasAccounts() {
+        return this.accounts.length > 0;
+    }
+
+    // Check if we have related contacts
+    get hasRelatedContacts() {
+        return this.relatedContacts && this.relatedContacts.length > 0;
+    }
+
     connectedCallback() {
         this.loadAccounts();
         // Listen for connectivity changes
@@ -88,38 +129,6 @@ export default class AccountManager extends LightningElement {
                 this.error = error.message || 'Error loading account details';
                 this.isLoading = false;
             });
-    }
-
-    // COMPUTED PROPERTIES
-    get showAccountList() {
-        return this.viewState === VIEW_STATES.LIST;
-    }
-
-    get showAccountForm() {
-        return this.viewState === VIEW_STATES.FORM;
-    }
-
-    get showAccountDetail() {
-        return this.viewState === VIEW_STATES.DETAIL;
-    }
-
-    get formattedCreatedDate() {
-        return this.formatDate(this.currentAccount.createdDate);
-    }
-
-    get formattedModifiedDate() {
-        return this.formatDate(this.currentAccount.lastModifiedDate);
-    }
-
-    get deleteConfirmationMessage() {
-        return this.deleteType === 'account'
-            ? 'Are you sure you want to delete this account? This will also delete all related contacts.'
-            : 'Are you sure you want to delete this contact?';
-    }
-
-    // Add a getter for empty accounts check
-    get hasAccounts() {
-        return this.accounts.length > 0;
     }
 
     // Add getter methods for each account to handle the classes
@@ -235,6 +244,7 @@ export default class AccountManager extends LightningElement {
     }
 
     handleNewAccount() {
+        console.log('Opening new account form');
         this.currentAccount = {
             name: '',
             industry: '',
@@ -248,48 +258,56 @@ export default class AccountManager extends LightningElement {
     }
 
     handleSave() {
+        console.log('Saving account:', this.currentAccount);
         if (!this.validateForm()) {
             return;
         }
 
         this.isLoading = true;
+        const actionType = this.isNew ? 'create' : 'update';
 
-        const savePromise = this.currentAccount.id
-            ? accountService.updateAccount(this.currentAccount)
-            : accountService.createAccount(this.currentAccount);
+        const savePromise = this.isNew
+            ? accountService.createAccount(this.currentAccount)
+            : accountService.updateAccount(this.currentAccount);
 
         savePromise
-            .then(() => {
-                // Refresh the account list
-                return this.loadAccounts();
-            })
-            .then(() => {
+            .then((result) => {
+                console.log('Account saved successfully:', result);
+                // Reset form state
+                this.viewState = VIEW_STATES.LIST;
+
                 // Fire success event
                 this.dispatchEvent(
-                    new CustomEvent('newedit', {
+                    new CustomEvent('editsuccess', {
                         detail: {
-                            message: `Account ${
-                                this.currentAccount.id ? 'updated' : 'created'
-                            } successfully`
+                            type: 'account',
+                            action: actionType,
+                            id: result.id,
+                            name: result.name
                         }
                     })
                 );
+
+                // Refresh the account list
+                return this.loadAccounts();
             })
             .catch((error) => {
                 this.error =
                     error.message ||
                     `Unknown error ${
-                        this.currentAccount.id ? 'updating' : 'creating'
+                        this.isNew ? 'creating' : 'updating'
                     } the account`;
             })
             .finally(() => {
                 this.isLoading = false;
-                this.currentAccount = {};
+                // Reset isNew flag after save operation completes
+                this.isNew = false;
             });
     }
 
     handleCancel() {
         this.viewState = VIEW_STATES.LIST;
+        this.error = null;
     }
 
     handleViewAccount(event) {
@@ -299,7 +317,12 @@ export default class AccountManager extends LightningElement {
     }
 
     handleEditAccount(event) {
-        const accountId = event.target.dataset.id;
+        const accountId = event.currentTarget.dataset.id;
+        if (!accountId) {
+            console.error('No account ID found in event', event);
+            return;
+        }
+
         this.isLoading = true;
 
         accountService
@@ -308,16 +331,22 @@ export default class AccountManager extends LightningElement {
                 this.currentAccount = account;
                 this.isNew = false;
                 this.viewState = VIEW_STATES.FORM;
-                this.isLoading = false;
             })
             .catch((error) => {
                 this.error = error.message || 'Error loading account for edit';
+            })
+            .finally(() => {
                 this.isLoading = false;
             });
     }
 
-    handleDeleteAccount(event) {
-        const accountId = event.target.dataset.id;
+    handleDeleteAccount() {
+        const accountId = this.currentAccount.id;
+        if (!accountId) {
+            this.error = 'No account selected for deletion';
+            return;
+        }
+
         this.itemToDeleteId = accountId;
         this.deleteType = 'account';
         this.showDeleteConfirmation = true;
@@ -349,6 +378,7 @@ export default class AccountManager extends LightningElement {
         accountService
             .deleteAccount(accountId)
             .then(() => {
+                this.viewState = VIEW_STATES.LIST;
                 this.loadAccounts();
                 // Dispatch delete success event
                 this.dispatchEvent(
@@ -363,6 +393,8 @@ export default class AccountManager extends LightningElement {
             })
             .catch((error) => {
                 this.error = error.message || 'Error deleting account';
+            })
+            .finally(() => {
                 this.isLoading = false;
             });
     }
@@ -379,6 +411,11 @@ export default class AccountManager extends LightningElement {
     }
 
     handleNewContact() {
+        if (!this.currentAccount || !this.currentAccount.id) {
+            console.error('No account selected or account ID is missing');
+            return;
+        }
+
         // Dispatch event to open contact form with pre-populated accountId
         const selectEvent = new CustomEvent('newcontact', {
             detail: { accountId: this.currentAccount.id }
@@ -419,7 +456,6 @@ export default class AccountManager extends LightningElement {
                     ...contact,
                     emailHref: `mailto:${contact.email}`
                 }));
-                this.isLoading = false;
 
                 // Dispatch delete success event
                 this.dispatchEvent(
@@ -434,6 +470,8 @@ export default class AccountManager extends LightningElement {
             })
             .catch((error) => {
                 this.error = error.message || 'Error deleting contact';
+            })
+            .finally(() => {
                 this.isLoading = false;
             });
     }
