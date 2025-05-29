@@ -350,11 +350,13 @@
                     </thead>
                     <tbody>
                         <template for:each={contacts} for:item="contact">
-                            <tr key={contact.id}>
-                                <td
-                                    data-id={contact.id}
-                                    onclick={handleViewContact}
-                                >
+                            <tr
+                                key={contact.id}
+                                data-id={contact.id}
+                                onclick={handleViewContact}
+                                class="contact-row"
+                            >
+                                <td>
                                     <div
                                         class="slds-truncate"
                                         title={contact.name}
@@ -396,7 +398,7 @@
                                         {contact.phone}
                                     </div>
                                 </td>
-                                <td>
+                                <td onclick={stopPropagation}>
                                     <button
                                         class="slds-button slds-button_icon"
                                         title="Edit"

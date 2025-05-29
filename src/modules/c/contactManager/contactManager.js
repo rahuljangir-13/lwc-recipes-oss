@@ -248,7 +248,19 @@ export default class ContactManager extends LightningElement {
 
     handleViewContact(event) {
         event.preventDefault();
-        const contactId = event.target.dataset.id;
+        // Use currentTarget to get the row element with the data-id attribute
+        const contactId = event.currentTarget.dataset.id;
+
+        // Stop event propagation if the click was on a button or link
+        if (
+            event.target.tagName === 'BUTTON' ||
+            event.target.tagName === 'A' ||
+            event.target.closest('button') ||
+            event.target.closest('a')
+        ) {
+            return; // Don't proceed with view contact if clicking on action buttons
+        }
+
         this.loadContactDetails(contactId);
     }
 
@@ -332,6 +344,10 @@ export default class ContactManager extends LightningElement {
     }
 
     // UTILITY METHODS
+    stopPropagation(event) {
+        event.stopPropagation();
+    }
+
     validateForm() {
         // Basic validation
         if (!this.currentContact.lastName) {

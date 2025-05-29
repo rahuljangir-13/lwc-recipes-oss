@@ -24,3 +24,15 @@
 .slds-dl_horizontal__detail {
     margin-bottom: 0.5rem;
 }
+
+.contact-row {
+    cursor: pointer;
+}
+
+.contact-row:hover {
+    background-color: #f3f2f2;
+}
+
+.contact-row td:last-child {
+    cursor: default;
+}
