@@ -5,11 +5,11 @@ import {
     createAccount,
     updateAccount,
     deleteAccount
-} from 'data/accountService/accountService';
+} from '../../data/accountService/accountService';
 import {
     getContactsByAccountId,
     deleteContact
-} from 'data/contactService/contactService';
+} from '../../data/contactService/contactService';
 
 const VIEW_STATES = {
     LIST: 'list',

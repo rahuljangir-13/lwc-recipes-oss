@@ -5,8 +5,8 @@ import {
     createContact,
     updateContact,
     deleteContact
-} from 'data/contactService/contactService';
-import { getAccounts } from 'data/accountService/accountService';
+} from '../../data/contactService/contactService';
+import { getAccounts } from '../../data/accountService/accountService';
 
 const VIEW_STATES = {
     LIST: 'list',
