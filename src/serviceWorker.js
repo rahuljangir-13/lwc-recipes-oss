@@ -142,11 +142,25 @@ function syncPendingOperations() {
 
     // Notify all clients about the sync
     return self.clients.matchAll().then((clients) => {
+        if (clients.length === 0) {
+            console.log(
+                '[Service Worker] No active clients found, will retry later'
+            );
+            // If no clients are active, register another sync
+            return self.registration.sync.register('sync-pending-operations');
+        }
+
         clients.forEach((client) => {
+            console.log(
+                '[Service Worker] Notifying client about sync:',
+                client.id
+            );
             client.postMessage({
                 type: 'SYNC_PENDING_OPERATIONS'
             });
         });
+
+        return Promise.resolve();
     });
 }
 
@@ -156,6 +170,9 @@ self.addEventListener('message', (event) => {
 
     if (event.data && event.data.type === 'SKIP_WAITING') {
         self.skipWaiting();
+    } else if (event.data && event.data.type === 'CHECK_PENDING_OPERATIONS') {
+        // Client is requesting to check for pending operations
+        event.waitUntil(syncPendingOperations());
     }
 });
 

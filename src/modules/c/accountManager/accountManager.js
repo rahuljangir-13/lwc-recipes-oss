@@ -23,6 +23,7 @@ export default class AccountManager extends LightningElement {
     @track pendingOperations = [];
     @track selectedAccountId;
     @track offlineAccountIds = [];
+    @api hideNewButton = false;
 
     // Getters for form and UI
     get formTitle() {

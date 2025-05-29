@@ -20,6 +20,7 @@ export default class ContactManager extends LightningElement {
     @track selectedAccountId = null;
     @track showDeleteConfirmation = false;
     @track itemToDeleteId = null;
+    @api hideNewButton = false;
 
     connectedCallback() {
         this.loadContacts();
@@ -73,6 +74,10 @@ export default class ContactManager extends LightningElement {
     }
 
     // COMPUTED PROPERTIES
+    get formTitle() {
+        return this.isNew ? 'New Contact' : 'Edit Contact';
+    }
+
     get showContactList() {
         return this.viewState === VIEW_STATES.LIST;
     }

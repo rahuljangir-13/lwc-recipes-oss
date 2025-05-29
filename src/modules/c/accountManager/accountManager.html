@@ -10,12 +10,17 @@
                     </h2>
                 </div>
                 <div class="slds-no-flex">
-                    <button
-                        class="slds-button slds-button_neutral"
-                        onclick={handleNewAccount}
-                    >
-                        New
-                    </button>
+                    <template lwc:if={hideNewButton}>
+                        <!-- New button hidden -->
+                    </template>
+                    <template lwc:else>
+                        <button
+                            class="slds-button slds-button_neutral"
+                            onclick={handleNewAccount}
+                        >
+                            New
+                        </button>
+                    </template>
                 </div>
             </header>
         </div>

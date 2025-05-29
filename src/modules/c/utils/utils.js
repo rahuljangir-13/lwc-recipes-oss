@@ -239,9 +239,9 @@ export const CONNECTIVITY_EVENTS = {
 };
 
 // Custom event dispatcher
-function dispatchStatusEvent(isOnline) {
+function dispatchStatusEvent(onlineStatus) {
     const event = new CustomEvent(CONNECTIVITY_EVENTS.STATUS_CHANGE, {
-        detail: { isOnline },
+        detail: { isOnline: onlineStatus },
         bubbles: true,
         composed: true
     });
@@ -249,7 +249,7 @@ function dispatchStatusEvent(isOnline) {
 
     // Also dispatch specific events
     const specificEvent = new CustomEvent(
-        isOnline ? CONNECTIVITY_EVENTS.ONLINE : CONNECTIVITY_EVENTS.OFFLINE,
+        onlineStatus ? CONNECTIVITY_EVENTS.ONLINE : CONNECTIVITY_EVENTS.OFFLINE,
         {
             bubbles: true,
             composed: true
@@ -260,15 +260,63 @@ function dispatchStatusEvent(isOnline) {
 
 // Initialize listeners
 export function initConnectivityListeners() {
-    // Set initial state
-    const initialStatus = navigator.onLine;
+    // Setup event listeners for online/offline events
+    window.addEventListener('online', () => {
+        console.log('🌐 Browser reports online status');
+        // Check if we're truly online by testing connection
+        testConnection().then((online) => {
+            if (online) {
+                console.log(
+                    '✅ Connection test succeeded, dispatching online event'
+                );
+                dispatchStatusEvent(true);
 
-    // Update state when online/offline status changes
-    window.addEventListener('online', () => dispatchStatusEvent(true));
-    window.addEventListener('offline', () => dispatchStatusEvent(false));
+                // Automatically sync pending operations when coming back online
+                syncPendingOperationsWhenOnline();
+            }
+        });
+    });
 
-    // Return current status
-    return initialStatus;
+    window.addEventListener('offline', () => {
+        console.log('📴 Browser reports offline status');
+        dispatchStatusEvent(false);
+    });
+
+    // Initial check
+    if (navigator.onLine) {
+        testConnection().then((online) => {
+            dispatchStatusEvent(online);
+        });
+    } else {
+        dispatchStatusEvent(false);
+    }
+}
+
+// Attempt to sync pending operations when coming back online
+export function syncPendingOperationsWhenOnline() {
+    if (!isOnline()) {
+        console.log('📴 Cannot sync while offline');
+        return Promise.resolve(false);
+    }
+
+    console.log('🔄 Checking for pending operations to sync');
+    return getPendingOperations().then((operations) => {
+        if (operations && operations.length > 0) {
+            console.log(
+                `🔄 Found ${operations.length} pending operations to sync`
+            );
+            // Dispatch an event to trigger sync in the app component
+            const syncEvent = new CustomEvent('sync-pending-operations', {
+                bubbles: true,
+                composed: true
+            });
+            document.body.dispatchEvent(syncEvent);
+            return true;
+        }
+
+        console.log('✅ No pending operations to sync');
+        return false;
+    });
 }
 
 // Get current online status

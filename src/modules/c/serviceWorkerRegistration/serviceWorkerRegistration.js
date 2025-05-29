@@ -1,4 +1,5 @@
 import { LightningElement } from 'lwc';
+import { syncPendingOperationsWhenOnline } from 'c/utils';
 
 /**
  * Component to register the Service Worker for offline capability
@@ -8,6 +9,27 @@ export default class ServiceWorkerRegistration extends LightningElement {
 
     connectedCallback() {
         this.registerServiceWorker();
+
+        // Setup connectivity change listener
+        window.addEventListener('online', this.handleOnlineStatus.bind(this));
+    }
+
+    disconnectedCallback() {
+        window.removeEventListener(
+            'online',
+            this.handleOnlineStatus.bind(this)
+        );
+    }
+
+    handleOnlineStatus() {
+        console.log('🌐 App is back online, checking for pending operations');
+        // Trigger sync of pending operations
+        syncPendingOperationsWhenOnline().then((hasPendingOps) => {
+            if (hasPendingOps) {
+                console.log('🔄 Sync will be triggered for pending operations');
+                this.dispatchEvent(new CustomEvent('syncpendingoperations'));
+            }
+        });
     }
 
     registerServiceWorker() {
@@ -65,17 +87,31 @@ export default class ServiceWorkerRegistration extends LightningElement {
 
     performSyncWhenOnline(registration) {
         window.addEventListener('online', () => {
+            console.log('🌐 Network is back online, registering sync task');
             if ('sync' in registration) {
                 registration.sync
                     .register('sync-pending-operations')
-                    .catch((err) =>
+                    .then(() => {
+                        console.log(
+                            '🔄 Background sync registered successfully'
+                        );
+                    })
+                    .catch((err) => {
                         console.error(
                             'Background sync registration failed:',
                             err
-                        )
-                    );
+                        );
+                        // If background sync fails, attempt manual sync
+                        console.log('⚠️ Falling back to manual sync');
+                        this.dispatchEvent(
+                            new CustomEvent('syncpendingoperations')
+                        );
+                    });
             } else {
                 // Manual sync if background sync not available
+                console.log(
+                    '⚠️ Background sync not supported, using manual sync'
+                );
                 this.dispatchEvent(new CustomEvent('syncpendingoperations'));
             }
         });
@@ -83,7 +119,9 @@ export default class ServiceWorkerRegistration extends LightningElement {
 
     setupMessageListener() {
         navigator.serviceWorker.addEventListener('message', (event) => {
+            console.log('📬 Message received from Service Worker:', event.data);
             if (event.data && event.data.type === 'SYNC_PENDING_OPERATIONS') {
+                console.log('🔄 Triggering sync for pending operations');
                 this.dispatchEvent(new CustomEvent('syncpendingoperations'));
             }
         });

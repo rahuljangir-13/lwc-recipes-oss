@@ -53,6 +53,7 @@
                         </template>
                         <template lwc:else>
                             <c-account-manager
+                                hide-new-button="true"
                                 onnewedit={handleEditSuccess}
                                 oneditsuccess={handleEditSuccess}
                                 onnewcontact={handleNewContactFromAccount}
@@ -103,6 +104,7 @@
                         </template>
                         <template lwc:else>
                             <c-contact-manager
+                                hide-new-button="true"
                                 onnewcontact={handleNewContact}
                                 oneditcontact={handleEditContact}
                                 oneditsuccess={handleEditSuccess}

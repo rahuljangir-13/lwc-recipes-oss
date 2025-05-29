@@ -1,7 +1,6 @@
 import { LightningElement, track } from 'lwc';
 import {
     isOnline,
-    initConnectivityListeners,
     addConnectivityListener,
     removeConnectivityListener,
     getPendingOperations
@@ -77,10 +76,10 @@ export default class ConnectivityStatus extends LightningElement {
         this.checkPendingOperations();
     }
 
-    handleConnectivityChange(isOnline) {
-        this.isOnline = isOnline;
+    handleConnectivityChange(onlineStatus) {
+        this.isOnline = onlineStatus;
 
-        if (isOnline) {
+        if (onlineStatus) {
             this.handleOnline();
             // Dispatch event to trigger sync
             this.dispatchEvent(new CustomEvent('sync-needed'));

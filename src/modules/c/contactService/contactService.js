@@ -79,10 +79,10 @@ export function getContacts() {
             utils.saveItems(utils.STORE_NAMES.CONTACTS, result);
             return result;
         });
-    } else {
-        // Offline: get from local storage
-        return utils.getAll(utils.STORE_NAMES.CONTACTS);
     }
+
+    // Offline: get from local storage
+    return utils.getAll(utils.STORE_NAMES.CONTACTS);
 }
 
 // Get contact by ID
@@ -94,10 +94,10 @@ export function getContact(id) {
             return Promise.resolve({ ...foundContact });
         }
         return Promise.reject(new Error(`Contact with id ${id} not found`));
-    } else {
-        // Offline: get from local storage
-        return utils.getById(utils.STORE_NAMES.CONTACTS, id);
     }
+
+    // Offline: get from local storage
+    return utils.getById(utils.STORE_NAMES.CONTACTS, id);
 }
 
 // Get contacts by Account ID
@@ -108,14 +108,12 @@ export function getContactsByAccountId(accountId) {
             (contact) => contact.accountId === accountId
         );
         return Promise.resolve([...filteredContacts]);
-    } else {
-        // Offline: get from local storage and filter
-        return utils.getAll(utils.STORE_NAMES.CONTACTS).then((allContacts) => {
-            return allContacts.filter(
-                (contact) => contact.accountId === accountId
-            );
-        });
     }
+
+    // Offline: get from local storage and filter
+    return utils.getAll(utils.STORE_NAMES.CONTACTS).then((allContacts) => {
+        return allContacts.filter((contact) => contact.accountId === accountId);
+    });
 }
 
 // Create a new contact
@@ -134,20 +132,20 @@ export function createContact(contactData) {
             utils.saveItem(utils.STORE_NAMES.CONTACTS, result);
             return result;
         });
-    } else {
-        // Offline: save to local storage and queue for sync
-        return utils
-            .saveItem(utils.STORE_NAMES.CONTACTS, newContact)
-            .then((result) => {
-                // Add to pending operations queue
-                return utils
-                    .addPendingOperation({
-                        type: 'CREATE_CONTACT',
-                        data: result
-                    })
-                    .then(() => result);
-            });
     }
+
+    // Offline: save to local storage and queue for sync
+    return utils
+        .saveItem(utils.STORE_NAMES.CONTACTS, newContact)
+        .then((result) => {
+            // Add to pending operations queue
+            return utils
+                .addPendingOperation({
+                    type: 'CREATE_CONTACT',
+                    data: result
+                })
+                .then(() => result);
+        });
 }
 
 // Update an existing contact
@@ -174,30 +172,30 @@ export function updateContact(contactData) {
         return Promise.reject(
             new Error(`Contact with id ${contactData.id} not found`)
         );
-    } else {
-        // Offline: update in local storage and queue for sync
-        return utils
-            .getById(utils.STORE_NAMES.CONTACTS, contactData.id)
-            .then((existingContact) => {
-                const updatedContact = {
-                    ...existingContact,
-                    ...contactData,
-                    lastModifiedDate: new Date().toISOString()
-                };
-
-                return utils
-                    .saveItem(utils.STORE_NAMES.CONTACTS, updatedContact)
-                    .then((result) => {
-                        // Add to pending operations queue
-                        return utils
-                            .addPendingOperation({
-                                type: 'UPDATE_CONTACT',
-                                data: result
-                            })
-                            .then(() => result);
-                    });
-            });
     }
+
+    // Offline: update in local storage and queue for sync
+    return utils
+        .getById(utils.STORE_NAMES.CONTACTS, contactData.id)
+        .then((existingContact) => {
+            const updatedContact = {
+                ...existingContact,
+                ...contactData,
+                lastModifiedDate: new Date().toISOString()
+            };
+
+            return utils
+                .saveItem(utils.STORE_NAMES.CONTACTS, updatedContact)
+                .then((result) => {
+                    // Add to pending operations queue
+                    return utils
+                        .addPendingOperation({
+                            type: 'UPDATE_CONTACT',
+                            data: result
+                        })
+                        .then(() => result);
+                });
+        });
 }
 
 // Delete a contact
@@ -215,29 +213,31 @@ export function deleteContact(id) {
             });
         }
         return Promise.reject(new Error(`Contact with id ${id} not found`));
-    } else {
-        // Offline: mark as deleted in local storage and queue for sync
-        return utils.getById(utils.STORE_NAMES.CONTACTS, id).then((contact) => {
-            // Add to pending operations queue for later deletion
-            return utils
-                .addPendingOperation({
-                    type: 'DELETE_CONTACT',
-                    data: { id }
-                })
-                .then(() => {
-                    // Remove from local storage
-                    return utils.deleteItem(utils.STORE_NAMES.CONTACTS, id);
-                });
-        });
     }
+
+    // Offline: mark as deleted in local storage and queue for sync
+    return utils.getById(utils.STORE_NAMES.CONTACTS, id).then(() => {
+        // Add to pending operations queue for later deletion
+        return utils
+            .addPendingOperation({
+                type: 'DELETE_CONTACT',
+                data: { id }
+            })
+            .then(() => {
+                // Remove from local storage
+                return utils.deleteItem(utils.STORE_NAMES.CONTACTS, id);
+            });
+    });
 }
 
 // Sync pending contact operations when online
 export function syncPendingOperations() {
     if (!isOnline()) {
+        console.log('❌ Cannot sync while offline');
         return Promise.reject(new Error('Cannot sync while offline'));
     }
 
+    console.log('🔄 Syncing pending contact operations');
     return utils.getPendingOperations().then((operations) => {
         // Filter contact operations
         const contactOps = operations.filter((op) =>
@@ -247,8 +247,11 @@ export function syncPendingOperations() {
         );
 
         if (!contactOps || contactOps.length === 0) {
-            return { synced: 0 };
+            console.log('✅ No pending contact operations to sync');
+            return { synced: 0, total: 0 };
         }
+
+        console.log(`🔄 Found ${contactOps.length} pending contact operations`);
 
         // Sort operations by timestamp
         const sortedOps = [...contactOps].sort(
@@ -259,15 +262,39 @@ export function syncPendingOperations() {
         return sortedOps.reduce(
             (promise, operation) => {
                 return promise.then((result) => {
+                    // Skip already processed operations
+                    if (operation.processed) {
+                        console.log(
+                            `⏭️ Skipping already processed operation ${operation.id}`
+                        );
+                        return result;
+                    }
+
                     // Process the operation based on type
                     let processPromise;
+                    console.log(
+                        `🔄 Processing ${operation.type} operation for id: ${operation.data?.id || 'new'}`
+                    );
 
                     switch (operation.type) {
                         case 'CREATE_CONTACT':
-                            // Create contact on server
-                            const createData = { ...operation.data };
-                            delete createData.id; // Let server assign ID
-                            processPromise = createContact(createData);
+                            // For create operations, we need to check if it was already created
+                            processPromise = new Promise((resolve) => {
+                                // Check if contact already exists with this ID
+                                const existingContact = contacts.find(
+                                    (c) => c.id === operation.data.id
+                                );
+                                if (existingContact) {
+                                    console.log(
+                                        `⚠️ Contact already exists, treating as successful sync`
+                                    );
+                                    resolve(existingContact);
+                                } else {
+                                    // Create contact on server
+                                    const createData = { ...operation.data };
+                                    resolve(createContact(createData));
+                                }
+                            });
                             break;
 
                         case 'UPDATE_CONTACT':
@@ -284,29 +311,35 @@ export function syncPendingOperations() {
                             processPromise = Promise.resolve();
                     }
 
+                    // Mark operation as being processed
+                    operation.processing = true;
+
                     return processPromise
                         .then(() => {
+                            console.log(
+                                `✅ Successfully processed ${operation.type} for id: ${operation.data?.id || 'new'}`
+                            );
                             // Remove from pending operations
                             return utils.deletePendingOperation(operation.id);
                         })
+                        .then(() => {
+                            // Update counts for result
+                            result.synced += 1;
+                            return result;
+                        })
                         .catch((error) => {
                             console.error(
-                                'Error processing operation:',
-                                operation,
-                                error
+                                `❌ Error processing ${operation.type}:`,
+                                error.message || error
                             );
-                            // Continue with next operation
-                        })
-                        .then(() => {
-                            // Increment counter
-                            return {
-                                synced: result.synced + 1,
-                                total: sortedOps.length
-                            };
+
+                            // Increment error count but continue with next operation
+                            result.errors = (result.errors || 0) + 1;
+                            return result;
                         });
                 });
             },
-            Promise.resolve({ synced: 0, total: sortedOps.length })
+            { synced: 0, errors: 0, total: contactOps.length }
         );
     });
 }
