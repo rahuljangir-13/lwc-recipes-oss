@@ -221,8 +221,8 @@ export default class ContactManager extends LightningElement {
                         detail: {
                             type: 'contact',
                             action: this.isNew ? 'create' : 'update',
-                            id: this.currentContact.id,
-                            isNew: this.isNew
+                            id: result.id || this.currentContact.id,
+                            name: `${this.currentContact.firstName} ${this.currentContact.lastName}`.trim()
                         }
                     })
                 );
@@ -231,7 +231,9 @@ export default class ContactManager extends LightningElement {
                 this.isNew = false;
             })
             .catch((error) => {
-                this.error = error.message || 'Error saving contact';
+                this.error =
+                    error.message ||
+                    `Error ${this.isNew ? 'creating' : 'updating'} contact`;
                 this.isLoading = false;
             })
             .finally(() => {
@@ -338,7 +340,7 @@ export default class ContactManager extends LightningElement {
         }
 
         if (!this.currentContact.accountId) {
-            this.error = 'Account is required';
+            this.error = 'Please select an Account';
             return false;
         }
 

@@ -480,7 +480,10 @@ export default class AccountManager extends LightningElement {
     // UTILITY METHODS
     validateForm() {
         // Basic validation
-        if (!this.currentAccount.name) {
+        if (
+            !this.currentAccount.name ||
+            this.currentAccount.name.trim() === ''
+        ) {
             this.error = 'Account Name is required';
             return false;
         }
