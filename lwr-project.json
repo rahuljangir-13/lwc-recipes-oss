@@ -2,7 +2,7 @@
     "namespace": "c",
     "lwcModuleMetadata": {
         "c": {
-            "services/accountService": {
+            "accountService": {
                 "exports": [
                     "getAccounts",
                     "getAccount",
@@ -11,7 +11,7 @@
                     "deleteAccount"
                 ]
             },
-            "services/contactService": {
+            "contactService": {
                 "exports": [
                     "getContacts",
                     "getContact",
