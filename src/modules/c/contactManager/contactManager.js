@@ -30,7 +30,15 @@ export default class ContactManager extends LightningElement {
     // API Methods
     @api
     handleNewContactForAccount(accountId) {
-        this.currentContact = { accountId };
+        this.currentContact = {
+            firstName: '',
+            lastName: '',
+            title: '',
+            email: '',
+            phone: '',
+            mobilePhone: '',
+            accountId: accountId || ''
+        };
         this.selectedAccountId = accountId;
         this.isNew = true;
         this.viewState = VIEW_STATES.FORM;
@@ -176,7 +184,15 @@ export default class ContactManager extends LightningElement {
     }
 
     handleNewContact() {
-        this.currentContact = {};
+        this.currentContact = {
+            firstName: '',
+            lastName: '',
+            title: '',
+            email: '',
+            phone: '',
+            mobilePhone: '',
+            accountId: ''
+        };
         this.isNew = true;
         this.viewState = VIEW_STATES.FORM;
     }

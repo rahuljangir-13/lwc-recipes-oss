@@ -11,7 +11,23 @@ export default class App extends LightningElement {
 
     connectedCallback() {
         // Initialize offline storage with mock data
-        this.initializeOfflineStorage();
+        this.initializeOfflineStorage().then(() => {
+            // Ensure both components load their data from storage
+            setTimeout(() => {
+                const accountManager =
+                    this.template.querySelector('c-account-manager');
+                const contactManager =
+                    this.template.querySelector('c-contact-manager');
+
+                if (accountManager) {
+                    accountManager.loadAccounts();
+                }
+
+                if (contactManager) {
+                    contactManager.loadContacts();
+                }
+            }, 1000);
+        });
 
         // Listen for service worker sync events
         this.addEventListener(
@@ -213,8 +229,8 @@ export default class App extends LightningElement {
         console.log('➕ Creating new contact');
         const contactManager = this.template.querySelector('c-contact-manager');
         if (contactManager) {
-            // If no account is specified, create a contact without an account
-            contactManager.createContactForAccount(null);
+            // Call the correct method that exists on the component
+            contactManager.handleNewContact();
         } else {
             console.error('Could not find contact manager component');
         }
@@ -230,7 +246,7 @@ export default class App extends LightningElement {
             const contactManager =
                 this.template.querySelector('c-contact-manager');
             if (contactManager) {
-                contactManager.editContact(event.detail.contactId);
+                contactManager.handleEditContactById(event.detail.contactId);
             }
         }, 0);
     }
@@ -298,7 +314,9 @@ export default class App extends LightningElement {
             const contactManager =
                 this.template.querySelector('c-contact-manager');
             if (contactManager) {
-                contactManager.createContactForAccount(event.detail.accountId);
+                contactManager.handleNewContactForAccount(
+                    event.detail.accountId
+                );
             }
         }, 0);
     }
