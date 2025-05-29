@@ -24,3 +24,50 @@
 .slds-dl_horizontal__detail {
     margin-bottom: 0.5rem;
 }
+
+.account-item-container {
+    cursor: pointer;
+    border-bottom: 1px solid #dddbda;
+    transition: background-color 0.2s ease;
+}
+
+.account-item-container:hover {
+    background-color: #f3f2f2;
+}
+
+.account-item {
+    padding: 0.75rem;
+    position: relative;
+}
+
+.account-name {
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.account-phone {
+    color: #706e6b;
+    font-size: 0.875rem;
+}
+
+.offline-indicator {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background-color: #ffb75d;
+    color: #514f4d;
+    font-size: 0.75rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 1rem;
+}
+
+.offline-record {
+    background-color: #fff4e5;
+}
+
+.empty-state {
+    padding: 2rem;
+    text-align: center;
+    color: #706e6b;
+}

@@ -22,33 +22,57 @@
         <div class="slds-card__body slds-card__body_inner">
             <!-- Loading spinner -->
             <template lwc:if={isLoading}>
-                <div class="loading-spinner">Loading...</div>
+                <div class="slds-is-relative slds-p-around_medium">
+                    <div class="slds-spinner_container">
+                        <div
+                            role="status"
+                            class="slds-spinner slds-spinner_medium"
+                        >
+                            <span class="slds-assistive-text">Loading</span>
+                            <div class="slds-spinner__dot-a"></div>
+                            <div class="slds-spinner__dot-b"></div>
+                        </div>
+                    </div>
+                </div>
             </template>
 
             <!-- Error message -->
             <template lwc:if={error}>
-                <div class="error-message">{error}</div>
+                <div
+                    class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error"
+                    role="alert"
+                >
+                    <span class="slds-assistive-text">Error</span>
+                    <h2>{error}</h2>
+                </div>
             </template>
 
             <!-- Delete Confirmation Modal -->
             <template lwc:if={showDeleteConfirmation}>
-                <section class="modal-overlay">
-                    <div class="modal-container">
-                        <header class="modal-header">
-                            <h2>Confirm Delete</h2>
+                <section
+                    role="dialog"
+                    tabindex="-1"
+                    aria-modal="true"
+                    class="slds-modal slds-fade-in-open"
+                >
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header">
+                            <h2 class="slds-text-heading_medium">
+                                Confirm Delete
+                            </h2>
                         </header>
-                        <div class="modal-content">
+                        <div class="slds-modal__content slds-p-around_medium">
                             <p>{deleteConfirmationMessage}</p>
                         </div>
-                        <footer class="modal-footer">
+                        <footer class="slds-modal__footer">
                             <button
-                                class="cancel-button"
+                                class="slds-button slds-button_neutral"
                                 onclick={handleCancelDelete}
                             >
                                 Cancel
                             </button>
                             <button
-                                class="delete-button"
+                                class="slds-button slds-button_destructive"
                                 onclick={handleConfirmDelete}
                             >
                                 Delete
@@ -56,86 +80,196 @@
                         </footer>
                     </div>
                 </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
             </template>
 
             <!-- Account form -->
             <template lwc:if={showAccountForm}>
-                <div class="form-container">
-                    <h2 class="form-title">{formTitle}</h2>
-
-                    <div class="form-group">
-                        <label for="name">Name</label>
-                        <input
-                            type="text"
-                            id="name"
-                            value={currentAccount.name}
-                            onchange={handleFieldChange}
-                            data-field="name"
-                            required
-                        />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="industry">Industry</label>
-                        <input
-                            type="text"
-                            id="industry"
-                            value={currentAccount.industry}
-                            onchange={handleFieldChange}
-                            data-field="industry"
-                        />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="type">Type</label>
-                        <input
-                            type="text"
-                            id="type"
-                            value={currentAccount.type}
-                            onchange={handleFieldChange}
-                            data-field="type"
-                        />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="phone">Phone</label>
-                        <input
-                            type="tel"
-                            id="phone"
-                            value={currentAccount.phone}
-                            onchange={handleFieldChange}
-                            data-field="phone"
-                        />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="website">Website</label>
-                        <input
-                            type="url"
-                            id="website"
-                            value={currentAccount.website}
-                            onchange={handleFieldChange}
-                            data-field="website"
-                        />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="description">Description</label>
-                        <textarea
-                            id="description"
-                            value={currentAccount.description}
-                            onchange={handleFieldChange}
-                            data-field="description"
-                        ></textarea>
-                    </div>
-
-                    <div class="form-actions">
-                        <button class="cancel-button" onclick={handleCancel}>
-                            Cancel
-                        </button>
-                        <button class="save-button" onclick={handleSave}>
-                            Save
-                        </button>
+                <div class="account-form">
+                    <div class="slds-grid slds-grid_vertical">
+                        <div class="slds-col slds-m-bottom_medium">
+                            <button
+                                class="slds-button slds-button_neutral"
+                                onclick={handleBackToList}
+                            >
+                                <svg
+                                    class="slds-button__icon slds-button__icon_left"
+                                    aria-hidden="true"
+                                >
+                                    <use
+                                        xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#back"
+                                    ></use>
+                                </svg>
+                                Cancel
+                            </button>
+                        </div>
+                        <div class="slds-col">
+                            <div class="slds-form">
+                                <div
+                                    class="slds-form-element slds-m-bottom_medium"
+                                >
+                                    <label
+                                        class="slds-form-element__label"
+                                        for="account-name"
+                                        >Name</label
+                                    >
+                                    <div class="slds-form-element__control">
+                                        <input
+                                            type="text"
+                                            id="account-name"
+                                            class="slds-input"
+                                            value={currentAccount.name}
+                                            data-field="name"
+                                            onchange={handleFieldChange}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                <div
+                                    class="slds-form-element slds-m-bottom_medium"
+                                >
+                                    <label
+                                        class="slds-form-element__label"
+                                        for="account-industry"
+                                        >Industry</label
+                                    >
+                                    <div class="slds-form-element__control">
+                                        <select
+                                            id="account-industry"
+                                            class="slds-select"
+                                            data-field="industry"
+                                            onchange={handleFieldChange}
+                                        >
+                                            <option value="">--Select--</option>
+                                            <option value="Agriculture">
+                                                Agriculture
+                                            </option>
+                                            <option value="Banking">
+                                                Banking
+                                            </option>
+                                            <option value="Consulting">
+                                                Consulting
+                                            </option>
+                                            <option value="Education">
+                                                Education
+                                            </option>
+                                            <option value="Energy">
+                                                Energy
+                                            </option>
+                                            <option value="Healthcare">
+                                                Healthcare
+                                            </option>
+                                            <option value="Manufacturing">
+                                                Manufacturing
+                                            </option>
+                                            <option value="Media">Media</option>
+                                            <option value="Retail">
+                                                Retail
+                                            </option>
+                                            <option value="Technology">
+                                                Technology
+                                            </option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div
+                                    class="slds-form-element slds-m-bottom_medium"
+                                >
+                                    <label
+                                        class="slds-form-element__label"
+                                        for="account-type"
+                                        >Type</label
+                                    >
+                                    <div class="slds-form-element__control">
+                                        <select
+                                            id="account-type"
+                                            class="slds-select"
+                                            data-field="type"
+                                            onchange={handleFieldChange}
+                                        >
+                                            <option value="">--Select--</option>
+                                            <option value="Customer - Direct">
+                                                Customer - Direct
+                                            </option>
+                                            <option value="Customer - Channel">
+                                                Customer - Channel
+                                            </option>
+                                            <option value="Partner">
+                                                Partner
+                                            </option>
+                                            <option value="Prospect">
+                                                Prospect
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div
+                                    class="slds-form-element slds-m-bottom_medium"
+                                >
+                                    <label
+                                        class="slds-form-element__label"
+                                        for="account-website"
+                                        >Website</label
+                                    >
+                                    <div class="slds-form-element__control">
+                                        <input
+                                            type="url"
+                                            id="account-website"
+                                            class="slds-input"
+                                            value={currentAccount.website}
+                                            data-field="website"
+                                            onchange={handleFieldChange}
+                                        />
+                                    </div>
+                                </div>
+                                <div
+                                    class="slds-form-element slds-m-bottom_medium"
+                                >
+                                    <label
+                                        class="slds-form-element__label"
+                                        for="account-phone"
+                                        >Phone</label
+                                    >
+                                    <div class="slds-form-element__control">
+                                        <input
+                                            type="tel"
+                                            id="account-phone"
+                                            class="slds-input"
+                                            value={currentAccount.phone}
+                                            data-field="phone"
+                                            onchange={handleFieldChange}
+                                        />
+                                    </div>
+                                </div>
+                                <div class="slds-form-element">
+                                    <label
+                                        class="slds-form-element__label"
+                                        for="account-description"
+                                        >Description</label
+                                    >
+                                    <div class="slds-form-element__control">
+                                        <textarea
+                                            id="account-description"
+                                            class="slds-textarea"
+                                            value={currentAccount.description}
+                                            data-field="description"
+                                            onchange={handleFieldChange}
+                                        ></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-m-top_medium">
+                            <div class="slds-grid slds-grid_align-end">
+                                <button
+                                    class="slds-button slds-button_brand"
+                                    onclick={handleSaveAccount}
+                                >
+                                    Save
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </template>
@@ -147,19 +281,13 @@
                         <template for:each={accounts} for:item="account">
                             <div
                                 key={account.id}
-                                class="{account.id,"
-                                isOfflineRecord(account.id)}
+                                class="account-item-container"
                                 onclick={handleEditAccount}
                                 data-id={account.id}
                                 data-name={account.name}
                             >
-                                <div
-                                    class="account-item"
-                                    class:offline={isOfflineRecord(account.id)}
-                                >
-                                    <template
-                                        lwc:if={isOfflineRecord(account.id)}
-                                    >
+                                <div class={account.cssClass}>
+                                    <template lwc:if={account.isOffline}>
                                         <span class="offline-indicator"
                                             >Offline</span
                                         >

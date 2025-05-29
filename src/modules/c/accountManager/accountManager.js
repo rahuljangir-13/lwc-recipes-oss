@@ -21,6 +21,8 @@ export default class AccountManager extends LightningElement {
     @track itemToDeleteId = null;
     @track deleteType = '';
     @track pendingOperations = [];
+    @track selectedAccountId;
+    @track offlineAccountIds = [];
 
     connectedCallback() {
         this.loadAccounts();
@@ -49,6 +51,18 @@ export default class AccountManager extends LightningElement {
     handleOnlineStatusChange() {
         // Refresh the view when connectivity changes
         this.loadAccounts();
+    }
+
+    // Handle selecting an account
+    handleAccountSelect(event) {
+        this.selectedAccountId = event.currentTarget.dataset.id;
+    }
+
+    // Class getter for account items
+    getAccountItemClass(accountId) {
+        return this.offlineAccountIds.includes(accountId)
+            ? 'account-item offline-record'
+            : 'account-item';
     }
 
     // API Methods
@@ -104,15 +118,38 @@ export default class AccountManager extends LightningElement {
     }
 
     // Add a getter for empty accounts check
-    get hasNoAccounts() {
-        return this.accounts.length === 0;
+    get hasAccounts() {
+        return this.accounts.length > 0;
+    }
+
+    // Add getter methods for each account to handle the classes
+    getAccountClass(accountId) {
+        // Instead of returning a computed value, we'll pass this to the template
+        // This is a solution to avoid using expressions in HTML attributes
+        return {
+            accountId,
+            isOffline: this.isOfflineRecord(accountId)
+        };
+    }
+
+    // Process each account to add a CSS class property for UI display
+    processAccounts(accounts) {
+        return accounts.map((account) => {
+            const isOffline = this.isOfflineRecord(account.id);
+            return {
+                ...account,
+                cssClass: isOffline
+                    ? 'account-item offline-record'
+                    : 'account-item',
+                isOffline: isOffline
+            };
+        });
     }
 
     // DATA LOADING METHODS
     loadAccounts() {
         this.isLoading = true;
         this.error = null;
-        this.showAccountForm = false;
 
         // Get pending operations to highlight offline records
         this.loadPendingOperations();
@@ -120,8 +157,9 @@ export default class AccountManager extends LightningElement {
         accountService
             .getAccounts()
             .then((result) => {
-                this.accounts = result;
-                this.showAccountList = true;
+                // Process accounts to add CSS classes
+                this.accounts = this.processAccounts(result);
+                this.viewState = VIEW_STATES.LIST;
             })
             .catch((error) => {
                 this.error =
@@ -130,6 +168,26 @@ export default class AccountManager extends LightningElement {
             .finally(() => {
                 this.isLoading = false;
             });
+    }
+
+    // Process accounts to identify which ones have offline changes
+    processOfflineAccounts() {
+        if (!isOnline()) {
+            const offlineIds = [];
+            this.pendingOperations.forEach((op) => {
+                if (
+                    ['CREATE_ACCOUNT', 'UPDATE_ACCOUNT'].includes(op.type) &&
+                    op.data &&
+                    op.data.id
+                ) {
+                    offlineIds.push(op.data.id);
+                }
+            });
+            this.offlineAccountIds = offlineIds;
+            console.log('Offline account IDs:', offlineIds);
+        } else {
+            this.offlineAccountIds = [];
+        }
     }
 
     // Load pending operations to highlight offline records
@@ -149,20 +207,22 @@ export default class AccountManager extends LightningElement {
                         '📝 Found pending operations:',
                         this.pendingOperations
                     );
+
+                    // Process accounts again with the updated pending operations
+                    if (this.accounts && this.accounts.length) {
+                        this.accounts = this.processAccounts(this.accounts);
+                    }
                 });
             });
         } else {
             this.pendingOperations = [];
+            this.offlineAccountIds = [];
         }
     }
 
     // Check if an account has pending operations
     isOfflineRecord(accountId) {
-        return this.pendingOperations.some(
-            (op) =>
-                op.data.id === accountId &&
-                ['CREATE_ACCOUNT', 'UPDATE_ACCOUNT'].includes(op.type)
-        );
+        return this.offlineAccountIds.includes(accountId);
     }
 
     // EVENT HANDLERS
