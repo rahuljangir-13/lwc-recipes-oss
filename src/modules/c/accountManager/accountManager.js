@@ -1,6 +1,7 @@
 import { LightningElement, track, api } from 'lwc';
 import * as accountService from 'c/accountService';
 import * as contactService from 'c/contactService';
+import { isOnline } from 'c/utils';
 
 const VIEW_STATES = {
     LIST: 'list',
@@ -13,14 +14,40 @@ export default class AccountManager extends LightningElement {
     @track currentAccount = {};
     @track relatedContacts = [];
     @track error = null;
-    @track isLoading = false;
+    @track isLoading = true;
     @track viewState = VIEW_STATES.LIST;
     @track isNew = false;
     @track showDeleteConfirmation = false;
     @track itemToDeleteId = null;
     @track deleteType = '';
+    @track pendingOperations = [];
 
     connectedCallback() {
+        this.loadAccounts();
+        // Listen for connectivity changes
+        window.addEventListener(
+            'online',
+            this.handleOnlineStatusChange.bind(this)
+        );
+        window.addEventListener(
+            'offline',
+            this.handleOnlineStatusChange.bind(this)
+        );
+    }
+
+    disconnectedCallback() {
+        window.removeEventListener(
+            'online',
+            this.handleOnlineStatusChange.bind(this)
+        );
+        window.removeEventListener(
+            'offline',
+            this.handleOnlineStatusChange.bind(this)
+        );
+    }
+
+    handleOnlineStatusChange() {
+        // Refresh the view when connectivity changes
         this.loadAccounts();
     }
 
@@ -85,17 +112,57 @@ export default class AccountManager extends LightningElement {
     loadAccounts() {
         this.isLoading = true;
         this.error = null;
+        this.showAccountForm = false;
+
+        // Get pending operations to highlight offline records
+        this.loadPendingOperations();
 
         accountService
             .getAccounts()
             .then((result) => {
                 this.accounts = result;
-                this.isLoading = false;
+                this.showAccountList = true;
             })
             .catch((error) => {
-                this.error = error.message || 'Error loading accounts';
+                this.error =
+                    error.message || 'Unknown error retrieving accounts';
+            })
+            .finally(() => {
                 this.isLoading = false;
             });
+    }
+
+    // Load pending operations to highlight offline records
+    loadPendingOperations() {
+        // Only check for pending operations when offline
+        if (!isOnline()) {
+            import('c/utils').then((utils) => {
+                utils.getPendingOperations().then((operations) => {
+                    this.pendingOperations = operations.filter((op) =>
+                        [
+                            'CREATE_ACCOUNT',
+                            'UPDATE_ACCOUNT',
+                            'DELETE_ACCOUNT'
+                        ].includes(op.type)
+                    );
+                    console.log(
+                        '📝 Found pending operations:',
+                        this.pendingOperations
+                    );
+                });
+            });
+        } else {
+            this.pendingOperations = [];
+        }
+    }
+
+    // Check if an account has pending operations
+    isOfflineRecord(accountId) {
+        return this.pendingOperations.some(
+            (op) =>
+                op.data.id === accountId &&
+                ['CREATE_ACCOUNT', 'UPDATE_ACCOUNT'].includes(op.type)
+        );
     }
 
     // EVENT HANDLERS
@@ -108,7 +175,14 @@ export default class AccountManager extends LightningElement {
     }
 
     handleNewAccount() {
-        this.currentAccount = {};
+        this.currentAccount = {
+            name: '',
+            industry: '',
+            type: '',
+            website: '',
+            phone: '',
+            description: ''
+        };
         this.isNew = true;
         this.viewState = VIEW_STATES.FORM;
     }
@@ -119,31 +193,38 @@ export default class AccountManager extends LightningElement {
         }
 
         this.isLoading = true;
-        this.error = null;
 
-        const saveOperation = this.isNew
-            ? accountService.createAccount(this.currentAccount)
-            : accountService.updateAccount(this.currentAccount);
+        const savePromise = this.currentAccount.id
+            ? accountService.updateAccount(this.currentAccount)
+            : accountService.createAccount(this.currentAccount);
 
-        saveOperation
+        savePromise
             .then(() => {
-                this.loadAccounts();
-                this.viewState = VIEW_STATES.LIST;
-
-                // Dispatch success event
+                // Refresh the account list
+                return this.loadAccounts();
+            })
+            .then(() => {
+                // Fire success event
                 this.dispatchEvent(
-                    new CustomEvent('editsuccess', {
+                    new CustomEvent('newedit', {
                         detail: {
-                            type: 'account',
-                            id: this.currentAccount.id,
-                            isNew: this.isNew
+                            message: `Account ${
+                                this.currentAccount.id ? 'updated' : 'created'
+                            } successfully`
                         }
                     })
                 );
             })
             .catch((error) => {
-                this.error = error.message || 'Error saving account';
+                this.error =
+                    error.message ||
+                    `Unknown error ${
+                        this.currentAccount.id ? 'updating' : 'creating'
+                    } the account`;
+            })
+            .finally(() => {
                 this.isLoading = false;
+                this.currentAccount = {};
             });
     }
 

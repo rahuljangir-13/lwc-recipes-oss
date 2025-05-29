@@ -1,108 +1,174 @@
 .app-container {
-    height: 100vh;
-    width: 100%;
-    overflow: hidden;
     display: flex;
     flex-direction: column;
+    height: 100vh;
+    background-color: #f4f6f9;
 }
 
 .app-header {
-    background-color: #0070d2;
+    background-color: #3074e1;
     color: white;
-    border-bottom: 1px solid #dddbda;
-    flex: 0 0 auto;
+    padding: 16px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.main-content {
-    height: calc(100vh - 70px); /* Account for header height */
-    overflow: hidden;
+.app-header-content h1 {
+    font-size: 24px;
+    font-weight: bold;
 }
 
-.navigation-panel {
-    height: 100%;
+.app-main {
+    flex: 1;
     overflow-y: auto;
-    border-right: 1px solid #dddbda;
+    padding-bottom: 70px; /* Space for footer */
 }
 
-.content-panel {
-    height: 100%;
-    overflow-y: auto;
-    background-color: #f7f9fb;
+.search-box-container {
+    padding: 12px 16px;
 }
 
-.slds-tabs_default {
-    flex: 1 1 auto;
+.search-box {
+    position: relative;
     display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-.slds-tabs_default__nav {
-    background-color: #f3f3f3;
-    border-bottom: 1px solid #dddbda;
-    padding: 0 0.5rem;
-}
-
-.slds-tabs_default__item {
-    text-transform: uppercase;
-    font-weight: 600;
-    font-size: 0.75rem;
-    letter-spacing: 0.5px;
-}
-
-.slds-tabs_default__content {
-    overflow-y: auto;
-    flex: 1 1 auto;
-    padding: 0;
-}
-
-.slds-tabs__left-icon {
-    margin-right: 0.5rem;
-}
-
-.slds-icon {
-    width: 1rem;
-    height: 1rem;
-    fill: white;
-}
-
-.slds-icon_container {
+    align-items: center;
+    background-color: white;
     border-radius: 4px;
-    padding: 0.15rem;
-    display: inline-flex;
+    padding: 0 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.search-icon {
+    display: flex;
+    align-items: center;
+    color: #767676;
+}
+
+.search-svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
+.search-input {
+    flex: 1;
+    border: none;
+    padding: 12px 8px;
+    font-size: 16px;
+    outline: none;
+}
+
+.card-list {
+    padding: 0 16px 16px;
+}
+
+.create-button {
+    display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.slds-icon-standard-account {
-    background-color: #01a1e0;
-}
-
-.slds-icon-standard-contact {
-    background-color: #a094ed;
-}
-
-/* Salesforce-like record list styling */
-.slds-table {
-    border-top: 1px solid #dddbda;
-    border-bottom: 1px solid #dddbda;
-}
-
-.slds-table th {
-    background-color: #f3f3f3;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    font-weight: 600;
-    line-height: 1.25;
-    letter-spacing: 0.5px;
-    color: #444;
-}
-
-.slds-table tr:hover > td {
-    background-color: #f3f3f3;
-}
-
-/* Action button styling */
-.slds-button_icon-border-filled {
+    width: 100%;
     background-color: white;
+    color: #3074e1;
+    border: 1px solid #e0e5ee;
+    border-radius: 4px;
+    padding: 12px;
+    margin-bottom: 12px;
+    font-weight: 500;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.plus-icon {
+    font-size: 18px;
+    margin-right: 8px;
+}
+
+.account-item {
+    background-color: white;
+    border-radius: 4px;
+    padding: 16px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.account-name {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+.account-phone {
+    color: #717171;
+    font-size: 14px;
+}
+
+.offline-record {
+    position: relative;
+    border-left: 4px solid #ffb75d; /* Orange border to indicate offline changes */
+}
+
+.offline-indicator {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background-color: #ffb75d;
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+.app-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-around;
+    background-color: white;
+    border-top: 1px solid #e0e5ee;
+    padding: 8px 0;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 0;
+    flex: 1;
+}
+
+.nav-icon {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 4px;
+    background-size: cover;
+}
+
+.accounts-icon {
+    background: url('/assets/icons/standard-sprite/svg/symbols.svg#account')
+        center no-repeat;
+    background-size: 24px;
+}
+
+.contacts-icon {
+    background: url('/assets/icons/standard-sprite/svg/symbols.svg#contact')
+        center no-repeat;
+    background-size: 24px;
+}
+
+.assessments-icon {
+    background: url('/assets/icons/standard-sprite/svg/symbols.svg#task') center
+        no-repeat;
+    background-size: 24px;
+}
+
+.nav-label {
+    font-size: 12px;
+    color: #2b2b2b;
+}
+
+.loading-spinner {
+    text-align: center;
+    padding: 24px;
+    color: #747474;
 }

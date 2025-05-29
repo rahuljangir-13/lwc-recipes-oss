@@ -1,129 +1,105 @@
 <template>
-    <div class="app-container slds-grid slds-grid_vertical">
-        <!-- App Header -->
-        <header class="slds-col app-header slds-p-around_medium">
-            <div
-                class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center"
-            >
-                <div>
-                    <h1 class="slds-text-heading_large">Salesforce CRM</h1>
-                </div>
-                <div class="slds-grid slds-grid_align-end">
-                    <c-connectivity-status
-                        class="slds-m-right_small"
-                    ></c-connectivity-status>
-                    <span class="slds-badge slds-badge_lightest"
-                        >Lightning Web Components OSS</span
-                    >
-                </div>
+    <!-- Header -->
+    <div class="app-container">
+        <header class="app-header">
+            <div class="app-header-content">
+                <h1>SRCM</h1>
             </div>
         </header>
 
-        <!-- Tab Navigation -->
-        <div class="slds-tabs_default">
-            <ul class="slds-tabs_default__nav" role="tablist">
-                <li
-                    class={accountsTabClass}
-                    title="Accounts"
-                    role="presentation"
-                >
-                    <a
-                        class="slds-tabs_default__link"
-                        href="javascript:void(0);"
-                        role="tab"
-                        tabindex={accountsTabIndex}
-                        aria-selected={isAccountView}
-                        aria-controls="accounts-tab-content"
-                        id="accounts-tab"
-                        onclick={handleTabSelect}
-                    >
-                        <span class="slds-tabs__left-icon">
-                            <span
-                                class="slds-icon_container slds-icon-standard-account"
-                            >
-                                <svg
-                                    class="slds-icon slds-icon_small"
-                                    aria-hidden="true"
-                                >
-                                    <use
-                                        xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#account"
-                                    ></use>
-                                </svg>
-                                <span class="slds-assistive-text">Account</span>
-                            </span>
-                        </span>
-                        <span>Accounts</span>
-                    </a>
-                </li>
-                <li
-                    class={contactsTabClass}
-                    title="Contacts"
-                    role="presentation"
-                >
-                    <a
-                        class="slds-tabs_default__link"
-                        href="javascript:void(0);"
-                        role="tab"
-                        tabindex={contactsTabIndex}
-                        aria-selected={isContactView}
-                        aria-controls="contacts-tab-content"
-                        id="contacts-tab"
-                        onclick={handleTabSelect}
-                    >
-                        <span class="slds-tabs__left-icon">
-                            <span
-                                class="slds-icon_container slds-icon-standard-contact"
-                            >
-                                <svg
-                                    class="slds-icon slds-icon_small"
-                                    aria-hidden="true"
-                                >
-                                    <use
-                                        xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#contact"
-                                    ></use>
-                                </svg>
-                                <span class="slds-assistive-text">Contact</span>
-                            </span>
-                        </span>
-                        <span>Contacts</span>
-                    </a>
-                </li>
-            </ul>
+        <!-- Main content area -->
+        <main class="app-main">
+            <!-- Connectivity status bar -->
+            <c-connectivity-status></c-connectivity-status>
 
-            <!-- Account Tab Content -->
-            <div
-                id="accounts-tab-content"
-                class="slds-tabs_default__content"
-                role="tabpanel"
-                aria-labelledby="accounts-tab"
-                hidden={isContactView}
-            >
-                <div class={contentClass}>
-                    <c-account-manager
-                        onnewcontact={handleNewContact}
-                        oneditcontact={handleEditContact}
-                        onviewcontacts={handleViewContacts}
-                        oneditsuccess={handleEditSuccess}
-                    ></c-account-manager>
+            <!-- Account view -->
+            <template lwc:if={isAccountView}>
+                <div class="search-box-container">
+                    <div class="search-box">
+                        <span class="search-icon">
+                            <svg viewBox="0 0 24 24" class="search-svg">
+                                <path
+                                    d="M16.4 15.2l4.4 4.4-1.2 1.2-4.4-4.4c-1.2.9-2.7 1.4-4.2 1.4-4 0-7.2-3.2-7.2-7.2S7 3.4 11 3.4s7.2 3.2 7.2 7.2c0 1.5-.5 3-1.8 4.6zM11 5.6C8.2 5.6 6 7.8 6 10.6s2.2 5 5 5 5-2.2 5-5-2.2-5-5-5z"
+                                ></path>
+                            </svg>
+                        </span>
+                        <input
+                            type="text"
+                            placeholder="Search accounts..."
+                            class="search-input"
+                        />
+                    </div>
                 </div>
-            </div>
 
-            <!-- Contact Tab Content -->
-            <div
-                id="contacts-tab-content"
-                class="slds-tabs_default__content"
-                role="tabpanel"
-                aria-labelledby="contacts-tab"
-                hidden={isAccountView}
-            >
-                <div class={contentClass}>
-                    <c-contact-manager
-                        onviewaccounts={handleViewAccounts}
-                        oneditsuccess={handleEditSuccess}
-                    ></c-contact-manager>
+                <div class="card-list">
+                    <button class="create-button" onclick={handleNewAccount}>
+                        <span class="plus-icon">+</span> Create New Account
+                    </button>
+
+                    <div class="accounts-list">
+                        <template lwc:if={isLoading}>
+                            <div class="loading-spinner">Loading...</div>
+                        </template>
+                        <template lwc:else>
+                            <c-account-manager
+                                onnewedit={handleEditSuccess}
+                            ></c-account-manager>
+                        </template>
+                    </div>
                 </div>
+            </template>
+
+            <!-- Contact view -->
+            <template lwc:if={isContactView}>
+                <div class="search-box-container">
+                    <div class="search-box">
+                        <span class="search-icon">
+                            <svg viewBox="0 0 24 24" class="search-svg">
+                                <path
+                                    d="M16.4 15.2l4.4 4.4-1.2 1.2-4.4-4.4c-1.2.9-2.7 1.4-4.2 1.4-4 0-7.2-3.2-7.2-7.2S7 3.4 11 3.4s7.2 3.2 7.2 7.2c0 1.5-.5 3-1.8 4.6zM11 5.6C8.2 5.6 6 7.8 6 10.6s2.2 5 5 5 5-2.2 5-5-2.2-5-5-5z"
+                                ></path>
+                            </svg>
+                        </span>
+                        <input
+                            type="text"
+                            placeholder="Search contacts..."
+                            class="search-input"
+                        />
+                    </div>
+                </div>
+
+                <div class="card-list">
+                    <div class="contacts-list">
+                        <template lwc:if={isLoading}>
+                            <div class="loading-spinner">Loading...</div>
+                        </template>
+                        <template lwc:else>
+                            <c-contact-manager
+                                onnewcontact={handleNewContact}
+                                oneditcontact={handleEditContact}
+                                onnewedit={handleEditSuccess}
+                            ></c-contact-manager>
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </main>
+
+        <!-- Bottom navigation -->
+        <footer class="app-footer">
+            <div class="nav-item" onclick={handleViewAccounts}>
+                <div class="nav-icon accounts-icon"></div>
+                <div class="nav-label">Accounts</div>
             </div>
-        </div>
+            <div class="nav-item" onclick={handleViewContacts}>
+                <div class="nav-icon contacts-icon"></div>
+                <div class="nav-label">Contacts</div>
+            </div>
+            <div class="nav-item" onclick={handleViewAssessments}>
+                <div class="nav-icon assessments-icon"></div>
+                <div class="nav-label">Assessments</div>
+            </div>
+        </footer>
     </div>
 
     <!-- Register Service Worker (no UI) -->

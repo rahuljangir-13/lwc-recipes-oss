@@ -7,6 +7,7 @@ export default class App extends LightningElement {
     @track syncingAccounts = false;
     @track syncingContacts = false;
     @track contentClass = 'slds-m-around_medium';
+    @track isLoading = true;
 
     connectedCallback() {
         // Initialize offline storage with mock data
@@ -20,6 +21,11 @@ export default class App extends LightningElement {
 
         // Listen for connectivity status changes
         this.addEventListener('sync-needed', this.handleSyncNeeded);
+
+        // Set loading to false after a short delay
+        setTimeout(() => {
+            this.isLoading = false;
+        }, 1000);
     }
 
     disconnectedCallback() {
@@ -32,16 +38,22 @@ export default class App extends LightningElement {
 
     // Initialize offline storage with mock data if empty
     initializeOfflineStorage() {
+        console.log('Initializing offline storage...');
         Promise.all([
             accountService.initializeOfflineStorage(),
             contactService.initializeOfflineStorage()
-        ]).catch((error) => {
-            console.error('Error initializing offline storage:', error);
-        });
+        ])
+            .then(() => {
+                console.log('✅ Offline storage initialized successfully');
+            })
+            .catch((error) => {
+                console.error('❌ Error initializing offline storage:', error);
+            });
     }
 
     // Handle sync operations when coming back online
     handleSyncOperations() {
+        console.log('🔄 Starting sync operations...');
         // Get connectivity status component
         const connectivityStatus = this.template.querySelector(
             'c-connectivity-status'
@@ -59,10 +71,12 @@ export default class App extends LightningElement {
         Promise.all([
             accountService.syncPendingOperations().then((result) => {
                 this.syncingAccounts = false;
+                console.log('✅ Account sync completed:', result);
                 return result;
             }),
             contactService.syncPendingOperations().then((result) => {
                 this.syncingContacts = false;
+                console.log('✅ Contact sync completed:', result);
                 return result;
             })
         ])
@@ -72,6 +86,10 @@ export default class App extends LightningElement {
                     (accountResult.synced || 0) + (contactResult.synced || 0);
                 const total =
                     (accountResult.total || 0) + (contactResult.total || 0);
+
+                console.log(
+                    `🔄 Sync complete: ${synced}/${total} operations processed`
+                );
 
                 // Notify user of sync completion
                 if (connectivityStatus) {
@@ -86,7 +104,7 @@ export default class App extends LightningElement {
                 }
             })
             .catch((error) => {
-                console.error('Error syncing pending operations:', error);
+                console.error('❌ Error syncing pending operations:', error);
 
                 // Notify user of sync error
                 if (connectivityStatus) {
@@ -102,11 +120,13 @@ export default class App extends LightningElement {
 
     // Handle sync needed event
     handleSyncNeeded() {
+        console.log('🔄 Sync needed - initiating sync operations');
         this.handleSyncOperations();
     }
 
     // Refresh the current view after syncing
     refreshCurrentView() {
+        console.log('🔄 Refreshing current view:', this.currentView);
         const currentViewComponent = this.isAccountView
             ? this.template.querySelector('c-account-manager')
             : this.template.querySelector('c-contact-manager');
@@ -117,6 +137,15 @@ export default class App extends LightningElement {
             } else {
                 currentViewComponent.loadContacts();
             }
+        }
+    }
+
+    // Handle new account
+    handleNewAccount() {
+        console.log('➕ Creating new account');
+        const accountManager = this.template.querySelector('c-account-manager');
+        if (accountManager) {
+            accountManager.handleNewAccount();
         }
     }
 
@@ -133,6 +162,10 @@ export default class App extends LightningElement {
 
     // Handle new contact creation from account view
     handleNewContact(event) {
+        console.log(
+            '➕ Creating new contact for account:',
+            event.detail.accountId
+        );
         this.currentView = 'contacts';
 
         // Allow the DOM to update
@@ -147,6 +180,7 @@ export default class App extends LightningElement {
 
     // Handle contact edit from account view
     handleEditContact(event) {
+        console.log('✏️ Editing contact:', event.detail.contactId);
         this.currentView = 'contacts';
 
         // Allow the DOM to update
@@ -161,16 +195,38 @@ export default class App extends LightningElement {
 
     // Handle view accounts
     handleViewAccounts() {
+        console.log('👁️ Switching to Accounts view');
         this.currentView = 'accounts';
     }
 
     // Handle view contacts
     handleViewContacts() {
+        console.log('👁️ Switching to Contacts view');
         this.currentView = 'contacts';
+    }
+
+    // Handle view assessments (placeholder)
+    handleViewAssessments() {
+        console.log('👁️ Assessments view not implemented yet');
+
+        // Get connectivity status component for toast notification
+        const connectivityStatus = this.template.querySelector(
+            'c-connectivity-status'
+        );
+        if (connectivityStatus) {
+            // Show an info notification instead of alert
+            connectivityStatus.handleSyncComplete({
+                detail: {
+                    message: 'Assessments feature coming soon!',
+                    variant: 'info'
+                }
+            });
+        }
     }
 
     // Handle edit success notifications from child components
     handleEditSuccess(event) {
+        console.log('✅ Edit operation successful:', event);
         // Get connectivity status component
         const connectivityStatus = this.template.querySelector(
             'c-connectivity-status'
@@ -198,36 +254,36 @@ export default class App extends LightningElement {
 
     // Computed classes for tabs
     get accountsTabClass() {
-        return `slds-tabs_default__item ${this.isAccountView ? 'slds-is-active' : ''}`;
+        return this.isAccountView
+            ? 'slds-tabs_default__item slds-is-active'
+            : 'slds-tabs_default__item';
     }
 
     get contactsTabClass() {
-        return `slds-tabs_default__item ${this.isContactView ? 'slds-is-active' : ''}`;
+        return this.isContactView
+            ? 'slds-tabs_default__item slds-is-active'
+            : 'slds-tabs_default__item';
     }
 
-    // Computed properties for tab focus
     get accountsTabIndex() {
-        return this.isAccountView ? 0 : -1;
+        return this.isAccountView ? '0' : '-1';
     }
 
     get contactsTabIndex() {
-        return this.isContactView ? 0 : -1;
+        return this.isContactView ? '0' : '-1';
     }
 
-    // Dynamic header content
     get currentViewTitle() {
-        return this.currentView === 'accounts' ? 'Accounts' : 'Contacts';
+        return this.isAccountView ? 'Accounts' : 'Contacts';
     }
 
     get currentViewDescription() {
-        return this.currentView === 'accounts'
-            ? 'Manage your accounts and related contacts'
-            : 'Manage your contacts across all accounts';
+        return this.isAccountView
+            ? 'Manage your business accounts'
+            : 'Manage your contacts';
     }
 
     get currentViewIcon() {
-        return this.currentView === 'accounts'
-            ? '/assets/icons/standard-sprite/svg/symbols.svg#account'
-            : '/assets/icons/standard-sprite/svg/symbols.svg#contact';
+        return this.isAccountView ? 'standard:account' : 'standard:contact';
     }
 }

@@ -49,10 +49,24 @@ function generateId() {
 
 // Initialize the local storage with mock data if empty
 export function initializeOfflineStorage() {
+    console.log('🔄 Initializing account offline storage...');
     return utils.getAll(utils.STORE_NAMES.ACCOUNTS).then((storedAccounts) => {
         if (!storedAccounts || storedAccounts.length === 0) {
-            return utils.saveItems(utils.STORE_NAMES.ACCOUNTS, mockAccounts);
+            console.log(
+                '💾 No accounts found in offline storage. Adding mock data...'
+            );
+            return utils
+                .saveItems(utils.STORE_NAMES.ACCOUNTS, mockAccounts)
+                .then((result) => {
+                    console.log(
+                        `✅ Added ${result.length} mock accounts to offline storage`
+                    );
+                    return result;
+                });
         }
+        console.log(
+            `✅ Found ${storedAccounts.length} accounts in offline storage`
+        );
         return storedAccounts;
     });
 }
@@ -60,20 +74,33 @@ export function initializeOfflineStorage() {
 // Get all accounts
 export function getAccounts() {
     if (isOnline()) {
+        console.log('🌐 Online: Getting accounts from server');
         // Online: get from server and update local storage
         return Promise.resolve([...accounts]).then((result) => {
+            console.log(
+                `💾 Saving ${result.length} accounts to offline storage`
+            );
             utils.saveItems(utils.STORE_NAMES.ACCOUNTS, result);
             return result;
         });
     } else {
+        console.log('📴 Offline: Getting accounts from local storage');
         // Offline: get from local storage
-        return utils.getAll(utils.STORE_NAMES.ACCOUNTS);
+        return utils
+            .getAll(utils.STORE_NAMES.ACCOUNTS)
+            .then((accountsFromStorage) => {
+                console.log(
+                    `📋 Retrieved ${accountsFromStorage.length} accounts from offline storage`
+                );
+                return accountsFromStorage;
+            });
     }
 }
 
 // Get account by ID
 export function getAccount(id) {
     if (isOnline()) {
+        console.log(`🌐 Online: Getting account ${id} from server`);
         // Online: get from server
         const foundAccount = accounts.find((acc) => acc.id === id);
         if (foundAccount) {
@@ -81,8 +108,15 @@ export function getAccount(id) {
         }
         return Promise.reject(new Error(`Account with id ${id} not found`));
     } else {
+        console.log(`📴 Offline: Getting account ${id} from local storage`);
         // Offline: get from local storage
-        return utils.getById(utils.STORE_NAMES.ACCOUNTS, id);
+        return utils.getById(utils.STORE_NAMES.ACCOUNTS, id).then((account) => {
+            console.log(
+                '📋 Retrieved account from offline storage:',
+                account.name
+            );
+            return account;
+        });
     }
 }
 
@@ -96,24 +130,37 @@ export function createAccount(accountData) {
     };
 
     if (isOnline()) {
+        console.log('🌐 Online: Creating account on server', newAccount.name);
         // Online: create on server and update local storage
         accounts.push(newAccount);
         return Promise.resolve({ ...newAccount }).then((result) => {
+            console.log('💾 Saving new account to offline storage');
             utils.saveItem(utils.STORE_NAMES.ACCOUNTS, result);
             return result;
         });
     } else {
+        console.log(
+            '📴 Offline: Creating account in local storage',
+            newAccount.name
+        );
         // Offline: save to local storage and queue for sync
         return utils
             .saveItem(utils.STORE_NAMES.ACCOUNTS, newAccount)
             .then((result) => {
+                console.log('💾 Account saved to offline storage');
                 // Add to pending operations queue
+                console.log('📝 Adding CREATE operation to pending queue');
                 return utils
                     .addPendingOperation({
                         type: 'CREATE_ACCOUNT',
                         data: result
                     })
-                    .then(() => result);
+                    .then(() => {
+                        console.log(
+                            '✅ Account created locally and queued for sync'
+                        );
+                        return result;
+                    });
             });
     }
 }
@@ -121,6 +168,7 @@ export function createAccount(accountData) {
 // Update an existing account
 export function updateAccount(accountData) {
     if (isOnline()) {
+        console.log(`🌐 Online: Updating account ${accountData.id} on server`);
         // Online: update on server
         const index = accounts.findIndex((acc) => acc.id === accountData.id);
         if (index !== -1) {
@@ -133,6 +181,7 @@ export function updateAccount(accountData) {
 
             // Also update in local storage
             return Promise.resolve({ ...updatedAccount }).then((result) => {
+                console.log('💾 Saving updated account to offline storage');
                 utils.saveItem(utils.STORE_NAMES.ACCOUNTS, result);
                 return result;
             });
@@ -141,6 +190,9 @@ export function updateAccount(accountData) {
             new Error(`Account with id ${accountData.id} not found`)
         );
     } else {
+        console.log(
+            `📴 Offline: Updating account ${accountData.id} in local storage`
+        );
         // Offline: update in local storage and queue for sync
         return utils
             .getById(utils.STORE_NAMES.ACCOUNTS, accountData.id)
@@ -151,16 +203,25 @@ export function updateAccount(accountData) {
                     lastModifiedDate: new Date().toISOString()
                 };
 
+                console.log('💾 Saving updated account to offline storage');
                 return utils
                     .saveItem(utils.STORE_NAMES.ACCOUNTS, updatedAccount)
                     .then((result) => {
                         // Add to pending operations queue
+                        console.log(
+                            '📝 Adding UPDATE operation to pending queue'
+                        );
                         return utils
                             .addPendingOperation({
                                 type: 'UPDATE_ACCOUNT',
                                 data: result
                             })
-                            .then(() => result);
+                            .then(() => {
+                                console.log(
+                                    '✅ Account updated locally and queued for sync'
+                                );
+                                return result;
+                            });
                     });
             });
     }
@@ -169,6 +230,7 @@ export function updateAccount(accountData) {
 // Delete an account
 export function deleteAccount(id) {
     if (isOnline()) {
+        console.log(`🌐 Online: Deleting account ${id} from server`);
         // Online: delete from server
         const index = accounts.findIndex((acc) => acc.id === id);
         if (index !== -1) {
@@ -176,14 +238,19 @@ export function deleteAccount(id) {
 
             // Also delete from local storage
             return Promise.resolve({ success: true, id }).then((result) => {
+                console.log('💾 Removing account from offline storage');
                 utils.deleteItem(utils.STORE_NAMES.ACCOUNTS, id);
                 return result;
             });
         }
         return Promise.reject(new Error(`Account with id ${id} not found`));
     } else {
+        console.log(
+            `📴 Offline: Marking account ${id} for deletion in local storage`
+        );
         // Offline: mark as deleted in local storage and queue for sync
         return utils.getById(utils.STORE_NAMES.ACCOUNTS, id).then((account) => {
+            console.log('📝 Adding DELETE operation to pending queue');
             // Add to pending operations queue for later deletion
             return utils
                 .addPendingOperation({
@@ -191,8 +258,16 @@ export function deleteAccount(id) {
                     data: { id }
                 })
                 .then(() => {
+                    console.log('💾 Removing account from offline storage');
                     // Remove from local storage
-                    return utils.deleteItem(utils.STORE_NAMES.ACCOUNTS, id);
+                    return utils
+                        .deleteItem(utils.STORE_NAMES.ACCOUNTS, id)
+                        .then(() => {
+                            console.log(
+                                '✅ Account deleted locally and queued for sync'
+                            );
+                            return { success: true, id };
+                        });
                 });
         });
     }
@@ -201,9 +276,11 @@ export function deleteAccount(id) {
 // Sync pending operations when online
 export function syncPendingOperations() {
     if (!isOnline()) {
+        console.log('❌ Cannot sync while offline');
         return Promise.reject(new Error('Cannot sync while offline'));
     }
 
+    console.log('🔄 Syncing pending account operations');
     return utils.getPendingOperations().then((operations) => {
         // Filter account operations
         const accountOps = operations.filter((op) =>
@@ -213,8 +290,11 @@ export function syncPendingOperations() {
         );
 
         if (!accountOps || accountOps.length === 0) {
-            return { synced: 0 };
+            console.log('✅ No pending account operations to sync');
+            return { synced: 0, total: 0 };
         }
+
+        console.log(`🔄 Found ${accountOps.length} pending account operations`);
 
         // Sort operations by timestamp
         const sortedOps = [...accountOps].sort(
@@ -227,6 +307,7 @@ export function syncPendingOperations() {
                 return promise.then((result) => {
                     // Process the operation based on type
                     let processPromise;
+                    console.log(`🔄 Processing ${operation.type} operation`);
 
                     switch (operation.type) {
                         case 'CREATE_ACCOUNT':
@@ -250,29 +331,29 @@ export function syncPendingOperations() {
                             processPromise = Promise.resolve();
                     }
 
+                    // Remove the operation from queue after processing
                     return processPromise
                         .then(() => {
-                            // Remove from pending operations
+                            console.log(
+                                `✅ Successfully processed ${operation.type}`
+                            );
                             return utils.deletePendingOperation(operation.id);
+                        })
+                        .then(() => {
+                            // Update counts for result
+                            result.synced += 1;
+                            return result;
                         })
                         .catch((error) => {
                             console.error(
-                                'Error processing operation:',
-                                operation,
+                                `❌ Error processing ${operation.type}:`,
                                 error
                             );
-                            // Continue with next operation
-                        })
-                        .then(() => {
-                            // Increment counter
-                            return {
-                                synced: result.synced + 1,
-                                total: sortedOps.length
-                            };
+                            return result; // Continue with next operation
                         });
                 });
             },
-            Promise.resolve({ synced: 0, total: sortedOps.length })
+            { synced: 0, total: accountOps.length }
         );
     });
 }

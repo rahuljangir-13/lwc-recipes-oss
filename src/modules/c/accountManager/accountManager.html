@@ -22,56 +22,33 @@
         <div class="slds-card__body slds-card__body_inner">
             <!-- Loading spinner -->
             <template lwc:if={isLoading}>
-                <div class="slds-spinner_container">
-                    <div class="slds-spinner slds-spinner_medium" role="status">
-                        <span class="slds-assistive-text">Loading</span>
-                        <div class="slds-spinner__dot-a"></div>
-                        <div class="slds-spinner__dot-b"></div>
-                    </div>
-                </div>
+                <div class="loading-spinner">Loading...</div>
             </template>
 
             <!-- Error message -->
             <template lwc:if={error}>
-                <div class="slds-text-color_error slds-m-vertical_small">
-                    {error}
-                </div>
+                <div class="error-message">{error}</div>
             </template>
 
             <!-- Delete Confirmation Modal -->
             <template lwc:if={showDeleteConfirmation}>
-                <section
-                    role="dialog"
-                    tabindex="-1"
-                    aria-labelledby="modal-heading-01"
-                    aria-modal="true"
-                    aria-describedby="modal-content-id-1"
-                    class="slds-modal slds-fade-in-open"
-                >
-                    <div class="slds-modal__container">
-                        <header class="slds-modal__header">
-                            <h2
-                                id="modal-heading-01"
-                                class="slds-modal__title slds-hyphenate"
-                            >
-                                Confirm Delete
-                            </h2>
+                <section class="modal-overlay">
+                    <div class="modal-container">
+                        <header class="modal-header">
+                            <h2>Confirm Delete</h2>
                         </header>
-                        <div
-                            class="slds-modal__content slds-p-around_medium"
-                            id="modal-content-id-1"
-                        >
+                        <div class="modal-content">
                             <p>{deleteConfirmationMessage}</p>
                         </div>
-                        <footer class="slds-modal__footer">
+                        <footer class="modal-footer">
                             <button
-                                class="slds-button slds-button_neutral"
+                                class="cancel-button"
                                 onclick={handleCancelDelete}
                             >
                                 Cancel
                             </button>
                             <button
-                                class="slds-button slds-button_brand"
+                                class="delete-button"
                                 onclick={handleConfirmDelete}
                             >
                                 Delete
@@ -79,117 +56,84 @@
                         </footer>
                     </div>
                 </section>
-                <div class="slds-backdrop slds-backdrop_open"></div>
             </template>
 
             <!-- Account form -->
             <template lwc:if={showAccountForm}>
-                <div class="slds-form slds-m-bottom_medium">
-                    <div class="slds-form-element slds-m-bottom_small">
-                        <label class="slds-form-element__label" for="name"
-                            >Name</label
-                        >
-                        <div class="slds-form-element__control">
-                            <input
-                                type="text"
-                                id="name"
-                                class="slds-input"
-                                value={currentAccount.name}
-                                onchange={handleFieldChange}
-                                data-field="name"
-                                required
-                            />
-                        </div>
+                <div class="form-container">
+                    <h2 class="form-title">{formTitle}</h2>
+
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input
+                            type="text"
+                            id="name"
+                            value={currentAccount.name}
+                            onchange={handleFieldChange}
+                            data-field="name"
+                            required
+                        />
                     </div>
-                    <div class="slds-form-element slds-m-bottom_small">
-                        <label class="slds-form-element__label" for="industry"
-                            >Industry</label
-                        >
-                        <div class="slds-form-element__control">
-                            <input
-                                type="text"
-                                id="industry"
-                                class="slds-input"
-                                value={currentAccount.industry}
-                                onchange={handleFieldChange}
-                                data-field="industry"
-                            />
-                        </div>
+
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input
+                            type="text"
+                            id="industry"
+                            value={currentAccount.industry}
+                            onchange={handleFieldChange}
+                            data-field="industry"
+                        />
                     </div>
-                    <div class="slds-form-element slds-m-bottom_small">
-                        <label class="slds-form-element__label" for="type"
-                            >Type</label
-                        >
-                        <div class="slds-form-element__control">
-                            <input
-                                type="text"
-                                id="type"
-                                class="slds-input"
-                                value={currentAccount.type}
-                                onchange={handleFieldChange}
-                                data-field="type"
-                            />
-                        </div>
+
+                    <div class="form-group">
+                        <label for="type">Type</label>
+                        <input
+                            type="text"
+                            id="type"
+                            value={currentAccount.type}
+                            onchange={handleFieldChange}
+                            data-field="type"
+                        />
                     </div>
-                    <div class="slds-form-element slds-m-bottom_small">
-                        <label class="slds-form-element__label" for="website"
-                            >Website</label
-                        >
-                        <div class="slds-form-element__control">
-                            <input
-                                type="url"
-                                id="website"
-                                class="slds-input"
-                                value={currentAccount.website}
-                                onchange={handleFieldChange}
-                                data-field="website"
-                            />
-                        </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input
+                            type="tel"
+                            id="phone"
+                            value={currentAccount.phone}
+                            onchange={handleFieldChange}
+                            data-field="phone"
+                        />
                     </div>
-                    <div class="slds-form-element slds-m-bottom_small">
-                        <label class="slds-form-element__label" for="phone"
-                            >Phone</label
-                        >
-                        <div class="slds-form-element__control">
-                            <input
-                                type="tel"
-                                id="phone"
-                                class="slds-input"
-                                value={currentAccount.phone}
-                                onchange={handleFieldChange}
-                                data-field="phone"
-                            />
-                        </div>
+
+                    <div class="form-group">
+                        <label for="website">Website</label>
+                        <input
+                            type="url"
+                            id="website"
+                            value={currentAccount.website}
+                            onchange={handleFieldChange}
+                            data-field="website"
+                        />
                     </div>
-                    <div class="slds-form-element slds-m-bottom_small">
-                        <label
-                            class="slds-form-element__label"
-                            for="description"
-                            >Description</label
-                        >
-                        <div class="slds-form-element__control">
-                            <textarea
-                                id="description"
-                                class="slds-textarea"
-                                value={currentAccount.description}
-                                onchange={handleFieldChange}
-                                data-field="description"
-                            ></textarea>
-                        </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea
+                            id="description"
+                            value={currentAccount.description}
+                            onchange={handleFieldChange}
+                            data-field="description"
+                        ></textarea>
                     </div>
-                    <div
-                        class="slds-grid slds-grid_align-center slds-m-top_medium"
-                    >
-                        <button
-                            class="slds-button slds-button_neutral slds-m-right_x-small"
-                            onclick={handleCancel}
-                        >
+
+                    <div class="form-actions">
+                        <button class="cancel-button" onclick={handleCancel}>
                             Cancel
                         </button>
-                        <button
-                            class="slds-button slds-button_brand"
-                            onclick={handleSave}
-                        >
+                        <button class="save-button" onclick={handleSave}>
                             Save
                         </button>
                     </div>
@@ -198,225 +142,46 @@
 
             <!-- Account list -->
             <template lwc:if={showAccountList}>
-                <div class="slds-page-header">
-                    <div class="slds-page-header__row">
-                        <div class="slds-page-header__col-title">
-                            <div class="slds-media">
-                                <div class="slds-media__figure">
-                                    <span
-                                        class="slds-icon_container slds-icon-standard-account"
-                                    >
-                                        <svg
-                                            class="slds-icon slds-icon_small"
-                                            aria-hidden="true"
-                                        >
-                                            <use
-                                                xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#account"
-                                            ></use>
-                                        </svg>
-                                    </span>
-                                </div>
-                                <div class="slds-media__body">
-                                    <h1
-                                        class="slds-page-header__title slds-truncate"
-                                        title="Accounts"
-                                    >
-                                        Accounts
-                                    </h1>
-                                    <p class="slds-page-header__info">
-                                        {accounts.length} items
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="slds-page-header__col-actions">
-                            <div class="slds-page-header__controls">
-                                <div class="slds-page-header__control">
-                                    <button
-                                        class="slds-button slds-button_neutral"
-                                        onclick={handleNewAccount}
-                                    >
-                                        New
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="slds-m-around_small">
-                    <table
-                        class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped"
-                    >
-                        <thead>
-                            <tr class="slds-line-height_reset">
-                                <th class="slds-text-title_caps" scope="col">
-                                    <div class="slds-truncate" title="Name">
-                                        Name
-                                    </div>
-                                </th>
-                                <th class="slds-text-title_caps" scope="col">
-                                    <div class="slds-truncate" title="Industry">
-                                        Industry
-                                    </div>
-                                </th>
-                                <th class="slds-text-title_caps" scope="col">
-                                    <div class="slds-truncate" title="Type">
-                                        Type
-                                    </div>
-                                </th>
-                                <th class="slds-text-title_caps" scope="col">
-                                    <div class="slds-truncate" title="Phone">
-                                        Phone
-                                    </div>
-                                </th>
-                                <th class="slds-text-title_caps" scope="col">
-                                    <div class="slds-truncate" title="Actions">
-                                        Actions
-                                    </div>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <template lwc:if={accounts.length}>
-                                <template
-                                    for:each={accounts}
-                                    for:item="account"
+                <div class="accounts-list">
+                    <template lwc:if={hasAccounts}>
+                        <template for:each={accounts} for:item="account">
+                            <div
+                                key={account.id}
+                                class="{account.id,"
+                                isOfflineRecord(account.id)}
+                                onclick={handleEditAccount}
+                                data-id={account.id}
+                                data-name={account.name}
+                            >
+                                <div
+                                    class="account-item"
+                                    class:offline={isOfflineRecord(account.id)}
                                 >
-                                    <tr key={account.id}>
-                                        <td>
-                                            <div class="slds-truncate">
-                                                <a
-                                                    href="javascript:void(0);"
-                                                    onclick={handleViewAccount}
-                                                    data-id={account.id}
-                                                    >{account.name}</a
-                                                >
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div
-                                                class="slds-truncate"
-                                                title={account.industry}
-                                            >
-                                                {account.industry}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div
-                                                class="slds-truncate"
-                                                title={account.type}
-                                            >
-                                                {account.type}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div
-                                                class="slds-truncate"
-                                                title={account.phone}
-                                            >
-                                                {account.phone}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div
-                                                class="slds-dropdown-trigger slds-dropdown-trigger_click"
-                                            >
-                                                <div
-                                                    class="slds-button-group"
-                                                    role="group"
-                                                >
-                                                    <button
-                                                        class="slds-button slds-button_icon-border-filled"
-                                                        title="Show contacts"
-                                                        onclick={handleViewContacts}
-                                                        data-id={account.id}
-                                                    >
-                                                        <span
-                                                            class="slds-icon_container slds-icon-standard-contact"
-                                                            title="Contacts"
-                                                        >
-                                                            <svg
-                                                                class="slds-icon slds-icon_x-small"
-                                                                aria-hidden="true"
-                                                            >
-                                                                <use
-                                                                    xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#contact"
-                                                                ></use>
-                                                            </svg>
-                                                        </span>
-                                                        <span
-                                                            class="slds-assistive-text"
-                                                            >Contacts</span
-                                                        >
-                                                    </button>
-                                                    <button
-                                                        class="slds-button"
-                                                        title="Edit"
-                                                        onclick={handleEditAccount}
-                                                        data-id={account.id}
-                                                    >
-                                                        <span
-                                                            class="slds-icon_container"
-                                                            title="Edit"
-                                                        >
-                                                            <svg
-                                                                class="slds-button__icon"
-                                                                aria-hidden="true"
-                                                            >
-                                                                <use
-                                                                    xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#edit"
-                                                                ></use>
-                                                            </svg>
-                                                        </span>
-                                                        <span
-                                                            class="slds-assistive-text"
-                                                            >Edit</span
-                                                        >
-                                                    </button>
-                                                    <button
-                                                        class="slds-button"
-                                                        title="Delete"
-                                                        onclick={handleDeleteAccount}
-                                                        data-id={account.id}
-                                                    >
-                                                        <span
-                                                            class="slds-icon_container"
-                                                            title="Delete"
-                                                        >
-                                                            <svg
-                                                                class="slds-button__icon"
-                                                                aria-hidden="true"
-                                                            >
-                                                                <use
-                                                                    xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#delete"
-                                                                ></use>
-                                                            </svg>
-                                                        </span>
-                                                        <span
-                                                            class="slds-assistive-text"
-                                                            >Delete</span
-                                                        >
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </template>
-                            </template>
-                            <template lwc:if={hasNoAccounts}>
-                                <tr>
-                                    <td colspan="5">
-                                        <div
-                                            class="slds-text-align_center slds-p-around_medium"
+                                    <template
+                                        lwc:if={isOfflineRecord(account.id)}
+                                    >
+                                        <span class="offline-indicator"
+                                            >Offline</span
                                         >
-                                            No accounts found.
-                                        </div>
-                                    </td>
-                                </tr>
-                            </template>
-                        </tbody>
-                    </table>
+                                    </template>
+                                    <div class="account-name">
+                                        {account.name}
+                                    </div>
+                                    <div class="account-phone">
+                                        {account.phone}
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+                    <template lwc:else>
+                        <div class="empty-state">
+                            <p>
+                                No accounts found. Create a new account to get
+                                started.
+                            </p>
+                        </div>
+                    </template>
                 </div>
             </template>
 
