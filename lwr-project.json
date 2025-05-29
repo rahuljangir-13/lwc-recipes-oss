@@ -1,0 +1,29 @@
+{
+    "namespace": "c",
+    "lwcModuleMetadata": {
+        "c": {
+            "services/accountService": {
+                "exports": [
+                    "getAccounts",
+                    "getAccount",
+                    "createAccount",
+                    "updateAccount",
+                    "deleteAccount"
+                ]
+            },
+            "services/contactService": {
+                "exports": [
+                    "getContacts",
+                    "getContact",
+                    "getContactsByAccountId",
+                    "createContact",
+                    "updateContact",
+                    "deleteContact"
+                ]
+            },
+            "utils": {
+                "exports": ["reduceErrors", "formatDate", "generateId"]
+            }
+        }
+    }
+}

@@ -1,6 +1,6 @@
 import { LightningElement, track, api } from 'lwc';
-import * as accountService from 'data/services/accountService';
-import * as contactService from 'data/services/contactService';
+import * as accountService from 'c/services/accountService';
+import * as contactService from 'c/services/contactService';
 
 const VIEW_STATES = {
     LIST: 'list',

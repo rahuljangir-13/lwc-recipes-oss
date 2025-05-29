@@ -55,7 +55,8 @@
         "test:unit:debug": "jest --debug"
     },
     "engines": {
-        "node": "20.x"
+        "node": ">=16.0.0",
+        "npm": ">=8.0.0"
     },
     "lint-staged": {
         "**/*.{cls,cmp,component,css,html,js,mjs,json,md,page,trigger,xml,yaml,yml}": [
