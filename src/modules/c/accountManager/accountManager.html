@@ -198,157 +198,226 @@
 
             <!-- Account list -->
             <template lwc:if={showAccountList}>
-                <table
-                    class="slds-table slds-table_cell-buffer slds-table_bordered"
-                >
-                    <thead>
-                        <tr class="slds-line-height_reset">
-                            <th class="slds-text-title_caps" scope="col">
-                                <div class="slds-truncate" title="Name">
-                                    Name
-                                </div>
-                            </th>
-                            <th class="slds-text-title_caps" scope="col">
-                                <div class="slds-truncate" title="Industry">
-                                    Industry
-                                </div>
-                            </th>
-                            <th class="slds-text-title_caps" scope="col">
-                                <div class="slds-truncate" title="Type">
-                                    Type
-                                </div>
-                            </th>
-                            <th class="slds-text-title_caps" scope="col">
-                                <div class="slds-truncate" title="Phone">
-                                    Phone
-                                </div>
-                            </th>
-                            <th class="slds-text-title_caps" scope="col">
-                                <div class="slds-truncate" title="Actions">
-                                    Actions
-                                </div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <template lwc:if={accounts.length}>
-                            <template for:each={accounts} for:item="account">
-                                <tr key={account.id}>
-                                    <td>
-                                        <div class="slds-truncate">
-                                            <a
-                                                href="#"
-                                                onclick={handleViewAccount}
-                                                data-id={account.id}
-                                                >{account.name}</a
-                                            >
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div
-                                            class="slds-truncate"
-                                            title={account.industry}
+                <div class="slds-page-header">
+                    <div class="slds-page-header__row">
+                        <div class="slds-page-header__col-title">
+                            <div class="slds-media">
+                                <div class="slds-media__figure">
+                                    <span
+                                        class="slds-icon_container slds-icon-standard-account"
+                                    >
+                                        <svg
+                                            class="slds-icon slds-icon_small"
+                                            aria-hidden="true"
                                         >
-                                            {account.industry}
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div
-                                            class="slds-truncate"
-                                            title={account.type}
-                                        >
-                                            {account.type}
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div
-                                            class="slds-truncate"
-                                            title={account.phone}
-                                        >
-                                            {account.phone}
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div
-                                            class="slds-button-group"
-                                            role="group"
-                                        >
-                                            <button
-                                                class="slds-button slds-button_icon slds-button_icon-border-filled"
-                                                title="Edit"
-                                                onclick={handleEditAccount}
-                                                data-id={account.id}
+                                            <use
+                                                xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#account"
+                                            ></use>
+                                        </svg>
+                                    </span>
+                                </div>
+                                <div class="slds-media__body">
+                                    <h1
+                                        class="slds-page-header__title slds-truncate"
+                                        title="Accounts"
+                                    >
+                                        Accounts
+                                    </h1>
+                                    <p class="slds-page-header__info">
+                                        {accounts.length} items
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-page-header__col-actions">
+                            <div class="slds-page-header__controls">
+                                <div class="slds-page-header__control">
+                                    <button
+                                        class="slds-button slds-button_neutral"
+                                        onclick={handleNewAccount}
+                                    >
+                                        New
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slds-m-around_small">
+                    <table
+                        class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped"
+                    >
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th class="slds-text-title_caps" scope="col">
+                                    <div class="slds-truncate" title="Name">
+                                        Name
+                                    </div>
+                                </th>
+                                <th class="slds-text-title_caps" scope="col">
+                                    <div class="slds-truncate" title="Industry">
+                                        Industry
+                                    </div>
+                                </th>
+                                <th class="slds-text-title_caps" scope="col">
+                                    <div class="slds-truncate" title="Type">
+                                        Type
+                                    </div>
+                                </th>
+                                <th class="slds-text-title_caps" scope="col">
+                                    <div class="slds-truncate" title="Phone">
+                                        Phone
+                                    </div>
+                                </th>
+                                <th class="slds-text-title_caps" scope="col">
+                                    <div class="slds-truncate" title="Actions">
+                                        Actions
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template lwc:if={accounts.length}>
+                                <template
+                                    for:each={accounts}
+                                    for:item="account"
+                                >
+                                    <tr key={account.id}>
+                                        <td>
+                                            <div class="slds-truncate">
+                                                <a
+                                                    href="javascript:void(0);"
+                                                    onclick={handleViewAccount}
+                                                    data-id={account.id}
+                                                    >{account.name}</a
+                                                >
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div
+                                                class="slds-truncate"
+                                                title={account.industry}
                                             >
-                                                <svg
-                                                    class="slds-button__icon"
-                                                    aria-hidden="true"
-                                                >
-                                                    <use
-                                                        xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#edit"
-                                                    ></use>
-                                                </svg>
-                                                <span
-                                                    class="slds-assistive-text"
-                                                    >Edit</span
-                                                >
-                                            </button>
-                                            <button
-                                                class="slds-button slds-button_icon slds-button_icon-border-filled"
-                                                title="Delete"
-                                                onclick={handleDeleteAccount}
-                                                data-id={account.id}
+                                                {account.industry}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div
+                                                class="slds-truncate"
+                                                title={account.type}
                                             >
-                                                <svg
-                                                    class="slds-button__icon"
-                                                    aria-hidden="true"
-                                                >
-                                                    <use
-                                                        xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#delete"
-                                                    ></use>
-                                                </svg>
-                                                <span
-                                                    class="slds-assistive-text"
-                                                    >Delete</span
-                                                >
-                                            </button>
-                                            <button
-                                                class="slds-button slds-button_icon slds-button_icon-border-filled"
-                                                title="View Contacts"
-                                                onclick={handleViewContacts}
-                                                data-id={account.id}
+                                                {account.type}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div
+                                                class="slds-truncate"
+                                                title={account.phone}
                                             >
-                                                <svg
-                                                    class="slds-button__icon"
-                                                    aria-hidden="true"
+                                                {account.phone}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div
+                                                class="slds-dropdown-trigger slds-dropdown-trigger_click"
+                                            >
+                                                <div
+                                                    class="slds-button-group"
+                                                    role="group"
                                                 >
-                                                    <use
-                                                        xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#user"
-                                                    ></use>
-                                                </svg>
-                                                <span
-                                                    class="slds-assistive-text"
-                                                    >View Contacts</span
-                                                >
-                                            </button>
+                                                    <button
+                                                        class="slds-button slds-button_icon-border-filled"
+                                                        title="Show contacts"
+                                                        onclick={handleViewContacts}
+                                                        data-id={account.id}
+                                                    >
+                                                        <span
+                                                            class="slds-icon_container slds-icon-standard-contact"
+                                                            title="Contacts"
+                                                        >
+                                                            <svg
+                                                                class="slds-icon slds-icon_x-small"
+                                                                aria-hidden="true"
+                                                            >
+                                                                <use
+                                                                    xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#contact"
+                                                                ></use>
+                                                            </svg>
+                                                        </span>
+                                                        <span
+                                                            class="slds-assistive-text"
+                                                            >Contacts</span
+                                                        >
+                                                    </button>
+                                                    <button
+                                                        class="slds-button slds-button_icon-border-filled"
+                                                        title="Edit"
+                                                        onclick={handleEditAccount}
+                                                        data-id={account.id}
+                                                    >
+                                                        <span
+                                                            class="slds-icon_container"
+                                                            title="Edit"
+                                                        >
+                                                            <svg
+                                                                class="slds-button__icon"
+                                                                aria-hidden="true"
+                                                            >
+                                                                <use
+                                                                    xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#edit"
+                                                                ></use>
+                                                            </svg>
+                                                        </span>
+                                                        <span
+                                                            class="slds-assistive-text"
+                                                            >Edit</span
+                                                        >
+                                                    </button>
+                                                    <button
+                                                        class="slds-button slds-button_icon-border-filled"
+                                                        title="Delete"
+                                                        onclick={handleDeleteAccount}
+                                                        data-id={account.id}
+                                                    >
+                                                        <span
+                                                            class="slds-icon_container"
+                                                            title="Delete"
+                                                        >
+                                                            <svg
+                                                                class="slds-button__icon"
+                                                                aria-hidden="true"
+                                                            >
+                                                                <use
+                                                                    xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#delete"
+                                                                ></use>
+                                                            </svg>
+                                                        </span>
+                                                        <span
+                                                            class="slds-assistive-text"
+                                                            >Delete</span
+                                                        >
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </template>
+                            <template lwc:if={!accounts.length}>
+                                <tr>
+                                    <td colspan="5">
+                                        <div
+                                            class="slds-text-align_center slds-p-around_medium"
+                                        >
+                                            No accounts found.
                                         </div>
                                     </td>
                                 </tr>
                             </template>
-                        </template>
-                        <template lwc:else>
-                            <tr>
-                                <td colspan="5">
-                                    <div
-                                        class="slds-text-align_center slds-m-vertical_small"
-                                    >
-                                        No accounts found. Click "New" to create
-                                        one.
-                                    </div>
-                                </td>
-                            </tr>
-                        </template>
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </template>
 
             <!-- Account details with related contacts -->

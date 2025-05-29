@@ -4,6 +4,41 @@ export default class App extends LightningElement {
     @track currentView = 'accounts'; // Default view
     @track pendingAction = null;
 
+    // Computed properties for tab classes
+    get accountsTabClass() {
+        return this.isAccountView
+            ? 'slds-tabs_default__item slds-is-active'
+            : 'slds-tabs_default__item';
+    }
+
+    get contactsTabClass() {
+        return this.isContactView
+            ? 'slds-tabs_default__item slds-is-active'
+            : 'slds-tabs_default__item';
+    }
+
+    // Computed properties for tab content
+    get accountsContentClass() {
+        return this.isAccountView
+            ? 'slds-tabs_default__content slds-show'
+            : 'slds-tabs_default__content slds-hide';
+    }
+
+    get contactsContentClass() {
+        return this.isContactView
+            ? 'slds-tabs_default__content slds-show'
+            : 'slds-tabs_default__content slds-hide';
+    }
+
+    // Computed properties for tab focus
+    get accountsTabIndex() {
+        return this.isAccountView ? 0 : -1;
+    }
+
+    get contactsTabIndex() {
+        return this.isContactView ? 0 : -1;
+    }
+
     // Computed properties for conditional rendering
     get isAccountView() {
         return this.currentView === 'accounts';
@@ -30,9 +65,13 @@ export default class App extends LightningElement {
             : '/assets/icons/standard-sprite/svg/symbols.svg#contact';
     }
 
-    // Navigation event handler
-    handleNavigation(event) {
-        this.currentView = event.detail.view;
+    // Tab click handlers
+    handleAccountsClick() {
+        this.currentView = 'accounts';
+    }
+
+    handleContactsClick() {
+        this.currentView = 'contacts';
     }
 
     // Lifecycle hook to handle pending actions after rendering

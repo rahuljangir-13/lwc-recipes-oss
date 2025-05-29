@@ -16,81 +16,111 @@
             </div>
         </header>
 
-        <!-- Main Content Area -->
-        <div class="slds-col slds-grid slds-wrap main-content">
-            <!-- Left Navigation -->
-            <div
-                class="slds-col slds-size_1-of-6 slds-border_right navigation-panel"
-            >
-                <c-navigation onnavigate={handleNavigation}></c-navigation>
-            </div>
+        <!-- Tab Navigation -->
+        <div class="slds-tabs_default">
+            <ul class="slds-tabs_default__nav" role="tablist">
+                <li
+                    class={accountsTabClass}
+                    title="Accounts"
+                    role="presentation"
+                >
+                    <a
+                        class="slds-tabs_default__link"
+                        href="javascript:void(0);"
+                        role="tab"
+                        tabindex={accountsTabIndex}
+                        aria-selected={isAccountView}
+                        aria-controls="tab-accounts"
+                        id="tab-accounts-link"
+                        onclick={handleAccountsClick}
+                    >
+                        <span class="slds-tabs__left-icon">
+                            <span
+                                class="slds-icon_container slds-icon-standard-account"
+                            >
+                                <svg
+                                    class="slds-icon slds-icon_small"
+                                    aria-hidden="true"
+                                >
+                                    <use
+                                        xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#account"
+                                    ></use>
+                                </svg>
+                                <span class="slds-assistive-text">Account</span>
+                            </span>
+                        </span>
+                        <span>Accounts</span>
+                    </a>
+                </li>
+                <li
+                    class={contactsTabClass}
+                    title="Contacts"
+                    role="presentation"
+                >
+                    <a
+                        class="slds-tabs_default__link"
+                        href="javascript:void(0);"
+                        role="tab"
+                        tabindex={contactsTabIndex}
+                        aria-selected={isContactView}
+                        aria-controls="tab-contacts"
+                        id="tab-contacts-link"
+                        onclick={handleContactsClick}
+                    >
+                        <span class="slds-tabs__left-icon">
+                            <span
+                                class="slds-icon_container slds-icon-standard-contact"
+                            >
+                                <svg
+                                    class="slds-icon slds-icon_small"
+                                    aria-hidden="true"
+                                >
+                                    <use
+                                        xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#contact"
+                                    ></use>
+                                </svg>
+                                <span class="slds-assistive-text">Contact</span>
+                            </span>
+                        </span>
+                        <span>Contacts</span>
+                    </a>
+                </li>
+            </ul>
 
             <!-- Content Area -->
-            <div class="slds-col slds-size_5-of-6 content-panel">
-                <!-- List Views Header -->
-                <div class="slds-page-header slds-m-bottom_small">
-                    <div class="slds-grid">
-                        <div class="slds-col slds-has-flexi-truncate">
-                            <div class="slds-media slds-no-space slds-grow">
-                                <div class="slds-media__figure">
-                                    <span
-                                        class="slds-icon_container"
-                                        title={currentViewTitle}
-                                    >
-                                        <svg
-                                            class="slds-icon slds-icon-standard-account"
-                                            aria-hidden="true"
-                                        >
-                                            <use
-                                                xlink:href={currentViewIcon}
-                                            ></use>
-                                        </svg>
-                                        <span class="slds-assistive-text"
-                                            >{currentViewTitle}</span
-                                        >
-                                    </span>
-                                </div>
-                                <div class="slds-media__body">
-                                    <h1
-                                        class="slds-page-header__title slds-truncate"
-                                        title={currentViewTitle}
-                                    >
-                                        {currentViewTitle}
-                                    </h1>
-                                    <p
-                                        class="slds-text-body_small slds-line-height_reset"
-                                    >
-                                        {currentViewDescription}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Dynamic Content Area -->
+            <div
+                id="tab-accounts"
+                class={accountsContentClass}
+                role="tabpanel"
+                aria-labelledby="tab-accounts-link"
+            >
                 <div class="slds-m-around_medium">
-                    <template lwc:if={isAccountView}>
-                        <c-account-manager
-                            onviewaccount={handleViewAccount}
-                            onviewcontact={handleViewContact}
-                            onviewcontacts={handleViewContacts}
-                            onviewaccounts={handleViewAccounts}
-                            oneditsuccess={handleEditSuccess}
-                            oneditcontact={handleEditContact}
-                            onnewcontact={handleNewContact}
-                        ></c-account-manager>
-                    </template>
+                    <c-account-manager
+                        onviewaccount={handleViewAccount}
+                        onviewcontact={handleViewContact}
+                        onviewcontacts={handleViewContacts}
+                        onviewaccounts={handleViewAccounts}
+                        oneditsuccess={handleEditSuccess}
+                        oneditcontact={handleEditContact}
+                        onnewcontact={handleNewContact}
+                    ></c-account-manager>
+                </div>
+            </div>
 
-                    <template lwc:if={isContactView}>
-                        <c-contact-manager
-                            onviewaccount={handleViewAccount}
-                            onviewcontact={handleViewContact}
-                            onviewcontacts={handleViewContacts}
-                            onviewaccounts={handleViewAccounts}
-                            oneditsuccess={handleEditSuccess}
-                        ></c-contact-manager>
-                    </template>
+            <div
+                id="tab-contacts"
+                class={contactsContentClass}
+                role="tabpanel"
+                aria-labelledby="tab-contacts-link"
+            >
+                <div class="slds-m-around_medium">
+                    <c-contact-manager
+                        onviewaccount={handleViewAccount}
+                        onviewcontact={handleViewContact}
+                        onviewcontacts={handleViewContacts}
+                        onviewaccounts={handleViewAccounts}
+                        oneditsuccess={handleEditSuccess}
+                    ></c-contact-manager>
                 </div>
             </div>
         </div>
