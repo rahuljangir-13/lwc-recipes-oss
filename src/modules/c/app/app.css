@@ -1,0 +1,41 @@
+.app-container {
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+}
+
+.app-header {
+    background-color: #0070d2;
+    color: white;
+    border-bottom: 1px solid #dddbda;
+}
+
+.main-content {
+    height: calc(100vh - 70px); /* Account for header height */
+    overflow: hidden;
+}
+
+.navigation-panel {
+    height: 100%;
+    overflow-y: auto;
+    border-right: 1px solid #dddbda;
+}
+
+.content-panel {
+    height: 100%;
+    overflow-y: auto;
+    background-color: #f7f9fb;
+}
+
+.slds-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.slds-icon-standard-account {
+    background-color: #01a1e0;
+}
+
+.slds-icon-standard-contact {
+    background-color: #a094ed;
+}

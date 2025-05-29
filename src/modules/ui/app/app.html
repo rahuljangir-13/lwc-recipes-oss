@@ -1,32 +1,5 @@
 <template>
     <section class="content container page-background">
-        <ui-navbar
-            nav-items={navigationItems}
-            selected-item={currentNavigationItem}
-            oncategorychange={handleCategoryChange}
-        >
-        </ui-navbar>
-
-        <article class="container">
-            <div>
-                <template lwc:if={navigationItems.accounts.visible}>
-                    <c-account-manager
-                        onnewcontact={handleNewContact}
-                        oneditcontact={handleEditContact}
-                    ></c-account-manager>
-                </template>
-                <template lwc:elseif={navigationItems.contacts.visible}>
-                    <c-contact-manager
-                        onviewaccount={handleViewAccount}
-                    ></c-contact-manager>
-                </template>
-                <ui-navfooter
-                    label-next={nextNavigationItem}
-                    label-previous={previousNavigationItem}
-                    onnextclicked={handleNavigateNext}
-                    onpreviousclicked={handleNavigatePrevious}
-                ></ui-navfooter>
-            </div>
-        </article>
+        <c-app></c-app>
     </section>
 </template>

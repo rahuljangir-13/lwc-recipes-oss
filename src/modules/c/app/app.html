@@ -1,0 +1,98 @@
+<template>
+    <div class="app-container slds-grid slds-grid_vertical">
+        <!-- App Header -->
+        <header class="slds-col app-header slds-p-around_medium">
+            <div
+                class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center"
+            >
+                <div>
+                    <h1 class="slds-text-heading_large">Salesforce CRM</h1>
+                </div>
+                <div>
+                    <span class="slds-badge slds-badge_lightest"
+                        >Lightning Web Components OSS</span
+                    >
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <div class="slds-col slds-grid slds-wrap main-content">
+            <!-- Left Navigation -->
+            <div
+                class="slds-col slds-size_1-of-6 slds-border_right navigation-panel"
+            >
+                <c-navigation onnavigate={handleNavigation}></c-navigation>
+            </div>
+
+            <!-- Content Area -->
+            <div class="slds-col slds-size_5-of-6 content-panel">
+                <!-- List Views Header -->
+                <div class="slds-page-header slds-m-bottom_small">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-has-flexi-truncate">
+                            <div class="slds-media slds-no-space slds-grow">
+                                <div class="slds-media__figure">
+                                    <span
+                                        class="slds-icon_container"
+                                        title={currentViewTitle}
+                                    >
+                                        <svg
+                                            class="slds-icon slds-icon-standard-account"
+                                            aria-hidden="true"
+                                        >
+                                            <use
+                                                xlink:href={currentViewIcon}
+                                            ></use>
+                                        </svg>
+                                        <span class="slds-assistive-text"
+                                            >{currentViewTitle}</span
+                                        >
+                                    </span>
+                                </div>
+                                <div class="slds-media__body">
+                                    <h1
+                                        class="slds-page-header__title slds-truncate"
+                                        title={currentViewTitle}
+                                    >
+                                        {currentViewTitle}
+                                    </h1>
+                                    <p
+                                        class="slds-text-body_small slds-line-height_reset"
+                                    >
+                                        {currentViewDescription}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Content Area -->
+                <div class="slds-m-around_medium">
+                    <template lwc:if={isAccountView}>
+                        <c-account-manager
+                            onviewaccount={handleViewAccount}
+                            onviewcontact={handleViewContact}
+                            onviewcontacts={handleViewContacts}
+                            onviewaccounts={handleViewAccounts}
+                            oneditsuccess={handleEditSuccess}
+                            oneditcontact={handleEditContact}
+                            onnewcontact={handleNewContact}
+                        ></c-account-manager>
+                    </template>
+
+                    <template lwc:if={isContactView}>
+                        <c-contact-manager
+                            onviewaccount={handleViewAccount}
+                            onviewcontact={handleViewContact}
+                            onviewcontacts={handleViewContacts}
+                            onviewaccounts={handleViewAccounts}
+                            oneditsuccess={handleEditSuccess}
+                        ></c-contact-manager>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

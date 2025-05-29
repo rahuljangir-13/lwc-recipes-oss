@@ -129,6 +129,17 @@ export default class AccountManager extends LightningElement {
             .then(() => {
                 this.loadAccounts();
                 this.viewState = VIEW_STATES.LIST;
+
+                // Dispatch success event
+                this.dispatchEvent(
+                    new CustomEvent('editsuccess', {
+                        detail: {
+                            type: 'account',
+                            id: this.currentAccount.id,
+                            isNew: this.isNew
+                        }
+                    })
+                );
             })
             .catch((error) => {
                 this.error = error.message || 'Error saving account';
@@ -196,6 +207,16 @@ export default class AccountManager extends LightningElement {
         deleteAccount(accountId)
             .then(() => {
                 this.loadAccounts();
+                // Dispatch delete success event
+                this.dispatchEvent(
+                    new CustomEvent('editsuccess', {
+                        detail: {
+                            type: 'account',
+                            action: 'delete',
+                            id: accountId
+                        }
+                    })
+                );
             })
             .catch((error) => {
                 this.error = error.message || 'Error deleting account';
@@ -205,6 +226,8 @@ export default class AccountManager extends LightningElement {
 
     handleBackToList() {
         this.viewState = VIEW_STATES.LIST;
+        // Dispatch viewaccounts event
+        this.dispatchEvent(new CustomEvent('viewaccounts'));
     }
 
     handleViewContacts(event) {
@@ -251,6 +274,17 @@ export default class AccountManager extends LightningElement {
                     emailHref: `mailto:${contact.email}`
                 }));
                 this.isLoading = false;
+
+                // Dispatch delete success event
+                this.dispatchEvent(
+                    new CustomEvent('editsuccess', {
+                        detail: {
+                            type: 'contact',
+                            action: 'delete',
+                            id: contactId
+                        }
+                    })
+                );
             })
             .catch((error) => {
                 this.error = error.message || 'Error deleting contact';

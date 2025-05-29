@@ -59,6 +59,23 @@ export default class ContactManager extends LightningElement {
             });
     }
 
+    @api
+    loadContactDetails(contactId) {
+        this.isLoading = true;
+        this.error = null;
+
+        getContact(contactId)
+            .then((contact) => {
+                this.currentContact = contact;
+                this.viewState = VIEW_STATES.DETAIL;
+                this.isLoading = false;
+            })
+            .catch((error) => {
+                this.error = error.message || 'Error loading contact details';
+                this.isLoading = false;
+            });
+    }
+
     // COMPUTED PROPERTIES
     get showContactList() {
         return this.viewState === VIEW_STATES.LIST;
@@ -146,22 +163,6 @@ export default class ContactManager extends LightningElement {
             });
     }
 
-    loadContactDetails(contactId) {
-        this.isLoading = true;
-        this.error = null;
-
-        getContact(contactId)
-            .then((contact) => {
-                this.currentContact = contact;
-                this.viewState = VIEW_STATES.DETAIL;
-                this.isLoading = false;
-            })
-            .catch((error) => {
-                this.error = error.message || 'Error loading contact details';
-                this.isLoading = false;
-            });
-    }
-
     // EVENT HANDLERS
     handleFieldChange(event) {
         const field = event.target.dataset.field;
@@ -193,6 +194,17 @@ export default class ContactManager extends LightningElement {
             .then(() => {
                 this.loadContacts();
                 this.viewState = VIEW_STATES.LIST;
+
+                // Dispatch success event
+                this.dispatchEvent(
+                    new CustomEvent('editsuccess', {
+                        detail: {
+                            type: 'contact',
+                            id: this.currentContact.id,
+                            isNew: this.isNew
+                        }
+                    })
+                );
             })
             .catch((error) => {
                 this.error = error.message || 'Error saving contact';
@@ -251,6 +263,17 @@ export default class ContactManager extends LightningElement {
         deleteContact(contactId)
             .then(() => {
                 this.loadContacts();
+
+                // Dispatch delete success event
+                this.dispatchEvent(
+                    new CustomEvent('editsuccess', {
+                        detail: {
+                            type: 'contact',
+                            action: 'delete',
+                            id: contactId
+                        }
+                    })
+                );
             })
             .catch((error) => {
                 this.error = error.message || 'Error deleting contact';
@@ -260,6 +283,9 @@ export default class ContactManager extends LightningElement {
 
     handleBackToList() {
         this.viewState = VIEW_STATES.LIST;
+
+        // Dispatch viewcontacts event
+        this.dispatchEvent(new CustomEvent('viewcontacts'));
     }
 
     handleViewAccount(event) {
