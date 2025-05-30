@@ -62,8 +62,9 @@
         "lint": "eslint **/src/**/*.js",
         "prettier": "prettier --write \"**/*.{css,html,js,mjs,json,md,yaml,yml}\"",
         "prettier:verify": "prettier --check \"**/*.{css,html,js,mjs,json,md,yaml,yml}\"",
-        "prepare": "husky || true",
+        "prepare": "husky install || true",
         "precommit": "lint-staged",
+        "postinstall": "npm run build",
         "start": "node scripts/start-server.mjs",
         "test": "npm run test:unit",
         "test:unit": "jest",
@@ -74,8 +75,8 @@
         "dev-with-proxy": "concurrently \"npm run proxy-server\" \"npm run dev\""
     },
     "engines": {
-        "node": ">=16.0.0",
-        "npm": ">=8.0.0"
+        "node": "20.18.2",
+        "npm": "10.2.4"
     },
     "lint-staged": {
         "**/*.{cls,cmp,component,css,html,js,mjs,json,md,page,trigger,yaml,yml}": [
