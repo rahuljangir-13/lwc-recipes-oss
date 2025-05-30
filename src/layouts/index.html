@@ -60,6 +60,10 @@
         <!-- Load PWA install functionality -->
         <script src="$assetsDir/js/pwa-install.js"></script>
 
+        <script src="$rootDir/src/layouts/index.js"></script>
+
+        <script src="$layoutsDir/index.js"></script>
+
         <!-- Fallback for browsers without JavaScript -->
         <script>
             // Check if the browser supports service workers
@@ -69,6 +73,9 @@
                     // We'll let our LWC component handle this, but this is a fallback
                     console.log(
                         'Service worker registration will be handled by LWC component'
+                    );
+                    navigator.serviceWorker.register(
+                        '$assetsDir/serviceWorker.js'
                     );
                 });
             }
