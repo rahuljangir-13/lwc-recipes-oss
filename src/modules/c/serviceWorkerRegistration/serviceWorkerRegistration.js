@@ -56,7 +56,7 @@ export default class ServiceWorkerRegistration extends LightningElement {
 
             window.addEventListener('load', () => {
                 // Use the correct path to service worker - relative to the root
-                const swPath = '/serviceWorker.js';
+                const swPath = '/assets/serviceWorker.js';
 
                 // Make sure we don't double-register the service worker
                 navigator.serviceWorker.getRegistration().then((reg) => {
