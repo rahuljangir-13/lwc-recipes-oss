@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.addEventListener('app_online', handleOnlineEvent);
     document.body.addEventListener('app_offline', handleOfflineEvent);
 
-    // Listen for sync events
-    document.body.addEventListener('sync-pending-operations', handleSyncEvent);
+    // Listen for sync events from service worker
+    document.body.addEventListener('sync-from-service-worker', handleSyncEvent);
 
     // Listen for visibility changes to trigger sync when tab becomes visible
     document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -50,8 +50,11 @@ function handleOfflineEvent() {
 
 // Handle sync request events - no need to use the event parameter
 function handleSyncEvent() {
-    console.log('🔄 Sync requested, triggering sync operations');
-    triggerSync();
+    console.log(
+        '🔄 Sync requested from service worker, processing pending operations'
+    );
+    // Perform actual sync operations here without triggering another sync event
+    performSync();
 }
 
 // Handle visibility change events
@@ -64,16 +67,26 @@ function handleVisibilityChange() {
     }
 }
 
+// Perform actual sync operations
+function performSync() {
+    console.log('🔄 Processing pending operations');
+    // Your actual sync logic here
+    // This function should NOT dispatch another sync event
+}
+
 // Trigger sync operations
 function triggerSync() {
     console.log('🔄 Triggering sync for pending operations');
 
-    // Dispatch custom event to app component
-    const syncEvent = new CustomEvent('sync-pending-operations', {
-        bubbles: true,
-        composed: true
-    });
-    document.body.dispatchEvent(syncEvent);
+    // Only dispatch an event to the service worker, not to the page itself
+    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({
+            type: 'SYNC_PENDING_OPERATIONS'
+        });
+    } else {
+        // No service worker, perform sync directly
+        performSync();
+    }
 }
 
 // Export functions for use in other scripts

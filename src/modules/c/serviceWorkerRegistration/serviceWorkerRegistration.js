@@ -6,7 +6,7 @@ import { syncPendingOperationsWhenOnline } from 'c/utils';
  */
 export default class ServiceWorkerRegistration extends LightningElement {
     isInitialized = false;
-    appUrl = 'https://lwc-oss-app-c9271d809a64.herokuapp.com';
+    appUrl = window.location.origin;
 
     connectedCallback() {
         this.registerServiceWorker();
@@ -55,29 +55,50 @@ export default class ServiceWorkerRegistration extends LightningElement {
             this.isInitialized = true;
 
             window.addEventListener('load', () => {
-                navigator.serviceWorker
-                    .register('/serviceWorker.js', { scope: '/' })
-                    .then((registration) => {
+                // Use the correct path to service worker - relative to the root
+                const swPath = '/serviceWorker.js';
+
+                // Make sure we don't double-register the service worker
+                navigator.serviceWorker.getRegistration().then((reg) => {
+                    if (reg && reg.active) {
                         console.log(
-                            'ServiceWorker registration successful with scope: ',
-                            registration.scope
+                            'Service worker is already registered:',
+                            reg
                         );
-
                         // Setup background sync when back online
-                        this.setupBackgroundSync(registration);
-
+                        this.setupBackgroundSync(reg);
                         // Listen for messages from service worker
                         this.setupMessageListener();
-
                         // Check for service worker updates
-                        this.checkForUpdates(registration);
-                    })
-                    .catch((error) => {
-                        console.error(
-                            'ServiceWorker registration failed: ',
-                            error
-                        );
-                    });
+                        this.checkForUpdates(reg);
+                        return;
+                    }
+
+                    // Register the service worker
+                    navigator.serviceWorker
+                        .register(swPath, { scope: '/' })
+                        .then((registration) => {
+                            console.log(
+                                'ServiceWorker registration successful with scope: ',
+                                registration.scope
+                            );
+
+                            // Setup background sync when back online
+                            this.setupBackgroundSync(registration);
+
+                            // Listen for messages from service worker
+                            this.setupMessageListener();
+
+                            // Check for service worker updates
+                            this.checkForUpdates(registration);
+                        })
+                        .catch((error) => {
+                            console.error(
+                                'ServiceWorker registration failed: ',
+                                error
+                            );
+                        });
+                });
             });
         }
     }
@@ -104,15 +125,21 @@ export default class ServiceWorkerRegistration extends LightningElement {
         // This approach is compliant with LWC's restrictions
         this._updateCheckingEnabled = true;
 
-        // Setup visibility change event to check for updates when tab becomes visible
-        document.addEventListener('visibilitychange', () => {
+        // Save the visibility change handler so we can remove it later
+        this._visibilityChangeHandler = () => {
             if (
                 document.visibilityState === 'visible' &&
                 this._updateCheckingEnabled
             ) {
                 this._updateCheckCallback();
             }
-        });
+        };
+
+        // Setup visibility change event to check for updates when tab becomes visible
+        document.addEventListener(
+            'visibilitychange',
+            this._visibilityChangeHandler
+        );
     }
 
     setupBackgroundSync(registration) {

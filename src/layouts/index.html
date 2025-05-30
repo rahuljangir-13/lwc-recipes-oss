@@ -72,11 +72,22 @@
                 window.addEventListener('load', function () {
                     // We'll let our LWC component handle this, but this is a fallback
                     console.log(
-                        'Service worker registration will be handled by LWC component'
+                        'Service Worker registration will be handled by LWC component'
                     );
-                    navigator.serviceWorker.register(
-                        '$assetsDir/serviceWorker.js'
-                    );
+                    navigator.serviceWorker
+                        .register('/serviceWorker.js')
+                        .then((registration) => {
+                            console.log(
+                                'Service Worker registered with scope:',
+                                registration.scope
+                            );
+                        })
+                        .catch((error) => {
+                            console.error(
+                                'Service Worker registration failed:',
+                                error
+                            );
+                        });
                 });
             }
         </script>
