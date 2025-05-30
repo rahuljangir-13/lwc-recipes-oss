@@ -12,17 +12,7 @@
         {
             "alias": "assetsDir",
             "dir": "$rootDir/src/assets",
-            "urlPath": "/assets",
-            "copy": [
-                {
-                    "from": "**/*",
-                    "to": "."
-                },
-                {
-                    "from": "serviceWorker.js",
-                    "to": "serviceWorker.js"
-                }
-            ]
+            "urlPath": "/assets"
         }
     ],
     "routes": [
