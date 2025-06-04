@@ -3,7 +3,15 @@
     margin: 0 auto;
     padding: 2rem;
     font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+    position: relative;
 }
+
+/* Make sure the detail view takes up the full container space */
+c-checklist-detail-page {
+    display: block;
+    width: 100%;
+}
+
 .checklist-title {
     font-family: 'Roboto', sans-serif;
     font-size: 1.75rem;
@@ -126,5 +134,21 @@ button {
 
     h2 {
         font-size: 1.4rem;
+    }
+}
+
+/* Add transition effect for detail page */
+.detail-page-transition {
+    animation: fadeInSlide 0.3s ease-out;
+}
+
+@keyframes fadeInSlide {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }

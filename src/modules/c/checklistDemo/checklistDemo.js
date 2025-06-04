@@ -2,11 +2,17 @@ import { LightningElement, track } from 'lwc';
 
 export default class ChecklistDemo extends LightningElement {
     @track checklistItems = [];
+    @track showDetailView = false;
+    @track selectedChecklistId = null;
+    @track selectedChecklist = null;
     @track showChecklistModal = false;
 
     connectedCallback() {
         // Initialize with sample data when component is inserted into the DOM
         this.initSampleData();
+
+        // Debug: Log initial state
+        console.log('ChecklistDemo initialized');
     }
 
     initSampleData() {
@@ -25,13 +31,19 @@ export default class ChecklistDemo extends LightningElement {
         this.checklistItems = [
             {
                 id: 'item1',
-                name: 'Checklist 16-05',
+                name: 'SIF Alert',
                 status: 'Completed',
-                category: 'Alpha Corporation',
+                category: 'Health & Safety',
                 createdBy: 'John Smith',
                 lastModifiedBy: 'Jane Doe',
                 createdDate: twoWeeksAgo.toISOString(),
-                lastModifiedDate: now.toISOString()
+                lastModifiedDate: now.toISOString(),
+                customer: 'Alpha Corporation',
+                occurrence: 'One Time',
+                startDate: '5/1/2025',
+                endDate: '5/31/2025',
+                description: 'description',
+                orgComponent: 'Spare Parts Room'
             },
             {
                 id: 'item2',
@@ -140,6 +152,88 @@ export default class ChecklistDemo extends LightningElement {
     handleResetItems() {
         // Reset to initial sample data
         this.initSampleData();
+    }
+
+    // Handle the checklist selection event
+    handleChecklistSelect(event) {
+        console.log('handleChecklistSelect called in checklistDemo component');
+
+        // Check if we received the expected data
+        if (!event || !event.detail) {
+            console.error('Invalid event or no detail object in event:', event);
+            return;
+        }
+
+        const { itemId, item } = event.detail;
+        console.log(`Selected checklist: ${itemId}`, item);
+
+        if (!itemId || !item) {
+            console.error(
+                'Missing itemId or item in event detail:',
+                event.detail
+            );
+            return;
+        }
+
+        try {
+            // Store the selected checklist data
+            this.selectedChecklistId = itemId;
+            this.selectedChecklist = item;
+
+            // Show the detail view - this acts as a redirect
+            this.showDetailView = true;
+
+            // Log state for debugging
+            console.log(
+                'Detail view should now be visible:',
+                this.showDetailView
+            );
+            console.log('Selected checklist data:', this.selectedChecklist);
+        } catch (error) {
+            console.error('Error in handleChecklistSelect:', error);
+        }
+    }
+
+    // This will run after the detail page is rendered
+    renderedCallback() {
+        if (this.showDetailView && this.selectedChecklist) {
+            console.log(
+                'In renderedCallback, finding detail page component...'
+            );
+            const detailPage = this.template.querySelector(
+                'c-checklist-detail-page'
+            );
+            if (detailPage) {
+                console.log('Found detail page component, setting data...');
+                try {
+                    detailPage.setChecklistData(this.selectedChecklist);
+                    console.log('Data successfully passed to detail page');
+                } catch (error) {
+                    console.error('Error setting checklist data:', error);
+                }
+            } else {
+                console.warn('Detail page component not found in DOM');
+            }
+        }
+    }
+
+    // Handle the back button event from detail page
+    handleBackToList() {
+        console.log('Back button clicked, returning to list view');
+
+        try {
+            // Reset the detail view state
+            this.showDetailView = false;
+            this.selectedChecklistId = null;
+            this.selectedChecklist = null;
+
+            console.log(
+                'View state reset - showDetailView:',
+                this.showDetailView
+            );
+        } catch (error) {
+            console.error('Error in handleBackToList:', error);
+        }
     }
 
     // Handle edit item event from checklist component

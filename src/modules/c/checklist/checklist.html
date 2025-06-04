@@ -17,7 +17,15 @@
                     <template if:true={hasItems}>
                         <template for:each={items} for:item="item">
                             <tr key={item.id}>
-                                <td>{item.name}</td>
+                                <td>
+                                    <a
+                                        href="javascript:void(0)"
+                                        onclick={handleChecklistClick}
+                                        data-id={item.id}
+                                        class="checklist-name-link"
+                                        >{item.name}</a
+                                    >
+                                </td>
                                 <td>
                                     <span class={item.statusClass}
                                         >{item.status}</span
@@ -58,7 +66,15 @@
                                 </svg>
                             </div>
                             <div class="card-details">
-                                <h3 class="card-title">{item.name}</h3>
+                                <h3 class="card-title">
+                                    <a
+                                        href="javascript:void(0)"
+                                        onclick={handleChecklistClick}
+                                        data-id={item.id}
+                                        class="checklist-name-link"
+                                        >{item.name}</a
+                                    >
+                                </h3>
                                 <div class="card-metadata">
                                     <div class="card-company">
                                         {item.category}
