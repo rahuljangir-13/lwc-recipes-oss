@@ -2,6 +2,100 @@ import { LightningElement, api, track } from 'lwc';
 
 export default class ChecklistDetailPage extends LightningElement {
     @api recordId;
+
+
+    // Static data to match the image
+    assessmentName = 'Assessment 16-05';
+    category = 'Health & Safety';
+    checklistName = 'SIF Alert';
+    occurrence = 'One Time';
+    startDate = '5/1/2025';
+    endDate = '5/31/2025';
+    customer = 'Alpha Corporation';
+    description = 'description';
+    orgComponent = 'Spare Parts Room';
+
+    // Track the active tab
+    @track activeTab = 'details';
+
+    // When component is connected to DOM
+    connectedCallback() {
+        // Set initial active tab
+        this.updateActiveTab();
+    }
+
+    // Handle tab click
+    handleTabClick(event) {
+        // Get the tab name from the tab-label div
+        const tabLabel = event.currentTarget
+            .querySelector('.tab-label')
+            .textContent.toLowerCase();
+        this.activeTab = tabLabel;
+
+        // Update the active tab styling
+        this.updateActiveTab();
+    }
+
+    // Update active tab styling
+    updateActiveTab() {
+        // First, remove active class from all tabs
+        const allTabs = this.template.querySelectorAll('.tab-item');
+        allTabs.forEach((tab) => {
+            tab.classList.remove('active');
+            const icon = tab.querySelector('.tab-icon');
+            icon.classList.remove('checked');
+        });
+
+        // Then add active class to the currently active tab
+        const activeTabElement = this.template.querySelector(
+            `.tab-item[data-tab="${this.activeTab}"]`
+        );
+        if (activeTabElement) {
+            activeTabElement.classList.add('active');
+            const icon = activeTabElement.querySelector('.tab-icon');
+            icon.classList.add('checked');
+        }
+
+        // Show the active tab content and hide others
+        const allContents = this.template.querySelectorAll('.tab-content');
+        allContents.forEach((content) => {
+            content.classList.remove('active');
+        });
+
+        const activeContent = this.template.querySelector(
+            `.tab-content[data-tab="${this.activeTab}"]`
+        );
+        if (activeContent) {
+            activeContent.classList.add('active');
+        }
+    }
+
+    // Toggle section expand/collapse
+    handleSectionToggle() {
+        const content = this.template.querySelector('.section-content');
+        if (content.style.display === 'none') {
+            content.style.display = 'block';
+        } else {
+            content.style.display = 'none';
+        }
+    }
+
+    // Click handlers for buttons
+    handleBackClick() {
+        // Dispatch a custom event to go back
+        this.dispatchEvent(new CustomEvent('back'));
+    }
+
+    handleEditClick() {
+        // Edit functionality would go here
+        console.log('Edit button clicked');
+    }
+
+    // For customer link click
+    handleCustomerClick() {
+        console.log('Customer link clicked:', this.customer);
+    }
+
     @api
     get detail() {
         return this._detail;

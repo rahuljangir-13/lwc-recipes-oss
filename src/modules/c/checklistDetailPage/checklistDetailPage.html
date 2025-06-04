@@ -1,367 +1,226 @@
 <template>
-    <div class="detail-container">
-        <!-- Sidebar with tabs -->
+    <div class="detail-page-container">
+        <!-- Sidebar with vertical tabs -->
         <div class="sidebar">
-            <div class={detailsStepClass} onclick={handleDetailsTab}>
-                <div class="step-icon">
+            <div
+                class="tab-item active"
+                onclick={handleTabClick}
+                data-tab="details"
+            >
+                <div class="tab-icon checked">
                     <svg viewBox="0 0 24 24">
                         <path
                             d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"
                         ></path>
                     </svg>
                 </div>
-                <div class="step-label">Details</div>
+                <div class="tab-label">Details</div>
             </div>
-            <div class="step-connector"></div>
-            <div class={questionsStepClass} onclick={handleQuestionsTab}>
-                <div class="step-icon">
+            <div class="tab-connector"></div>
+            <div class="tab-item" onclick={handleTabClick} data-tab="questions">
+                <div class="tab-icon">
                     <svg viewBox="0 0 24 24">
                         <path
-                            d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"
                         ></path>
                     </svg>
                 </div>
-                <div class="step-label">Questions</div>
+                <div class="tab-label">Questions</div>
             </div>
-            <div class="step-connector"></div>
-            <div class={filesStepClass} onclick={handleFilesTab}>
-                <div class="step-icon">
+            <div class="tab-connector"></div>
+            <div class="tab-item" onclick={handleTabClick} data-tab="files">
+                <div class="tab-icon">
                     <svg viewBox="0 0 24 24">
                         <path
-                            d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"
+                            d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"
                         ></path>
                     </svg>
                 </div>
-                <div class="step-label">Files</div>
+                <div class="tab-label">Files</div>
             </div>
-            <div class="step-connector"></div>
-            <div class={previewStepClass} onclick={handlePreviewTab}>
-                <div class="step-icon">
+            <div class="tab-connector"></div>
+            <div class="tab-item" onclick={handleTabClick} data-tab="preview">
+                <div class="tab-icon">
                     <svg viewBox="0 0 24 24">
                         <path
-                            d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm0 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-7 7z"
+                            d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
                         ></path>
                     </svg>
                 </div>
-                <div class="step-label">Preview</div>
+                <div class="tab-label">Preview</div>
             </div>
         </div>
 
         <!-- Main content area -->
         <div class="main-content">
             <!-- Header with title and actions -->
-            <div class="page-header">
-                <h1 class="page-title">Define</h1>
-                <div class="header-actions">
+            <div class="header">
+                <h1 class="title">Define</h1>
+                <div class="actions">
                     <button
-                        class="action-button back-button"
-                        onclick={handleBack}
+                        class="action-button back"
+                        onclick={handleBackClick}
                     >
-                        <span>Back</span>
+                        Back
                     </button>
                     <button
-                        class="action-button edit-button"
-                        onclick={handleEdit}
+                        class="action-button edit"
+                        onclick={handleEditClick}
                     >
-                        <span>Edit</span>
+                        Edit
                     </button>
                 </div>
             </div>
 
-            <!-- Main content -->
-            <div class="detail-content">
-                <!-- If data is loading or not available -->
-                <template if:false={hasDetail}>
-                    <div class="loading-container">
-                        <div if:true={isLoading} class="loading-spinner">
-                            Loading...
+            <!-- Details Tab Content -->
+            <div class="tab-content active" data-tab="details">
+                <!-- General Information section -->
+                <div class="section">
+                    <div class="section-header" onclick={handleSectionToggle}>
+                        <div class="section-toggle">
+                            <svg class="toggle-icon" viewBox="0 0 24 24">
+                                <path
+                                    d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"
+                                ></path>
+                            </svg>
                         </div>
-                        <div if:false={isLoading} class="no-data">
-                            No details available for this checklist.
+                        <h2>General Information</h2>
+                        <div class="section-status">
+                            <span class="status">Closed</span>
                         </div>
                     </div>
-                </template>
 
-                <!-- If data is available -->
-                <template if:true={hasDetail}>
-                    <!-- Details Tab Content -->
-                    <template if:true={isDetailsTabActive}>
-                        <div class="detail-tab-content">
-                            <!-- General Information Section with Collapse/Expand -->
-                            <div class="information-section">
-                                <div
-                                    class="section-header"
-                                    onclick={toggleInformationSection}
-                                >
-                                    <div class="section-toggle">
-                                        <template
-                                            if:true={isInformationExpanded}
-                                        >
-                                            <svg
-                                                class="toggle-icon"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"
-                                                ></path>
-                                            </svg>
-                                        </template>
-                                        <template
-                                            if:false={isInformationExpanded}
-                                        >
-                                            <svg
-                                                class="toggle-icon"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"
-                                                ></path>
-                                            </svg>
-                                        </template>
+                    <!-- Information content -->
+                    <div class="section-content">
+                        <div class="info-grid">
+                            <div class="info-row">
+                                <div class="info-col">
+                                    <div class="info-label">
+                                        Assessment Name
                                     </div>
-                                    <h2 class="section-title">
-                                        General Information
-                                    </h2>
-                                    <div class="section-status">
-                                        <span class="status-pill closed"
-                                            >Closed</span
-                                        >
+                                    <div class="info-value">
+                                        {assessmentName}
                                     </div>
                                 </div>
-
-                                <div class={informationContentClass}>
-                                    <div class="detail-field-row">
-                                        <div class="field-group">
-                                            <div class="field-label">
-                                                Assessment Name
-                                            </div>
-                                            <div class="field-value">
-                                                {_detail.name}
-                                            </div>
-                                        </div>
-                                        <div class="field-group">
-                                            <div class="field-label">
-                                                Category
-                                            </div>
-                                            <div class="field-value">
-                                                {_detail.category}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="detail-field-row">
-                                        <div class="field-group">
-                                            <div class="field-label">
-                                                Checklist Name
-                                            </div>
-                                            <div class="field-value">
-                                                {_detail.checklist}
-                                            </div>
-                                        </div>
-                                        <div class="field-group">
-                                            <div class="field-label">
-                                                Occurrence
-                                            </div>
-                                            <div class="field-value">
-                                                {_detail.occurrence}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="detail-field-row">
-                                        <div class="field-group">
-                                            <div class="field-label">
-                                                Start Date
-                                            </div>
-                                            <div class="field-value">
-                                                {_detail.startDate}
-                                            </div>
-                                        </div>
-                                        <div class="field-group">
-                                            <div class="field-label">
-                                                End Date
-                                            </div>
-                                            <div class="field-value">
-                                                {_detail.endDate}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="detail-field-row">
-                                        <div class="field-group">
-                                            <div class="field-label">
-                                                Associated Customer
-                                            </div>
-                                            <div
-                                                class="field-value link-value"
-                                                onclick={handleCustomerClick}
-                                            >
-                                                {_detail.customer}
-                                            </div>
-                                        </div>
-                                        <div class="field-group">
-                                            <div class="field-label">
-                                                Description
-                                            </div>
-                                            <div class="field-value">
-                                                {_detail.description}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="detail-field-row">
-                                        <div class="field-group">
-                                            <div class="field-label">
-                                                Org Component
-                                            </div>
-                                            <div class="field-value">
-                                                {_detail.orgComponent}
-                                            </div>
-                                        </div>
-                                        <div class="field-group">
-                                            <!-- Empty field for alignment -->
-                                        </div>
-                                    </div>
+                                <div class="info-col">
+                                    <div class="info-label">Category</div>
+                                    <div class="info-value">{category}</div>
                                 </div>
                             </div>
-
-                            <div class="recurring-assessment-section">
-                                <div class="checkbox-group">
-                                    <input
-                                        type="checkbox"
-                                        id="recurringCheckbox"
-                                        class="checkbox-input"
-                                        checked={isRecurringAssessment}
-                                        onchange={handleRecurringCheckboxChange}
-                                    />
-                                    <label
-                                        for="recurringCheckbox"
-                                        class="checkbox-label"
-                                        >Create Recurring Assessments?</label
+                            <div class="info-row">
+                                <div class="info-col">
+                                    <div class="info-label">Checklist Name</div>
+                                    <div class="info-value">
+                                        {checklistName}
+                                    </div>
+                                </div>
+                                <div class="info-col">
+                                    <div class="info-label">Occurrence</div>
+                                    <div class="info-value">{occurrence}</div>
+                                </div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-col">
+                                    <div class="info-label">Start Date</div>
+                                    <div class="info-value">{startDate}</div>
+                                </div>
+                                <div class="info-col">
+                                    <div class="info-label">End Date</div>
+                                    <div class="info-value">{endDate}</div>
+                                </div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-col">
+                                    <div class="info-label">
+                                        Associated Customer
+                                    </div>
+                                    <div
+                                        class="info-value customer"
+                                        onclick={handleCustomerClick}
                                     >
-                                </div>
-                            </div>
-
-                            <!-- Additional Information Section -->
-                            <div class="information-section">
-                                <div
-                                    class="section-header"
-                                    onclick={toggleAdditionalSection}
-                                >
-                                    <div class="section-toggle">
-                                        <template
-                                            if:true={isAdditionalExpanded}
-                                        >
-                                            <svg
-                                                class="toggle-icon"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"
-                                                ></path>
-                                            </svg>
-                                        </template>
-                                        <template
-                                            if:false={isAdditionalExpanded}
-                                        >
-                                            <svg
-                                                class="toggle-icon"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"
-                                                ></path>
-                                            </svg>
-                                        </template>
-                                    </div>
-                                    <h2 class="section-title">
-                                        Additional Information
-                                    </h2>
-                                </div>
-
-                                <div class={additionalContentClass}>
-                                    <div class="detail-section">
-                                        <div class="detail-fields">
-                                            <div class="detail-field">
-                                                <div class="field-label">
-                                                    Created By
-                                                </div>
-                                                <div class="field-value">
-                                                    {_detail.createdBy}
-                                                </div>
-                                            </div>
-                                            <div class="detail-field">
-                                                <div class="field-label">
-                                                    Creation Date
-                                                </div>
-                                                <div class="field-value">
-                                                    {_detail.formattedCreatedDate}
-                                                </div>
-                                            </div>
-                                            <div class="detail-field">
-                                                <div class="field-label">
-                                                    Last Modified By
-                                                </div>
-                                                <div class="field-value">
-                                                    {_detail.lastModifiedBy}
-                                                </div>
-                                            </div>
-                                            <div class="detail-field">
-                                                <div class="field-label">
-                                                    Last Modified Date
-                                                </div>
-                                                <div class="field-value">
-                                                    {_detail.formattedLastModifiedDate}
-                                                </div>
-                                            </div>
-                                        </div>
+                                        {customer}
                                     </div>
                                 </div>
+                                <div class="info-col">
+                                    <div class="info-label">Description</div>
+                                    <div class="info-value">{description}</div>
+                                </div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-col">
+                                    <div class="info-label">Org Component</div>
+                                    <div class="info-value">{orgComponent}</div>
+                                </div>
                             </div>
                         </div>
-                    </template>
+                    </div>
+                </div>
+            </div>
 
-                    <!-- Questions Tab Content -->
-                    <template if:true={isQuestionsTabActive}>
-                        <div class="questions-tab-content">
-                            <div class="no-questions">
-                                <h3>
-                                    No questions available for this checklist.
-                                </h3>
-                                <p>
-                                    Questions will appear here when they are
-                                    added to the checklist.
-                                </p>
-                            </div>
-                        </div>
-                    </template>
+            <!-- Questions Tab Content -->
+            <div class="tab-content" data-tab="questions">
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Questions</h2>
+                    </div>
+                    <div class="empty-state">
+                        <svg class="empty-state-icon" viewBox="0 0 24 24">
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"
+                            ></path>
+                        </svg>
+                        <h3 class="empty-state-title">
+                            No Questions Available
+                        </h3>
+                        <p class="empty-state-message">
+                            There are no questions configured for this
+                            checklist. Questions will appear here when they are
+                            added.
+                        </p>
+                    </div>
+                </div>
+            </div>
 
-                    <!-- Files Tab Content -->
-                    <template if:true={isFilesTabActive}>
-                        <div class="questions-tab-content">
-                            <div class="no-questions">
-                                <h3>No files available for this checklist.</h3>
-                                <p>
-                                    Files will appear here when they are added
-                                    to the checklist.
-                                </p>
-                            </div>
-                        </div>
-                    </template>
+            <!-- Files Tab Content -->
+            <div class="tab-content" data-tab="files">
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Files</h2>
+                    </div>
+                    <div class="empty-state">
+                        <svg class="empty-state-icon" viewBox="0 0 24 24">
+                            <path
+                                d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"
+                            ></path>
+                        </svg>
+                        <h3 class="empty-state-title">No Files Available</h3>
+                        <p class="empty-state-message">
+                            There are no files attached to this checklist. Files
+                            will appear here when they are uploaded.
+                        </p>
+                    </div>
+                </div>
+            </div>
 
-                    <!-- Preview Tab Content -->
-                    <template if:true={isPreviewTabActive}>
-                        <div class="preview-tab-content">
-                            <div class="no-preview">
-                                <h3>Preview not available.</h3>
-                                <p>
-                                    This is a preview of how your checklist will
-                                    appear when filled out.
-                                </p>
-                            </div>
-                        </div>
-                    </template>
-                </template>
+            <!-- Preview Tab Content -->
+            <div class="tab-content" data-tab="preview">
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Preview</h2>
+                    </div>
+                    <div class="empty-state">
+                        <svg class="empty-state-icon" viewBox="0 0 24 24">
+                            <path
+                                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
+                            ></path>
+                        </svg>
+                        <h3 class="empty-state-title">Preview Not Available</h3>
+                        <p class="empty-state-message">
+                            A preview of the checklist will appear here when it
+                            is ready to be viewed.
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
