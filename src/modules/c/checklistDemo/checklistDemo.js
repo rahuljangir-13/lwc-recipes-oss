@@ -2,6 +2,7 @@ import { LightningElement, track } from 'lwc';
 
 export default class ChecklistDemo extends LightningElement {
     @track checklistItems = [];
+    @track showChecklistModal = false;
 
     connectedCallback() {
         // Initialize with sample data when component is inserted into the DOM
@@ -186,5 +187,13 @@ export default class ChecklistDemo extends LightningElement {
                 }
             })
         );
+    }
+    handleOpenChecklistModal() {
+        console.log('Opening checklist modal...');
+        this.showChecklistModal = true;
+    }
+
+    handleCloseChecklistModal() {
+        this.showChecklistModal = false;
     }
 }

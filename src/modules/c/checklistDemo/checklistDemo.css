@@ -2,15 +2,43 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial,
-        sans-serif;
+    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+}
+.checklist-title {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.checklist-icon-container {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #0070d2; /* Salesforce blue */
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+}
+
+.checklist-icon {
+    width: 20px;
+    height: 20px;
+    filter: brightness(100%);
+}
+
+.title-with-icon {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
 
 h2 {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     font-weight: 600;
-    color: #2a2a2a;
-    margin-bottom: 0.5rem;
+    color: #1a1a1a;
+    margin: 0;
 }
 
 .description {
@@ -41,9 +69,10 @@ h2 {
 }
 
 .checklist-container {
-    background-color: #f9f9f9;
+    background-color: #fdfdfd;
     border-radius: 8px;
     padding: 1rem;
+    overflow-x: auto;
 }
 button {
     background-color: #0973d0;
@@ -53,41 +82,49 @@ button {
     height: 25px;
     width: 55px;
 }
+.card-container {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    max-width: 1200px;
+    margin: 2rem auto;
+}
 
 .header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1.5rem;
-    width: 100%;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 1rem;
 }
 
 .new-button {
-    background-color: #0070d2;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 2x 16px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+    background: #0070d2; /* same as header */
+    color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 112, 210, 0.1);
 }
 
 .new-button:hover {
     background-color: #005fb2;
+    box-shadow: 0 4px 8px rgba(0, 95, 178, 0.3);
 }
 
 @media screen and (max-width: 768px) {
-    .container {
-        padding: 1rem;
-    }
-
-    .controls {
+    .header-container {
         flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
     }
 
-    .button {
+    .new-button {
         width: 100%;
+        text-align: center;
+    }
+
+    h2 {
+        font-size: 1.4rem;
     }
 }

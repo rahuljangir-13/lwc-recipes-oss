@@ -1,16 +1,26 @@
 <template>
-    <div class="container">
+    <template lwc:if={showChecklistModal}>
+        <c-checklist-modal
+            onclose={handleCloseChecklistModal}
+        ></c-checklist-modal>
+    </template>
+
+    <div class="card-container">
         <div class="header-container">
-            <h2>Checklist</h2>
-            <button class="new-button" onclick={handleAddItem}>New</button>
+            <div class="title-with-icon">
+                <span class="checklist-icon-container">
+                    <img
+                        src="https://img.icons8.com/fluency-systems-filled/24/ffffff/checklist.png"
+                        alt="Checklist Icon"
+                        class="checklist-icon"
+                    />
+                </span>
+                <h2 class="checklist-title">Checklist</h2>
+            </div>
+            <button class="new-button" onclick={handleOpenChecklistModal}>
+                New
+            </button>
         </div>
-
-        <!-- <p class="description">This component switches between table view on desktop and card view on mobile devices (resize browser window to see)</p> -->
-
-        <!-- <div class="controls">
-            <button onclick={handleAddItem} class="button">Add Sample Item</button>
-            <button onclick={handleResetItems} class="button">Reset Items</button>
-        </div> -->
 
         <div class="checklist-container">
             <c-checklist
