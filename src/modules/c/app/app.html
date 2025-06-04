@@ -12,6 +12,11 @@
             <!-- Connectivity status bar -->
             <c-connectivity-status></c-connectivity-status>
 
+            <!-- PubSub Test Components -->
+            <!-- <div class="pubsub-test slds-m-around_medium">
+                <c-comp-a></c-comp-a>
+            </div> -->
+
             <!-- Account view -->
             <template lwc:if={isAccountView}>
                 <div class="search-box-container">
@@ -119,6 +124,48 @@
                     </div>
                 </div>
             </template>
+
+            <!-- Checklist view -->
+            <template lwc:if={isChecklistView}>
+                <div class="search-box-container">
+                    <div class="search-box">
+                        <span class="search-icon">
+                            <svg viewBox="0 0 24 24" class="search-svg">
+                                <path
+                                    d="M16.4 15.2l4.4 4.4-1.2 1.2-4.4-4.4c-1.2.9-2.7 1.4-4.2 1.4-4 0-7.2-3.2-7.2-7.2S7 3.4 11 3.4s7.2 3.2 7.2 7.2c0 1.5-.5 3-1.8 4.6zM11 5.6C8.2 5.6 6 7.8 6 10.6s2.2 5 5 5 5-2.2 5-5-2.2-5-5-5z"
+                                ></path>
+                            </svg>
+                        </span>
+                        <input
+                            type="text"
+                            placeholder="Search checklists..."
+                            class="search-input"
+                        />
+                    </div>
+                </div>
+
+                <div class="card-list">
+                    <div class="checklist-container">
+                        <template lwc:if={isLoading}>
+                            <div class="slds-spinner_container">
+                                <div
+                                    role="status"
+                                    class="slds-spinner slds-spinner_medium"
+                                >
+                                    <span class="slds-assistive-text"
+                                        >Loading</span
+                                    >
+                                    <div class="slds-spinner__dot-a"></div>
+                                    <div class="slds-spinner__dot-b"></div>
+                                </div>
+                            </div>
+                        </template>
+                        <template lwc:else>
+                            <c-checklist-demo></c-checklist-demo>
+                        </template>
+                    </div>
+                </div>
+            </template>
         </main>
 
         <!-- Bottom navigation -->
@@ -130,6 +177,10 @@
             <div class={contactsTabClass} onclick={handleViewContacts}>
                 <div class="nav-icon contacts-icon"></div>
                 <div class="nav-label">Contacts</div>
+            </div>
+            <div class={checklistTabClass} onclick={handleViewChecklists}>
+                <div class="nav-icon checklist-icon"></div>
+                <div class="nav-label">Checklists</div>
             </div>
             <div class="nav-item" onclick={handleViewAssessments}>
                 <div class="nav-icon assessments-icon"></div>

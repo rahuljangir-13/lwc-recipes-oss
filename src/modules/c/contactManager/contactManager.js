@@ -1,6 +1,8 @@
 import { LightningElement, track, api } from 'lwc';
 import * as contactService from 'c/contactService';
 import * as accountService from 'c/accountService';
+import pubsub from 'c/pubsub';
+import userDataService from 'c/userDataService';
 
 const VIEW_STATES = {
     LIST: 'list',
@@ -22,9 +24,45 @@ export default class ContactManager extends LightningElement {
     @track itemToDeleteId = null;
     @api hideNewButton = false;
 
+    // User Data related properties
+    @track userData = null;
+
     connectedCallback() {
         this.loadContacts();
         this.loadAccounts();
+
+        // Subscribe to user data updates
+        pubsub.subscribe(
+            'userDataUpdate',
+            this.handleUserDataUpdate.bind(this)
+        );
+
+        // Load any existing user data
+        this.loadExistingUserData();
+    }
+
+    disconnectedCallback() {
+        // Unsubscribe from user data updates
+        pubsub.unsubscribe(
+            'userDataUpdate',
+            this.handleUserDataUpdate.bind(this)
+        );
+    }
+
+    // User Data Methods
+    loadExistingUserData() {
+        const storedData = userDataService.getStoredUserData();
+        if (storedData) {
+            this.userData = storedData;
+        }
+    }
+
+    handleUserDataUpdate(message) {
+        if (message.type === 'update') {
+            this.userData = message.data;
+        } else if (message.type === 'clear') {
+            this.userData = null;
+        }
     }
 
     // API Methods

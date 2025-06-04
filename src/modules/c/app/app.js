@@ -189,15 +189,28 @@ export default class App extends LightningElement {
     // Refresh the current view after syncing
     refreshCurrentView() {
         console.log('🔄 Refreshing current view:', this.currentView);
-        const currentViewComponent = this.isAccountView
-            ? this.template.querySelector('c-account-manager')
-            : this.template.querySelector('c-contact-manager');
+        let currentViewComponent;
+
+        if (this.isAccountView) {
+            currentViewComponent =
+                this.template.querySelector('c-account-manager');
+        } else if (this.isContactView) {
+            currentViewComponent =
+                this.template.querySelector('c-contact-manager');
+        } else if (this.isChecklistView) {
+            currentViewComponent =
+                this.template.querySelector('c-checklist-demo');
+        }
 
         if (currentViewComponent) {
             if (this.isAccountView) {
                 currentViewComponent.loadAccounts();
-            } else {
+            } else if (this.isContactView) {
                 currentViewComponent.loadContacts();
+            } else if (this.isChecklistView) {
+                // No need to refresh checklist demo as it doesn't have a load method
+                // Just log that we're in checklist view
+                console.log('Refreshed checklist view');
             }
         }
     }
@@ -282,6 +295,12 @@ export default class App extends LightningElement {
         }
     }
 
+    // Handle view checklists
+    handleViewChecklists() {
+        console.log('👁️ Switching to Checklists view');
+        this.currentView = 'checklists';
+    }
+
     // Handle edit success notifications from child components
     handleEditSuccess(event) {
         console.log('✅ Edit operation successful:', event);
@@ -330,6 +349,10 @@ export default class App extends LightningElement {
         return this.currentView === 'contacts';
     }
 
+    get isChecklistView() {
+        return this.currentView === 'checklists';
+    }
+
     // Computed classes for tabs
     get accountsTabClass() {
         return this.isAccountView ? 'nav-item active' : 'nav-item';
@@ -337,6 +360,10 @@ export default class App extends LightningElement {
 
     get contactsTabClass() {
         return this.isContactView ? 'nav-item active' : 'nav-item';
+    }
+
+    get checklistTabClass() {
+        return this.isChecklistView ? 'nav-item active' : 'nav-item';
     }
 
     get accountsTabIndex() {
@@ -348,17 +375,27 @@ export default class App extends LightningElement {
     }
 
     get currentViewTitle() {
-        return this.isAccountView ? 'Accounts' : 'Contacts';
+        return this.isAccountView
+            ? 'Accounts'
+            : this.isContactView
+              ? 'Contacts'
+              : 'Checklists';
     }
 
     get currentViewDescription() {
         return this.isAccountView
             ? 'Manage your business accounts'
-            : 'Manage your contacts';
+            : this.isContactView
+              ? 'Manage your contacts'
+              : 'Manage your checklists';
     }
 
     get currentViewIcon() {
-        return this.isAccountView ? 'standard:account' : 'standard:contact';
+        return this.isAccountView
+            ? 'standard:account'
+            : this.isContactView
+              ? 'standard:contact'
+              : 'standard:checklist';
     }
 
     // Handle connectivity changes

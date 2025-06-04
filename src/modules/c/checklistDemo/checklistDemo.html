@@ -1,0 +1,23 @@
+<template>
+    <div class="container">
+        <div class="header-container">
+            <h2>Checklist</h2>
+            <button class="new-button" onclick={handleAddItem}>New</button>
+        </div>
+
+        <!-- <p class="description">This component switches between table view on desktop and card view on mobile devices (resize browser window to see)</p> -->
+
+        <!-- <div class="controls">
+            <button onclick={handleAddItem} class="button">Add Sample Item</button>
+            <button onclick={handleResetItems} class="button">Reset Items</button>
+        </div> -->
+
+        <div class="checklist-container">
+            <c-checklist
+                items={checklistItems}
+                onedit={handleEditItem}
+                ondelete={handleDeleteItem}
+            ></c-checklist>
+        </div>
+    </div>
+</template>

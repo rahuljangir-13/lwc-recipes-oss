@@ -213,6 +213,12 @@
     background-size: 24px;
 }
 
+.checklist-icon {
+    background: url('/assets/icons/standard-sprite/svg/symbols.svg#task2')
+        center no-repeat;
+    background-size: 24px;
+}
+
 .nav-label {
     font-size: 12px;
 }
