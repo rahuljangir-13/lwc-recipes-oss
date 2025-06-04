@@ -1,0 +1,30 @@
+<template>
+    <div class="details-container">
+        <!-- Define Tab -->
+        <template if:true={isDefineTab}>
+            <ui-define-section record-id={recordId}></ui-define-section>
+        </template>
+
+        <!-- Assign Tab -->
+        <template if:true={isAssignTab}>
+            <ui-assign-section record-id={recordId}></ui-assign-section>
+        </template>
+
+        <!-- Response Tab for Manage section -->
+        <template if:true={isResponseTab}>
+            <ui-response-section record-id={recordId}></ui-response-section>
+        </template>
+
+        <!-- Finding Tab for Manage section -->
+        <template if:true={isFindingTab}>
+            <ui-findings-section record-id={recordId}></ui-findings-section>
+        </template>
+
+        <!-- Email Communication Tab for Manage section -->
+        <template if:true={isEmailTab}>
+            <ui-email-communication-section
+                record-id={recordId}
+            ></ui-email-communication-section>
+        </template>
+    </div>
+</template>

@@ -1,0 +1,370 @@
+<template>
+    <div class="response-section">
+        <div class="section-header">
+            <h2 class="section-title">Responses</h2>
+        </div>
+
+        <div class="slds-card">
+            <!-- Header with actions -->
+            <div
+                class="slds-card__header slds-grid slds-grid_vertical-align-center"
+            >
+                <div
+                    class="slds-media slds-media_center slds-has-flexi-truncate"
+                >
+                    <div class="slds-media__figure">
+                        <span
+                            class="slds-icon_container slds-icon-standard-response"
+                        >
+                            <svg
+                                class="slds-icon slds-icon_small"
+                                aria-hidden="true"
+                            >
+                                <use
+                                    xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#response"
+                                ></use>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="slds-media__body">
+                        <h2 class="slds-card__header-title">
+                            Responses ({totalResponses}) • Last updated:
+                            {lastUpdated}
+                        </h2>
+                    </div>
+                </div>
+                <div class="slds-no-flex">
+                    <button
+                        class="slds-button slds-button_neutral"
+                        onclick={handleSendEmail}
+                    >
+                        <svg
+                            class="slds-button__icon slds-button__icon_left"
+                            aria-hidden="true"
+                        >
+                            <use
+                                xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#email"
+                            ></use>
+                        </svg>
+                        Send Email
+                    </button>
+                    <button
+                        class="slds-button slds-button_icon slds-button_icon-border"
+                        title="Refresh"
+                        onclick={handleRefresh}
+                    >
+                        <svg class="slds-button__icon" aria-hidden="true">
+                            <use
+                                xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#refresh"
+                            ></use>
+                        </svg>
+                        <span class="slds-assistive-text">Refresh</span>
+                    </button>
+                    <button
+                        class="slds-button slds-button_icon slds-button_icon-border"
+                        title="Settings"
+                        onclick={handleSettings}
+                    >
+                        <svg class="slds-button__icon" aria-hidden="true">
+                            <use
+                                xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#settings"
+                            ></use>
+                        </svg>
+                        <span class="slds-assistive-text">Settings</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="slds-card__body">
+                <table
+                    class="slds-table slds-table_bordered slds-table_cell-buffer slds-table_fixed-layout"
+                >
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th
+                                scope="col"
+                                class="slds-is-sortable"
+                                aria-sort="none"
+                            >
+                                <div
+                                    class="slds-th__action"
+                                    onclick={handleSort}
+                                    data-field-name="supplier"
+                                >
+                                    <span
+                                        class="slds-truncate"
+                                        title="Supplier Name"
+                                        >Supplier Name</span
+                                    >
+                                    <span
+                                        class="slds-icon_container slds-icon-utility-arrowup"
+                                    >
+                                        <svg
+                                            class="slds-icon slds-icon_xx-small slds-icon-text-default"
+                                            aria-hidden="true"
+                                        >
+                                            <use
+                                                xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#arrowup"
+                                            ></use>
+                                        </svg>
+                                    </span>
+                                </div>
+                            </th>
+                            <th
+                                scope="col"
+                                class="slds-is-sortable"
+                                aria-sort="none"
+                            >
+                                <div
+                                    class="slds-th__action"
+                                    onclick={handleSort}
+                                    data-field-name="completedPercent"
+                                >
+                                    <span
+                                        class="slds-truncate"
+                                        title="% Completed"
+                                        >% Completed</span
+                                    >
+                                    <span
+                                        class="slds-icon_container slds-icon-utility-arrowup"
+                                    >
+                                        <svg
+                                            class="slds-icon slds-icon_xx-small slds-icon-text-default"
+                                            aria-hidden="true"
+                                        >
+                                            <use
+                                                xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#arrowup"
+                                            ></use>
+                                        </svg>
+                                    </span>
+                                </div>
+                            </th>
+                            <th
+                                scope="col"
+                                class="slds-is-sortable"
+                                aria-sort="none"
+                            >
+                                <div
+                                    class="slds-th__action"
+                                    onclick={handleSort}
+                                    data-field-name="score"
+                                >
+                                    <span class="slds-truncate" title="% Score"
+                                        >% Score</span
+                                    >
+                                    <span
+                                        class="slds-icon_container slds-icon-utility-arrowup"
+                                    >
+                                        <svg
+                                            class="slds-icon slds-icon_xx-small slds-icon-text-default"
+                                            aria-hidden="true"
+                                        >
+                                            <use
+                                                xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#arrowup"
+                                            ></use>
+                                        </svg>
+                                    </span>
+                                </div>
+                            </th>
+                            <th
+                                scope="col"
+                                class="slds-is-sortable"
+                                aria-sort="none"
+                            >
+                                <div
+                                    class="slds-th__action"
+                                    onclick={handleSort}
+                                    data-field-name="status"
+                                >
+                                    <span class="slds-truncate" title="Status"
+                                        >Status</span
+                                    >
+                                    <span
+                                        class="slds-icon_container slds-icon-utility-arrowup"
+                                    >
+                                        <svg
+                                            class="slds-icon slds-icon_xx-small slds-icon-text-default"
+                                            aria-hidden="true"
+                                        >
+                                            <use
+                                                xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#arrowup"
+                                            ></use>
+                                        </svg>
+                                    </span>
+                                </div>
+                            </th>
+                            <th
+                                scope="col"
+                                class="slds-is-sortable"
+                                aria-sort="none"
+                            >
+                                <div
+                                    class="slds-th__action"
+                                    onclick={handleSort}
+                                    data-field-name="submissionDate"
+                                >
+                                    <span
+                                        class="slds-truncate"
+                                        title="Submission Date"
+                                        >Submission Date</span
+                                    >
+                                    <span
+                                        class="slds-icon_container slds-icon-utility-arrowup"
+                                    >
+                                        <svg
+                                            class="slds-icon slds-icon_xx-small slds-icon-text-default"
+                                            aria-hidden="true"
+                                        >
+                                            <use
+                                                xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#arrowup"
+                                            ></use>
+                                        </svg>
+                                    </span>
+                                </div>
+                            </th>
+                            <th
+                                scope="col"
+                                class="slds-is-sortable"
+                                aria-sort="none"
+                            >
+                                <div
+                                    class="slds-th__action"
+                                    onclick={handleSort}
+                                    data-field-name="followUps"
+                                >
+                                    <span
+                                        class="slds-truncate"
+                                        title="# Follow Ups"
+                                        ># Follow Ups</span
+                                    >
+                                    <span
+                                        class="slds-icon_container slds-icon-utility-arrowup"
+                                    >
+                                        <svg
+                                            class="slds-icon slds-icon_xx-small slds-icon-text-default"
+                                            aria-hidden="true"
+                                        >
+                                            <use
+                                                xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#arrowup"
+                                            ></use>
+                                        </svg>
+                                    </span>
+                                </div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-th__action">
+                                    <span class="slds-truncate" title="View"
+                                        >View</span
+                                    >
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={responses} for:item="response">
+                            <tr key={response.id} class="slds-hint-parent">
+                                <td data-label="Supplier Name">
+                                    <div
+                                        class="slds-truncate"
+                                        title={response.supplier}
+                                    >
+                                        <a href="javascript:void(0);"
+                                            >{response.supplier}</a
+                                        >
+                                    </div>
+                                </td>
+                                <td data-label="% Completed">
+                                    <div
+                                        class="slds-truncate"
+                                        title={response.completedPercent}
+                                    >
+                                        <div
+                                            class="slds-progress-bar slds-progress-bar_small"
+                                            aria-valuemin="0"
+                                            aria-valuemax="100"
+                                            aria-valuenow={response.completedPercent}
+                                            role="progressbar"
+                                        >
+                                            <span
+                                                class="slds-progress-bar__value"
+                                                style="width: 100%"
+                                            >
+                                                <span
+                                                    class="slds-assistive-text"
+                                                    >Progress:
+                                                    {response.completedPercent}%</span
+                                                >
+                                            </span>
+                                        </div>
+                                        <div
+                                            class="slds-text-align_right slds-p-top_x-small"
+                                        >
+                                            {response.completedPercent}%
+                                        </div>
+                                    </div>
+                                </td>
+                                <td data-label="% Score">
+                                    <div
+                                        class="slds-truncate"
+                                        title={response.score}
+                                    >
+                                        {response.score}%
+                                    </div>
+                                </td>
+                                <td data-label="Status">
+                                    <div
+                                        class="slds-truncate"
+                                        title={response.status}
+                                    >
+                                        <template
+                                            if:true={response.isCompleted}
+                                        >
+                                            <span
+                                                class="slds-badge slds-badge_success"
+                                                >{response.status}</span
+                                            >
+                                        </template>
+                                        <template
+                                            if:true={response.isInProgress}
+                                        >
+                                            <span
+                                                class="slds-badge slds-badge_warning"
+                                                >{response.status}</span
+                                            >
+                                        </template>
+                                    </div>
+                                </td>
+                                <td data-label="Submission Date">
+                                    <div
+                                        class="slds-truncate"
+                                        title={response.submissionDate}
+                                    >
+                                        {response.submissionDate}
+                                    </div>
+                                </td>
+                                <td data-label="# Follow Ups">
+                                    <div
+                                        class="slds-truncate"
+                                        title={response.followUps}
+                                    >
+                                        {response.followUps}
+                                    </div>
+                                </td>
+                                <td data-label="View">
+                                    <div class="slds-truncate">
+                                        <a
+                                            href="javascript:void(0);"
+                                            class="slds-text-link"
+                                            >View</a
+                                        >
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</template>

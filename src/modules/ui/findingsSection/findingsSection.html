@@ -1,0 +1,116 @@
+<template>
+    <div class="findings-section">
+        <div class="section-header">
+            <h2 class="section-title">Findings</h2>
+        </div>
+
+        <div class="slds-card">
+            <div
+                class="slds-card__header slds-grid slds-grid_vertical-align-center"
+            >
+                <div
+                    class="slds-media slds-media_center slds-has-flexi-truncate"
+                >
+                    <div class="slds-media__figure">
+                        <span
+                            class="slds-icon_container slds-icon-standard-report"
+                        >
+                            <svg
+                                class="slds-icon slds-icon_small"
+                                aria-hidden="true"
+                            >
+                                <use
+                                    xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#report"
+                                ></use>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="slds-media__body">
+                        <h2 class="slds-card__header-title">
+                            Assessment Findings ({findingsCount})
+                        </h2>
+                    </div>
+                </div>
+                <div class="slds-no-flex">
+                    <button
+                        class="slds-button slds-button_neutral"
+                        onclick={handleNewFinding}
+                    >
+                        <svg
+                            class="slds-button__icon slds-button__icon_left"
+                            aria-hidden="true"
+                        >
+                            <use
+                                xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#add"
+                            ></use>
+                        </svg>
+                        New
+                    </button>
+                </div>
+            </div>
+            <div class="slds-card__body slds-card__body_inner">
+                <template if:true={findings.length}>
+                    <ul class="slds-has-dividers_bottom-space">
+                        <template for:each={findings} for:item="finding">
+                            <li key={finding.id} class="slds-item">
+                                <div class="slds-media">
+                                    <div class="slds-media__figure">
+                                        <span
+                                            class="slds-icon_container slds-icon-standard-report-type"
+                                        >
+                                            <svg
+                                                class="slds-icon slds-icon_small"
+                                                aria-hidden="true"
+                                            >
+                                                <use
+                                                    xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#report_type"
+                                                ></use>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                    <div class="slds-media__body">
+                                        <h3 class="slds-text-heading_small">
+                                            {finding.title}
+                                        </h3>
+                                        <p class="slds-text-body_small">
+                                            {finding.description}
+                                        </p>
+                                        <div
+                                            class="slds-grid slds-grid_align-spread"
+                                        >
+                                            <div class="slds-col">
+                                                <span class="slds-badge"
+                                                    >{finding.severity}</span
+                                                >
+                                            </div>
+                                            <div class="slds-col">
+                                                <span
+                                                    class="slds-text-body_small slds-text-color_weak"
+                                                    >Created:
+                                                    {finding.date}</span
+                                                >
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </template>
+                    </ul>
+                </template>
+                <template if:false={findings.length}>
+                    <div class="slds-illustration slds-illustration_small">
+                        <div class="slds-text-longform">
+                            <h3 class="slds-text-heading_medium">
+                                No findings yet
+                            </h3>
+                            <p class="slds-text-body_regular">
+                                Click the New button to create an assessment
+                                finding.
+                            </p>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+</template>

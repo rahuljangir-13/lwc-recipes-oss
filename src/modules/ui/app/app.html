@@ -1,11 +1,13 @@
 <template>
     <section class="content container page-background">
         <!-- <c-app></c-app> -->
-        <template if:true={isLoggedIn}>
+        <!-- <template if:true={isLoggedIn}>
             <c-app></c-app>
         </template>
         <template if:false={isLoggedIn}>
             <c-login onlogin={handleLogin}></c-login>
-        </template>
+        </template> -->
+        <!-- <c-account-list-display></c-account-list-display> -->
+        <ui-assessment-page></ui-assessment-page>
     </section>
 </template>

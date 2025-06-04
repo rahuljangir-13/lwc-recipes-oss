@@ -1,0 +1,219 @@
+<template>
+    <div class="assign-section">
+        <div class="section-header">
+            <h2 class="section-title">Assign Assessment</h2>
+        </div>
+
+        <!-- Scope Selection -->
+        <div class="slds-form-element slds-m-bottom_medium">
+            <label class="slds-form-element__label" for="scope-select"
+                >Assessment Scope</label
+            >
+            <div class="slds-form-element__control">
+                <div class="slds-select_container">
+                    <select
+                        id="scope-select"
+                        class="slds-select"
+                        onchange={handleScopeChange}
+                    >
+                        <option value="All Suppliers">All Suppliers</option>
+                        <option value="North America Suppliers">
+                            North America Suppliers
+                        </option>
+                        <option value="Europe Suppliers">
+                            Europe Suppliers
+                        </option>
+                        <option value="Asia Suppliers">Asia Suppliers</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Suppliers Data Table -->
+        <div class="slds-card">
+            <div class="slds-card__header slds-grid">
+                <header
+                    class="slds-media slds-media_center slds-has-flexi-truncate"
+                >
+                    <div class="slds-media__figure">
+                        <span
+                            class="slds-icon_container slds-icon-standard-account"
+                        >
+                            <svg
+                                class="slds-icon slds-icon_small"
+                                aria-hidden="true"
+                            >
+                                <use
+                                    xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#account"
+                                ></use>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="slds-media__body">
+                        <h2 class="slds-card__header-title">
+                            <span>Assigned Suppliers ({suppliers.length})</span>
+                        </h2>
+                    </div>
+                    <div class="slds-no-flex">
+                        <button class="slds-button slds-button_neutral">
+                            <svg
+                                class="slds-button__icon slds-button__icon_left"
+                                aria-hidden="true"
+                            >
+                                <use
+                                    xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#add"
+                                ></use>
+                            </svg>
+                            Add Suppliers
+                        </button>
+                    </div>
+                </header>
+            </div>
+            <div class="slds-card__body">
+                <div
+                    class="slds-table_header-fixed_container"
+                    style="height: 300px"
+                >
+                    <div class="slds-scrollable_y" style="height: 100%">
+                        <table
+                            class="slds-table slds-table_bordered slds-table_cell-buffer slds-table_fixed-layout"
+                        >
+                            <thead>
+                                <tr class="slds-line-height_reset">
+                                    <th scope="col" style="width: 3.25rem">
+                                        <div class="slds-th__action">
+                                            <span class="slds-checkbox">
+                                                <input
+                                                    type="checkbox"
+                                                    name="select-all"
+                                                    id="select-all"
+                                                />
+                                                <label
+                                                    class="slds-checkbox__label"
+                                                    for="select-all"
+                                                >
+                                                    <span
+                                                        class="slds-checkbox_faux"
+                                                    ></span>
+                                                    <span
+                                                        class="slds-form-element__label slds-assistive-text"
+                                                        >Select All</span
+                                                    >
+                                                </label>
+                                            </span>
+                                        </div>
+                                    </th>
+                                    <th scope="col" style="width: 35%">
+                                        <div class="slds-th__action">
+                                            <span>Name</span>
+                                        </div>
+                                    </th>
+                                    <th scope="col" style="width: 45%">
+                                        <div class="slds-th__action">
+                                            <span>Corporate Address</span>
+                                        </div>
+                                    </th>
+                                    <th scope="col" style="width: 20%">
+                                        <div class="slds-th__action">
+                                            <span>Date Added</span>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template
+                                    for:each={suppliers}
+                                    for:item="supplier"
+                                >
+                                    <tr
+                                        key={supplier.id}
+                                        class="slds-hint-parent"
+                                    >
+                                        <td>
+                                            <div class="slds-th__action">
+                                                <span class="slds-checkbox">
+                                                    <input
+                                                        type="checkbox"
+                                                        name={supplier.id}
+                                                        id={supplier.id}
+                                                    />
+                                                    <label
+                                                        class="slds-checkbox__label"
+                                                        for={supplier.id}
+                                                    >
+                                                        <span
+                                                            class="slds-checkbox_faux"
+                                                        ></span>
+                                                        <span
+                                                            class="slds-form-element__label slds-assistive-text"
+                                                            >Select
+                                                            {supplier.name}</span
+                                                        >
+                                                    </label>
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td data-label="Name">
+                                            <div
+                                                class="slds-truncate"
+                                                title={supplier.name}
+                                            >
+                                                <a href="javascript:void(0);"
+                                                    >{supplier.name}</a
+                                                >
+                                            </div>
+                                        </td>
+                                        <td data-label="Corporate Address">
+                                            <div
+                                                class="slds-truncate"
+                                                title={supplier.address}
+                                            >
+                                                {supplier.address}
+                                            </div>
+                                        </td>
+                                        <td data-label="Date Added">
+                                            <div
+                                                class="slds-truncate"
+                                                title={supplier.dateAdded}
+                                            >
+                                                {supplier.dateAdded}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Pagination Controls -->
+                <div
+                    class="slds-grid slds-grid_vertical-align-center slds-p-around_medium"
+                >
+                    <div class="slds-col slds-size_2-of-12">
+                        <div class="slds-text-color_weak">
+                            5 items • page 1 of 1
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_7-of-12"></div>
+                    <div class="slds-col slds-size_3-of-12">
+                        <div class="slds-button-group" role="group">
+                            <button
+                                class="slds-button slds-button_neutral"
+                                disabled
+                            >
+                                Previous
+                            </button>
+                            <button
+                                class="slds-button slds-button_neutral"
+                                disabled
+                            >
+                                Next
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

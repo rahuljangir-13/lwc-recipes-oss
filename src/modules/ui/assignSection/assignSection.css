@@ -1,0 +1,25 @@
+.assign-section {
+    font-family: 'Roboto', Arial, sans-serif;
+}
+
+.section-header {
+    margin-bottom: 16px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #181818;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #6a31ea;
+}
+
+.slds-table_fixed-layout {
+    table-layout: fixed;
+}
+
+.slds-truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

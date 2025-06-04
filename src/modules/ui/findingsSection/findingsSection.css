@@ -1,0 +1,32 @@
+.findings-section {
+    font-family: 'Roboto', Arial, sans-serif;
+}
+
+.section-header {
+    margin-bottom: 16px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #181818;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #6a31ea;
+}
+
+.slds-has-dividers_bottom-space .slds-item {
+    padding: 12px 0;
+}
+
+.slds-illustration {
+    text-align: center;
+    padding: 40px 0;
+}
+
+.slds-illustration .slds-text-heading_medium {
+    margin-bottom: 8px;
+}
+
+.slds-item:hover {
+    background-color: #f8f8f8;
+}

@@ -1,0 +1,110 @@
+<template>
+    <div class="sidebar-container">
+        <div class="main-tab-container">
+            <!-- Create Tab -->
+            <div
+                class={createTabClass}
+                onclick={handleCreateClick}
+                role="button"
+                tabindex="0"
+            >
+                <div class="tab-grid">
+                    <div class="tab-left">
+                        <span class="tab-icon create-icon"></span>
+                        <span class="tab-label">Create</span>
+                    </div>
+                    <div class="tab-right">
+                        <span
+                            class={createChevronClass}
+                            aria-hidden="true"
+                        ></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create Subtabs -->
+            <div class={createSubTabsClass}>
+                <div
+                    class={defineTabContainerClass}
+                    data-tab="define"
+                    onclick={handleSubTabClick}
+                    role="button"
+                    tabindex="0"
+                >
+                    <div class="sub-tab-content">Define</div>
+                </div>
+                <div
+                    class={assignTabContainerClass}
+                    data-tab="assign"
+                    onclick={handleSubTabClick}
+                    role="button"
+                    tabindex="0"
+                >
+                    <div class="sub-tab-content">Assign</div>
+                </div>
+            </div>
+
+            <!-- Manage Tab -->
+            <div
+                class={manageTabClass}
+                onclick={handleManageClick}
+                role="button"
+                tabindex="0"
+            >
+                <div class="tab-grid">
+                    <div class="tab-left">
+                        <span class="tab-icon manage-icon"></span>
+                        <span class="tab-label">Manage</span>
+                    </div>
+                    <div class="tab-right">
+                        <span
+                            class={manageChevronClass}
+                            aria-hidden="true"
+                        ></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manage Subtabs -->
+            <div class={manageSubTabsClass}>
+                <div
+                    class={responsesTabContainerClass}
+                    data-tab="response"
+                    onclick={handleSubTabClick}
+                    role="button"
+                    tabindex="0"
+                >
+                    <div class="sub-tab-content">Responses</div>
+                </div>
+                <div
+                    class={findingsTabContainerClass}
+                    data-tab="finding"
+                    onclick={handleSubTabClick}
+                    role="button"
+                    tabindex="0"
+                >
+                    <div class="sub-tab-content">Findings</div>
+                </div>
+                <div
+                    class={emailTabContainerClass}
+                    data-tab="email"
+                    onclick={handleSubTabClick}
+                    role="button"
+                    tabindex="0"
+                >
+                    <div class="sub-tab-content">Email Communication</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter section at bottom -->
+    <div class="filter-container">
+        <div class="filter-text">
+            Filters: All time • All activities • All types
+        </div>
+        <div class="filter-icon">
+            <span class="filter-icon-custom" aria-hidden="true"></span>
+        </div>
+    </div>
+</template>
