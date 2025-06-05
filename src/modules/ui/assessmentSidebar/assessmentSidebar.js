@@ -1,106 +1,76 @@
-import { LightningElement } from 'lwc';
+import { LightningElement, track } from 'lwc';
 
 export default class AssessmentSidebar extends LightningElement {
-    createExpanded = true;
-    manageExpanded = false;
-    currentTab = 'define'; // Default selected tab
+    @track selectedTab = 'create'; // Default to 'create' tab
 
-    // Get classes for main tabs
-    get createTabClass() {
-        return this.createExpanded ? 'main-tab main-tab-active' : 'main-tab';
+    // Set initial active state when component is inserted into DOM
+    connectedCallback() {
+        // Set default tab to 'create'
+        this.selectedTab = 'create';
+
+        // The active class and event firing will be handled in renderedCallback
     }
 
-    get manageTabClass() {
-        return this.manageExpanded ? 'main-tab main-tab-active' : 'main-tab';
+    selectCreateTab() {
+        this.selectedTab = 'create';
+        // Update tab styling
+        this.updateActiveTabClass();
+        // Fire event to parent
+        this.fireTabChangeEvent('create');
     }
 
-    // Get classes for subtabs containers
-    get createSubTabsClass() {
-        return this.createExpanded
-            ? 'sub-tabs-container expanded'
-            : 'sub-tabs-container collapsed';
+    selectManageTab() {
+        this.selectedTab = 'manage';
+        // Update tab styling
+        this.updateActiveTabClass();
+        // Fire event to parent
+        this.fireTabChangeEvent('manage');
     }
 
-    get manageSubTabsClass() {
-        return this.manageExpanded
-            ? 'sub-tabs-container expanded'
-            : 'sub-tabs-container collapsed';
-    } // Get chevron classes based on expansion state
-    get createChevronClass() {
-        return this.createExpanded
-            ? 'chevron-icon chevron-down'
-            : 'chevron-icon chevron-right';
-    }
+    // Method to update the active class on the tabs
+    updateActiveTabClass() {
+        console.log('Setting active tab to:', this.selectedTab);
 
-    get manageChevronClass() {
-        return this.manageExpanded
-            ? 'chevron-icon chevron-down'
-            : 'chevron-icon chevron-right';
-    }
+        // Find all tab elements
+        const tabs = this.template.querySelectorAll('.sidebar-tab');
 
-    // Dynamic classes for Create section subtabs
-    get defineTabContainerClass() {
-        return this.currentTab === 'define'
-            ? 'sub-tab sub-tab-active'
-            : 'sub-tab';
-    }
+        // Remove active class from all tabs
+        tabs.forEach((tab) => {
+            tab.classList.remove('active');
+        });
 
-    get assignTabContainerClass() {
-        return this.currentTab === 'assign'
-            ? 'sub-tab sub-tab-active'
-            : 'sub-tab';
-    }
+        // Add active class to the selected tab
+        const selectedTabElement = this.template.querySelector(
+            `.sidebar-tab[data-tab="${this.selectedTab}"]`
+        );
+        if (selectedTabElement) {
+            console.log('Found tab element, adding active class');
+            selectedTabElement.classList.add('active');
 
-    // Dynamic classes for Manage section subtabs
-    get responsesTabContainerClass() {
-        return this.currentTab === 'response'
-            ? 'sub-tab sub-tab-active'
-            : 'sub-tab';
-    }
+            // Also update the icon and label styles
+            const icon = selectedTabElement.querySelector('.tab-icon svg');
+            if (icon) {
+                icon.style.fill = 'white';
+            }
 
-    get findingsTabContainerClass() {
-        return this.currentTab === 'finding'
-            ? 'sub-tab sub-tab-active'
-            : 'sub-tab';
-    }
-
-    get emailTabContainerClass() {
-        return this.currentTab === 'email'
-            ? 'sub-tab sub-tab-active'
-            : 'sub-tab';
-    }
-
-    // Event handlers
-    handleCreateClick() {
-        // If already expanded, don't change anything
-        if (!this.createExpanded) {
-            this.createExpanded = true;
-            this.manageExpanded = false;
-            this.currentTab = 'define';
-            this.fireTabChangeEvent('define');
+            const label = selectedTabElement.querySelector('.tab-label');
+            if (label) {
+                label.style.color = 'white';
+                label.style.fontWeight = '600';
+            }
+        } else {
+            console.log(
+                'Could not find element with data-tab:',
+                this.selectedTab
+            );
         }
-    }
-
-    handleManageClick() {
-        // If already expanded, don't change anything
-        if (!this.manageExpanded) {
-            this.createExpanded = false;
-            this.manageExpanded = true;
-            this.currentTab = 'response';
-            this.fireTabChangeEvent('response');
-        }
-    }
-
-    handleSubTabClick(event) {
-        const tab = event.currentTarget.dataset.tab;
-        this.currentTab = tab;
-        this.fireTabChangeEvent(tab);
     }
 
     fireTabChangeEvent(tabName) {
-        const selectedEvent = new CustomEvent('selectedtabchange', {
+        // Create and dispatch custom event
+        const event = new CustomEvent('selectedtabchange', {
             detail: tabName
         });
-        this.dispatchEvent(selectedEvent);
+        this.dispatchEvent(event);
     }
 }

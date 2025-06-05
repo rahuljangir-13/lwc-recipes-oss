@@ -14,12 +14,23 @@
                 </svg>
             </button>
         </div>
-        <!-- Information Section -->
+        <!-- General Information Accordion -->
         <div class="slds-card slds-m-bottom_medium info-card">
             <div
-                class="slds-card__header info-header-flex"
-                style="background: #fff; border-bottom: none"
+                class="slds-card__header info-header-flex accordion-header"
+                onclick={toggleGeneralInfo}
             >
+                <span>
+                    <svg
+                        class="slds-icon slds-icon_small"
+                        aria-hidden="true"
+                        style="width: 22px; height: 22px"
+                    >
+                        <use
+                            xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#chevronright"
+                        ></use>
+                    </svg>
+                </span>
                 <span class="slds-text-heading_medium info-section-title"
                     >General Information</span
                 >
@@ -27,83 +38,83 @@
                     >Closed</span
                 >
             </div>
-            <hr class="section-divider" />
-            <div
-                class="slds-card__body slds-card__body_inner info-section-body"
-            >
-                <div class="info-grid-2col">
-                    <div class="info-row-2col">
-                        <div>
-                            <div class="info-label">Assessment Name</div>
-                            <div class="info-value info-bold">
-                                Assessment 16-05
+            <template if:true={isGeneralInfoOpen}>
+                <hr class="section-divider" />
+                <div
+                    class="slds-card__body slds-card__body_inner info-section-body accordion-body"
+                >
+                    <div class="info-grid-2col">
+                        <div class="info-row-2col">
+                            <div>
+                                <div class="info-label">Assessment Name</div>
+                                <div class="info-value info-bold">
+                                    Assessment 16-05
+                                </div>
+                            </div>
+                            <div>
+                                <div class="info-label">Category</div>
+                                <div class="info-value">Health & Safety</div>
                             </div>
                         </div>
-                        <div>
-                            <div class="info-label">Category</div>
-                            <div class="info-value">Health & Safety</div>
-                        </div>
-                    </div>
-                    <div class="info-row-2col">
-                        <div>
-                            <div class="info-label">Checklist Name</div>
-                            <div class="info-value">
-                                <a href="#" class="info-link">SIF Alert</a>
+                        <div class="info-row-2col">
+                            <div>
+                                <div class="info-label">Checklist Name</div>
+                                <div class="info-value">
+                                    <a href="#" class="info-link">SIF Alert</a>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="info-label">Occurrence</div>
+                                <div class="info-value">One Time</div>
                             </div>
                         </div>
-                        <div>
-                            <div class="info-label">Occurrence</div>
-                            <div class="info-value">One Time</div>
-                        </div>
-                    </div>
-                    <div class="info-row-2col">
-                        <div>
-                            <div class="info-label">Start Date</div>
-                            <div class="info-value">5/1/2025</div>
-                        </div>
-                        <div>
-                            <div class="info-label">End Date</div>
-                            <div class="info-value">5/31/2025</div>
-                        </div>
-                    </div>
-                    <div class="info-row-2col">
-                        <div>
-                            <div class="info-label">Associated Customer</div>
-                            <div class="info-value">
-                                <a href="#" class="info-link"
-                                    >Alpha Corporation</a
-                                >
+                        <div class="info-row-2col">
+                            <div>
+                                <div class="info-label">Start Date</div>
+                                <div class="info-value">5/1/2025</div>
+                            </div>
+                            <div>
+                                <div class="info-label">End Date</div>
+                                <div class="info-value">5/31/2025</div>
                             </div>
                         </div>
-                        <div>
-                            <div class="info-label">Description</div>
-                            <div class="info-value">description</div>
-                        </div>
-                    </div>
-                    <div class="info-row-2col">
-                        <div>
-                            <div class="info-label">Org Component</div>
-                            <div class="info-value">
-                                <a href="#" class="info-link"
-                                    >Spare Parts Room</a
-                                >
+                        <div class="info-row-2col">
+                            <div>
+                                <div class="info-label">
+                                    Associated Customer
+                                </div>
+                                <div class="info-value">
+                                    <a href="#" class="info-link"
+                                        >Alpha Corporation</a
+                                    >
+                                </div>
+                            </div>
+                            <div>
+                                <div class="info-label">Description</div>
+                                <div class="info-value">description</div>
                             </div>
                         </div>
-                        <div></div>
+                        <div class="info-row-2col">
+                            <div>
+                                <div class="info-label">Org Component</div>
+                                <div class="info-value">
+                                    <a href="#" class="info-link"
+                                        >Spare Parts Room</a
+                                    >
+                                </div>
+                            </div>
+                            <div></div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </template>
         </div>
 
-        <!-- Assessment Roles Section -->
+        <!-- Assessment Roles Accordion -->
         <div class="slds-card slds-m-bottom_medium info-card">
             <div
-                class="slds-card__header info-header-flex"
-                style="
-                    justify-content: center;
-                    background: #fff;
-                    border-bottom: none;
-                "
+                class="slds-card__header info-header-flex accordion-header"
+                onclick={toggleRoles}
             >
                 <span
                     class="slds-text-heading_medium"
@@ -111,315 +122,338 @@
                     >Assessment Roles</span
                 >
             </div>
-            <hr class="section-divider" />
-            <div
-                class="slds-card__body slds-card__body_inner info-section-body"
-            >
-                <div class="assessment-info-box">
-                    Assessment Role assigns associated permissions to selected
-                    public group for managing suppliers, viewing responses,
-                    closing reviews, editing responses and editing reviews by
-                    ensuring limited control over key assessment processes.
+            <template if:true={isRolesOpen}>
+                <hr class="section-divider" />
+                <div
+                    class="slds-card__body slds-card__body_inner info-section-body accordion-body"
+                >
+                    <div class="assessment-info-box">
+                        Assessment Role assigns associated permissions to
+                        selected public group for managing suppliers, viewing
+                        responses, closing reviews, editing responses and
+                        editing reviews by ensuring limited control over key
+                        assessment processes.
+                    </div>
+                    <div class="roles-grid-2col">
+                        <div class="roles-row-2col">
+                            <div>
+                                <div
+                                    class="info-label"
+                                    onclick={handleLabelClick}
+                                    data-role="Administrators"
+                                >
+                                    Administrators
+                                </div>
+                                <div class="role-search-bar">
+                                    <input
+                                        class="role-search-input"
+                                        type="text"
+                                        placeholder="Select an Option..."
+                                        readonly={isAdminReadonly}
+                                    />
+                                    <span class="role-search-icon">
+                                        <!-- <svg
+                                            class="slds-icon slds-icon_x-small"
+                                            aria-hidden="true"
+                                            style="width: 18px; height: 18px"
+                                        >
+                                            <use
+                                                xlink:href="/assets/icons/utility-sprint/svg/incon8-search.svg"
+                                            ></use>
+                                        </svg> -->
+                                    </span>
+                                </div>
+                            </div>
+                            <div>
+                                <div
+                                    class="info-label"
+                                    onclick={handleLabelClick}
+                                    data-role="Approvers"
+                                >
+                                    Approvers
+                                </div>
+                                <div class="role-search-bar">
+                                    <input
+                                        class="role-search-input"
+                                        type="text"
+                                        placeholder="Select an Option..."
+                                        readonly={isApproverReadonly}
+                                    />
+                                    <span class="role-search-icon">
+                                        <svg
+                                            class="slds-icon slds-icon_x-small"
+                                            aria-hidden="true"
+                                            style="width: 18px; height: 18px"
+                                        >
+                                            <use
+                                                xlink:href="/assets/icons/utility-sprint/svg/incon8-search.svg#icon8-search"
+                                            ></use>
+                                        </svg>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="roles-row-2col">
+                            <div>
+                                <div
+                                    class="info-label"
+                                    onclick={handleLabelClick}
+                                    data-role="Initiators"
+                                >
+                                    Initiators
+                                </div>
+                                <div class="role-search-bar">
+                                    <input
+                                        class="role-search-input"
+                                        type="text"
+                                        placeholder="Select an Option..."
+                                        readonly={isInitiatorReadonly}
+                                    />
+                                    <span class="role-search-icon">
+                                        <svg
+                                            class="slds-icon slds-icon_x-small"
+                                            aria-hidden="true"
+                                            style="width: 18px; height: 18px"
+                                        >
+                                            <use
+                                                xlink:href="/assets/icons/utility-sprint/svg/incon8-search.svg#icon8-search"
+                                            ></use>
+                                        </svg>
+                                    </span>
+                                </div>
+                            </div>
+                            <div>
+                                <div
+                                    class="info-label"
+                                    onclick={handleLabelClick}
+                                    data-role="Respondents"
+                                >
+                                    Respondents
+                                </div>
+                                <div class="role-search-bar">
+                                    <input
+                                        class="role-search-input"
+                                        type="text"
+                                        placeholder="Select an Option..."
+                                        readonly={isRespondentReadonly}
+                                    />
+                                    <span class="role-search-icon">
+                                        <svg
+                                            class="slds-icon slds-icon_x-small"
+                                            aria-hidden="true"
+                                            style="width: 18px; height: 18px"
+                                        >
+                                            <use
+                                                xlink:href="/assets/icons/utility-sprint/svg/incon8-search.svg#icon8-search"
+                                            ></use>
+                                        </svg>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="roles-row-2col">
+                            <div>
+                                <div
+                                    class="info-label"
+                                    onclick={handleLabelClick}
+                                    data-role="Reviewers"
+                                >
+                                    Reviewers
+                                </div>
+                                <div class="role-search-bar">
+                                    <input
+                                        class="role-search-input"
+                                        type="text"
+                                        placeholder="Select an Option..."
+                                        readonly={isReviewerReadonly}
+                                    />
+                                    <span class="role-search-icon">
+                                        <svg
+                                            class="slds-icon slds-icon_x-small"
+                                            aria-hidden="true"
+                                            style="width: 18px; height: 18px"
+                                        >
+                                            <use
+                                                xlink:href="/assets/icons/utility-sprint/svg/incon8-search.svg#icon8-search"
+                                            ></use>
+                                        </svg>
+                                    </span>
+                                </div>
+                            </div>
+                            <div>
+                                <div
+                                    class="info-label"
+                                    onclick={handleLabelClick}
+                                    data-role="Viewers"
+                                >
+                                    Viewers
+                                </div>
+                                <div class="role-search-bar">
+                                    <input
+                                        class="role-search-input"
+                                        type="text"
+                                        placeholder="Select an Option..."
+                                        readonly={isViewerReadonly}
+                                    />
+                                    <span class="role-search-icon">
+                                        <svg
+                                            class="slds-icon slds-icon_x-small"
+                                            aria-hidden="true"
+                                            style="width: 18px; height: 18px"
+                                        >
+                                            <use
+                                                xlink:href="/assets/icons/utility-sprint/svg/incon8-search.svg#icon8-search"
+                                            ></use>
+                                        </svg>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="roles-grid-2col">
-                    <div class="roles-row-2col">
-                        <div>
-                            <div
-                                class="info-label"
-                                onclick={handleLabelClick}
-                                data-role="Administrators"
-                            >
-                                Administrators
-                            </div>
-                            <div class="role-search-bar">
-                                <input
-                                    class="role-search-input"
-                                    type="text"
-                                    placeholder="Select an Option..."
-                                    readonly={isAdminReadonly}
-                                />
-                                <span class="role-search-icon">
-                                    <svg
-                                        class="slds-icon slds-icon_x-small"
-                                        aria-hidden="true"
-                                        style="width: 18px; height: 18px"
-                                    >
-                                        <use
-                                            xlink:href="/assets/icons/utility-sprint/svg/incon8-search.svg"
-                                        ></use>
-                                    </svg>
-                                </span>
-                            </div>
-                        </div>
-                        <div>
-                            <div
-                                class="info-label"
-                                onclick={handleLabelClick}
-                                data-role="Approvers"
-                            >
-                                Approvers
-                            </div>
-                            <div class="role-search-bar">
-                                <input
-                                    class="role-search-input"
-                                    type="text"
-                                    placeholder="Select an Option..."
-                                    readonly={isApproverReadonly}
-                                />
-                                <span class="role-search-icon">
-                                    <svg
-                                        class="slds-icon slds-icon_x-small"
-                                        aria-hidden="true"
-                                        style="width: 18px; height: 18px"
-                                    >
-                                        <use
-                                            xlink:href="/assets/icons/utility-sprint/svg/incon8-search.svg#icon8-search"
-                                        ></use>
-                                    </svg>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="roles-row-2col">
-                        <div>
-                            <div
-                                class="info-label"
-                                onclick={handleLabelClick}
-                                data-role="Initiators"
-                            >
-                                Initiators
-                            </div>
-                            <div class="role-search-bar">
-                                <input
-                                    class="role-search-input"
-                                    type="text"
-                                    placeholder="Select an Option..."
-                                    readonly={isInitiatorReadonly}
-                                />
-                                <span class="role-search-icon">
-                                    <svg
-                                        class="slds-icon slds-icon_x-small"
-                                        aria-hidden="true"
-                                        style="width: 18px; height: 18px"
-                                    >
-                                        <use
-                                            xlink:href="/assets/icons/utility-sprint/svg/incon8-search.svg#icon8-search"
-                                        ></use>
-                                    </svg>
-                                </span>
-                            </div>
-                        </div>
-                        <div>
-                            <div
-                                class="info-label"
-                                onclick={handleLabelClick}
-                                data-role="Respondents"
-                            >
-                                Respondents
-                            </div>
-                            <div class="role-search-bar">
-                                <input
-                                    class="role-search-input"
-                                    type="text"
-                                    placeholder="Select an Option..."
-                                    readonly={isRespondentReadonly}
-                                />
-                                <span class="role-search-icon">
-                                    <svg
-                                        class="slds-icon slds-icon_x-small"
-                                        aria-hidden="true"
-                                        style="width: 18px; height: 18px"
-                                    >
-                                        <use
-                                            xlink:href="/assets/icons/utility-sprint/svg/incon8-search.svg#icon8-search"
-                                        ></use>
-                                    </svg>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="roles-row-2col">
-                        <div>
-                            <div
-                                class="info-label"
-                                onclick={handleLabelClick}
-                                data-role="Reviewers"
-                            >
-                                Reviewers
-                            </div>
-                            <div class="role-search-bar">
-                                <input
-                                    class="role-search-input"
-                                    type="text"
-                                    placeholder="Select an Option..."
-                                    readonly={isReviewerReadonly}
-                                />
-                                <span class="role-search-icon">
-                                    <svg
-                                        class="slds-icon slds-icon_x-small"
-                                        aria-hidden="true"
-                                        style="width: 18px; height: 18px"
-                                    >
-                                        <use
-                                            xlink:href="/assets/icons/utility-sprint/svg/incon8-search.svg#icon8-search"
-                                        ></use>
-                                    </svg>
-                                </span>
-                            </div>
-                        </div>
-                        <div>
-                            <div
-                                class="info-label"
-                                onclick={handleLabelClick}
-                                data-role="Viewers"
-                            >
-                                Viewers
-                            </div>
-                            <div class="role-search-bar">
-                                <input
-                                    class="role-search-input"
-                                    type="text"
-                                    placeholder="Select an Option..."
-                                    readonly={isViewerReadonly}
-                                />
-                                <span class="role-search-icon">
-                                    <svg
-                                        class="slds-icon slds-icon_x-small"
-                                        aria-hidden="true"
-                                        style="width: 18px; height: 18px"
-                                    >
-                                        <use
-                                            xlink:href="/assets/icons/utility-sprint/svg/incon8-search.svg#icon8-search"
-                                        ></use>
-                                    </svg>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </template>
         </div>
 
-        <!-- Scoring Ranges Section -->
+        <!-- Scoring Ranges Accordion -->
         <div class="slds-card slds-m-bottom_medium info-card scoring-card">
             <div
-                class="slds-card__header info-header-flex scoring-header"
-                style="
-                    background: #f6f8fa;
-                    border-bottom: 1px solid #e5e5e5;
-                    border-radius: 8px 8px 0 0;
-                    padding: 16px 24px;
-                "
+                class="slds-card__header info-header-flex scoring-header accordion-header"
+                onclick={toggleScoring}
             >
-                <div class="scoring-header-left">
-                    <span
-                        class="slds-icon_container scoring-gear"
-                        title="Configure Scoring Ranges"
-                    >
-                        <svg
-                            class="slds-icon slds-icon_small slds-icon-text-default"
-                            aria-hidden="true"
-                            style="width: 22px; height: 22px"
-                        >
-                            <use
-                                xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#settings"
-                            ></use>
-                        </svg>
-                    </span>
-                    <span class="scoring-title">Configure Scoring Ranges</span>
-                </div>
-                <div class="scoring-header-actions">
+                <span class="slds-text-heading_medium scoring-title"
+                    >Configure Scoring Ranges</span
+                >
+                <!-- <div class="scoring-header-actions">
                     <button class="scoring-edit-btn">Edit</button>
-                    <button class="scoring-add-btn">+ Add</button>
-                </div>
+                    <button class="scoring-add-btn"> Add</button>
+                </div> -->
             </div>
-            <div
-                class="slds-card__body slds-card__body_inner scoring-section-body"
-            >
-                <div class="scoring-rows">
-                    <div class="scoring-row">
-                        <input
-                            type="text"
-                            class="scoring-input"
-                            value="0"
-                            readonly
-                        />
-                        <span class="scoring-percent">%-</span>
-                        <input
-                            type="text"
-                            class="scoring-input"
-                            value="35"
-                            readonly
-                        />
-                        <span class="scoring-percent">%</span>
-                        <button class="scoring-flag red">
-                            <svg class="slds-icon" aria-hidden="true">
-                                <use
-                                    xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#flag"
-                                ></use>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="scoring-row">
-                        <input
-                            type="text"
-                            class="scoring-input"
-                            value="36"
-                            readonly
-                        />
-                        <span class="scoring-percent">%-</span>
-                        <input
-                            type="text"
-                            class="scoring-input"
-                            value="75"
-                            readonly
-                        />
-                        <span class="scoring-percent">%</span>
-                        <button class="scoring-flag orange">
-                            <svg class="slds-icon" aria-hidden="true">
-                                <use
-                                    xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#flag"
-                                ></use>
-                            </svg>
-                        </button>
-                        <!-- <button class="scoring-delete"><svg class="slds-icon" aria-hidden="true"><use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#delete"></use></svg></button> -->
-                    </div>
-                    <div class="scoring-row">
-                        <input
-                            type="text"
-                            class="scoring-input"
-                            value="76"
-                            readonly
-                        />
-                        <span class="scoring-percent">%-</span>
-                        <input
-                            type="text"
-                            class="scoring-input"
-                            value="100"
-                            readonly
-                        />
-                        <span class="scoring-percent">%</span>
-                        <button class="scoring-flag green">
-                            <svg class="slds-icon" aria-hidden="true">
-                                <use
-                                    xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#flag"
-                                ></use>
-                            </svg>
-                        </button>
+            <template if:true={isScoringOpen}>
+                <div
+                    class="slds-card__body slds-card__body_inner scoring-section-body accordion-body"
+                >
+                    <div class="scoring-table">
+                        <div class="scoring-table-header">
+                            <div class="stage-column">Flag color</div>
+                            <div class="from-column">FROM %</div>
+                            <div class="to-column">TO %</div>
+                            <div class="actions-column"></div>
+                        </div>
+
+                        <!-- Regular row - shown when not editing this record -->
+                        <template for:each={scoringRanges} for:item="range">
+                            <div
+                                key={range.id}
+                                class="scoring-table-row"
+                                data-id={range.id}
+                            >
+                                <template if:false={range.isEditing}>
+                                    <div class="stage-column">
+                                        <span class={range.colorClass}></span>
+                                        <!-- <span>{range.stageName}</span> -->
+                                    </div>
+                                    <div class="from-column">{range.from}</div>
+                                    <div class="to-column">{range.to}</div>
+                                    <div class="actions-column">
+                                        <button
+                                            class="action-icon edit-icon"
+                                            title="Edit"
+                                            data-id={range.id}
+                                            onclick={handleEditRange}
+                                        >
+                                            +
+                                        </button>
+                                        <button
+                                            class="action-icon edit-icon"
+                                            title="Edit"
+                                            data-id={range.id}
+                                            onclick={handleEditRange}
+                                        >
+                                            <svg aria-hidden="true">
+                                                <use
+                                                    xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#edit"
+                                                ></use>
+                                            </svg>
+                                        </button>
+                                        <button
+                                            class="action-icon delete-icon"
+                                            title="Delete"
+                                            data-id={range.id}
+                                            onclick={handleDeleteRange}
+                                        >
+                                            <svg aria-hidden="true">
+                                                <use
+                                                    xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#delete"
+                                                ></use>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </template>
+
+                                <!-- Edit form - shown when editing this record -->
+                                <template if:true={range.isEditing}>
+                                    <div class="stage-column">
+                                        <input
+                                            type="text"
+                                            class="stage-input"
+                                            placeholder="Stage name"
+                                            value={range.stageName}
+                                            data-id={range.id}
+                                            data-field="stageName"
+                                            onchange={handleRangeFieldChange}
+                                        />
+                                    </div>
+                                    <div class="from-column">
+                                        <input
+                                            type="text"
+                                            class="numeric-input"
+                                            placeholder="0"
+                                            value={range.from}
+                                            data-id={range.id}
+                                            data-field="from"
+                                            onchange={handleRangeFieldChange}
+                                        />
+                                    </div>
+                                    <div class="to-column">
+                                        <input
+                                            type="text"
+                                            class="numeric-input"
+                                            placeholder="Value"
+                                            value={range.to}
+                                            data-id={range.id}
+                                            data-field="to"
+                                            onchange={handleRangeFieldChange}
+                                        />
+                                    </div>
+                                    <div class="actions-column">
+                                        <button
+                                            class="cancel-btn"
+                                            data-id={range.id}
+                                            onclick={handleCancelEdit}
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            class="save-btn"
+                                            data-id={range.id}
+                                            onclick={handleSaveRange}
+                                        >
+                                            Save
+                                        </button>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
                     </div>
                 </div>
-            </div>
+            </template>
         </div>
 
-        <!-- System Information Section -->
+        <!-- System Information Accordion -->
         <div class="slds-card slds-m-bottom_medium info-card">
             <div
-                class="slds-card__header info-header-flex"
-                style="
-                    justify-content: center;
-                    background: #fff;
-                    border-bottom: none;
-                "
+                class="slds-card__header info-header-flex accordion-header"
+                onclick={toggleSystemInfo}
             >
                 <span
                     class="slds-text-heading_medium"
@@ -427,30 +461,32 @@
                     >System Information</span
                 >
             </div>
-            <hr class="section-divider" />
-            <div
-                class="slds-card__body slds-card__body_inner info-section-body"
-            >
-                <div class="info-grid-2col">
-                    <div class="info-row-2col">
-                        <div>
-                            <div class="info-label">Created By</div>
-                            <div class="info-value">
-                                <a href="#" class="info-link"
-                                    >Red Guard Supplier</a
-                                >, 5/16/2025, 12:39 PM
+            <template if:true={isSystemInfoOpen}>
+                <hr class="section-divider" />
+                <div
+                    class="slds-card__body slds-card__body_inner info-section-body accordion-body"
+                >
+                    <div class="info-grid-2col">
+                        <div class="info-row-2col">
+                            <div>
+                                <div class="info-label">Created By</div>
+                                <div class="info-value">
+                                    <a href="#" class="info-link"
+                                        >Red Guard Supplier</a
+                                    >, 5/16/2025, 12:39 PM
+                                </div>
                             </div>
-                        </div>
-                        <div>
-                            <div class="info-label">Last Modified By</div>
-                            <div class="info-value">
-                                <a href="#" class="info-link">Dev Admin</a>,
-                                6/3/2025, 4:18 PM
+                            <div>
+                                <div class="info-label">Last Modified By</div>
+                                <div class="info-value">
+                                    <a href="#" class="info-link">Dev Admin</a>,
+                                    6/3/2025, 4:18 PM
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </template>
         </div>
 
         <!-- Create Recurring Assessments -->

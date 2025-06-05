@@ -1,217 +1,176 @@
 <template>
     <div class="assign-section">
         <div class="section-header">
-            <h2 class="section-title">Assign Assessment</h2>
+            <h2 class="section-title">Assign</h2>
         </div>
 
-        <!-- Scope Selection -->
-        <div class="slds-form-element slds-m-bottom_medium">
-            <label class="slds-form-element__label" for="scope-select"
-                >Assessment Scope</label
-            >
-            <div class="slds-form-element__control">
-                <div class="slds-select_container">
+        <!-- Assessment Scope Selection -->
+        <div class="scope-container">
+            <div class="scope-selection">
+                <label for="scope-select">Assessment Scope</label>
+                <div class="select-wrapper">
                     <select
                         id="scope-select"
-                        class="slds-select"
+                        class="custom-select"
                         onchange={handleScopeChange}
+                        placeholder="Select scope"
                     >
-                        <option value="All Suppliers">All Suppliers</option>
-                        <option value="North America Suppliers">
-                            North America Suppliers
-                        </option>
-                        <option value="Europe Suppliers">
-                            Europe Suppliers
-                        </option>
-                        <option value="Asia Suppliers">Asia Suppliers</option>
+                        <!-- <option value="">Select scope</option> -->
+                        <option value="All Suppliers">Supplier</option>
+                        <option value="Customer">Customer</option>
+                        <option value="Location">Location</option>
                     </select>
                 </div>
             </div>
         </div>
 
-        <!-- Suppliers Data Table -->
-        <div class="slds-card">
-            <div class="slds-card__header slds-grid">
-                <header
-                    class="slds-media slds-media_center slds-has-flexi-truncate"
+        <!-- Dynamic Item Selection Based on Scope -->
+        <div if:true={showItemSelection} class="item-selection-container">
+            <div class="selection-header">
+                <h3 class="selection-title">Select {selectedScope}</h3>
+                <span class="selected-count"
+                    >{selectedItems.length} selected</span
                 >
-                    <div class="slds-media__figure">
-                        <span
-                            class="slds-icon_container slds-icon-standard-account"
-                        >
-                            <svg
-                                class="slds-icon slds-icon_small"
-                                aria-hidden="true"
-                            >
-                                <use
-                                    xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#account"
-                                ></use>
-                            </svg>
-                        </span>
-                    </div>
-                    <div class="slds-media__body">
-                        <h2 class="slds-card__header-title">
-                            <span>Assigned Suppliers ({suppliers.length})</span>
-                        </h2>
-                    </div>
-                    <div class="slds-no-flex">
-                        <button class="slds-button slds-button_neutral">
-                            <svg
-                                class="slds-button__icon slds-button__icon_left"
-                                aria-hidden="true"
-                            >
-                                <use
-                                    xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#add"
-                                ></use>
-                            </svg>
-                            Add Suppliers
-                        </button>
-                    </div>
-                </header>
             </div>
-            <div class="slds-card__body">
-                <div
-                    class="slds-table_header-fixed_container"
-                    style="height: 300px"
-                >
-                    <div class="slds-scrollable_y" style="height: 100%">
-                        <table
-                            class="slds-table slds-table_bordered slds-table_cell-buffer slds-table_fixed-layout"
-                        >
-                            <thead>
-                                <tr class="slds-line-height_reset">
-                                    <th scope="col" style="width: 3.25rem">
-                                        <div class="slds-th__action">
-                                            <span class="slds-checkbox">
-                                                <input
-                                                    type="checkbox"
-                                                    name="select-all"
-                                                    id="select-all"
-                                                />
-                                                <label
-                                                    class="slds-checkbox__label"
-                                                    for="select-all"
-                                                >
-                                                    <span
-                                                        class="slds-checkbox_faux"
-                                                    ></span>
-                                                    <span
-                                                        class="slds-form-element__label slds-assistive-text"
-                                                        >Select All</span
-                                                    >
-                                                </label>
-                                            </span>
-                                        </div>
-                                    </th>
-                                    <th scope="col" style="width: 35%">
-                                        <div class="slds-th__action">
-                                            <span>Name</span>
-                                        </div>
-                                    </th>
-                                    <th scope="col" style="width: 45%">
-                                        <div class="slds-th__action">
-                                            <span>Corporate Address</span>
-                                        </div>
-                                    </th>
-                                    <th scope="col" style="width: 20%">
-                                        <div class="slds-th__action">
-                                            <span>Date Added</span>
-                                        </div>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <template
-                                    for:each={suppliers}
-                                    for:item="supplier"
-                                >
-                                    <tr
-                                        key={supplier.id}
-                                        class="slds-hint-parent"
-                                    >
-                                        <td>
-                                            <div class="slds-th__action">
-                                                <span class="slds-checkbox">
-                                                    <input
-                                                        type="checkbox"
-                                                        name={supplier.id}
-                                                        id={supplier.id}
-                                                    />
-                                                    <label
-                                                        class="slds-checkbox__label"
-                                                        for={supplier.id}
-                                                    >
-                                                        <span
-                                                            class="slds-checkbox_faux"
-                                                        ></span>
-                                                        <span
-                                                            class="slds-form-element__label slds-assistive-text"
-                                                            >Select
-                                                            {supplier.name}</span
-                                                        >
-                                                    </label>
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td data-label="Name">
-                                            <div
-                                                class="slds-truncate"
-                                                title={supplier.name}
-                                            >
-                                                <a href="javascript:void(0);"
-                                                    >{supplier.name}</a
-                                                >
-                                            </div>
-                                        </td>
-                                        <td data-label="Corporate Address">
-                                            <div
-                                                class="slds-truncate"
-                                                title={supplier.address}
-                                            >
-                                                {supplier.address}
-                                            </div>
-                                        </td>
-                                        <td data-label="Date Added">
-                                            <div
-                                                class="slds-truncate"
-                                                title={supplier.dateAdded}
-                                            >
-                                                {supplier.dateAdded}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </template>
-                            </tbody>
-                        </table>
-                    </div>
+            <div class="multi-select-container">
+                <div class="search-box">
+                    <input
+                        type="text"
+                        placeholder="Search..."
+                        onkeyup={handleSearch}
+                        class="search-input"
+                    />
                 </div>
+                <div class="items-list">
+                    <template
+                        for:each={availableItems}
+                        for:item="item"
+                        for:index="index"
+                    >
+                        <div key={item.id} class="select-item">
+                            <div class="custom-checkbox">
+                                <input
+                                    type="checkbox"
+                                    id={item.id}
+                                    name={item.id}
+                                    checked={item.selected}
+                                    onchange={handleItemSelection}
+                                    data-id={item.id}
+                                />
+                                <label for={item.id}></label>
+                            </div>
+                            <span class="item-name">{item.name}</span>
+                        </div>
+                    </template>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-cancel" onclick={handleCancel}>
+                    Cancel
+                </button>
+                <button class="btn btn-save" onclick={handleSave}>Save</button>
+            </div>
+        </div>
 
-                <!-- Pagination Controls -->
-                <div
-                    class="slds-grid slds-grid_vertical-align-center slds-p-around_medium"
-                >
-                    <div class="slds-col slds-size_2-of-12">
-                        <div class="slds-text-color_weak">
-                            5 items • page 1 of 1
+        <!-- Suppliers Data Table -->
+        <div class="modern-table-container">
+            <div class="table-header">
+                <div class="table-title">Suppliers Data Table</div>
+                <div class="table-actions">
+                    <span class="table-count">Total {suppliersCount}</span>
+                </div>
+            </div>
+
+            <div class="responsive-table-wrapper">
+                <table class="modern-table">
+                    <thead>
+                        <tr>
+                            <th class="checkbox-column">
+                                <div class="custom-checkbox">
+                                    <input type="checkbox" id="select-all" />
+                                    <label for="select-all"></label>
+                                </div>
+                            </th>
+                            <th class="sortable-column" onclick={sortByName}>
+                                <div class="column-header">
+                                    Name
+                                    <span class="sort-icon"></span>
+                                </div>
+                            </th>
+                            <th class="sortable-column" onclick={sortByAddress}>
+                                <div class="column-header">
+                                    Corporate Address
+                                    <span class="sort-icon"></span>
+                                </div>
+                            </th>
+                            <th class="sortable-column" onclick={sortByDate}>
+                                <div class="column-header">
+                                    Date Added
+                                    <span class="sort-icon"></span>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template
+                            for:each={suppliers}
+                            for:item="supplier"
+                            for:index="index"
+                        >
+                            <tr key={supplier.id} class="table-row">
+                                <td>
+                                    <div class="custom-checkbox">
+                                        <input
+                                            type="checkbox"
+                                            id={supplier.id}
+                                            name={supplier.id}
+                                        />
+                                        <label for={supplier.id}></label>
+                                    </div>
+                                </td>
+                                <td class="name-column">
+                                    <span class="supplier-name"
+                                        >{supplier.name}</span
+                                    >
+                                </td>
+                                <td>
+                                    <span class="supplier-address"
+                                        >{supplier.address}</span
+                                    >
+                                </td>
+                                <td>
+                                    <span class="date-added"
+                                        >{supplier.dateAdded}</span
+                                    >
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination Controls -->
+            <div class="pagination-container">
+                <div class="pagination-info">
+                    <button class="page-first" aria-label="First Page">
+                        «
+                    </button>
+                    <button
+                        class="page-prev"
+                        disabled
+                        aria-label="Previous Page"
+                    >
+                        ‹
+                    </button>
+                    <div class="page-indicator">
+                        <span class="current-page">1</span>
+                        <div class="page-selector">
+                            <input type="number" value="1" min="1" max="10" />
+                            <span>▾</span>
                         </div>
                     </div>
-                    <div class="slds-col slds-size_7-of-12"></div>
-                    <div class="slds-col slds-size_3-of-12">
-                        <div class="slds-button-group" role="group">
-                            <button
-                                class="slds-button slds-button_neutral"
-                                disabled
-                            >
-                                Previous
-                            </button>
-                            <button
-                                class="slds-button slds-button_neutral"
-                                disabled
-                            >
-                                Next
-                            </button>
-                        </div>
-                    </div>
+                    <button class="page-next" aria-label="Next Page">›</button>
+                    <button class="page-last" aria-label="Last Page">»</button>
                 </div>
             </div>
         </div>

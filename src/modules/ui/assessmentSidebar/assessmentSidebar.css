@@ -1,197 +1,151 @@
 :host {
     display: block;
-    height: 100%;
     width: 100%;
     font-family: 'Roboto', Arial, sans-serif;
+    background-color: #f0f0f0;
+    color: #000000;
 }
 
 .sidebar-container {
-    background-color: #f7f9fb;
-    height: calc(100% - 50px);
-    overflow-y: auto;
     display: flex;
     flex-direction: column;
-    font-family: 'Roboto', Arial, sans-serif;
-    padding: 12px;
-    border-radius: 4px;
+    height: 100%;
+    background: #ffffff;
+    padding: 24px 0;
+    box-shadow: 1px 0 4px rgba(0, 0, 0, 0.05);
+    border-right: 1px solid #eaeaea;
 }
 
-.main-tab-container {
+.sidebar-tabs {
     display: flex;
     flex-direction: column;
-    padding: 8px 0;
+    gap: 8px;
+    padding: 0 8px;
 }
 
-/* Tab grid layout */
-.tab-grid {
+.sidebar-tab {
+    position: relative;
     display: flex;
-    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    border: 1px solid transparent;
+}
+
+.tab-content {
+    display: flex;
     align-items: center;
     width: 100%;
 }
 
-.tab-left {
+.tab-icon {
+    margin-right: 12px;
     display: flex;
     align-items: center;
+    justify-content: center;
+    background: rgba(124, 58, 237, 0.08);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    transition: background 0.2s;
 }
 
-/* Main tab styling */
-.main-tab {
-    padding: 12px 16px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
+.tab-icon svg {
+    width: 18px;
+    height: 18px;
+    fill: #7c3aed;
 }
 
-.main-tab:hover {
-    background-color: #eef1f6;
+.tab-label {
+    font-size: 1.08rem;
+    font-weight: 500;
+    color: #444;
+    transition: color 0.2s;
 }
 
-.main-tab-active {
-    background-color: #e8eaf6;
-    border-left: 4px solid #6a31ea;
-    padding-left: 12px;
+/* Hover state */
+.sidebar-tab:hover:not(.active) {
+    background-color: rgba(81, 85, 92, 0.08);
 }
 
-.main-tab-active:before {
-    content: '';
+.sidebar-tab:hover .tab-label {
+    color: #222;
+}
+
+.sidebar-tab:hover .tab-icon {
+    background: rgba(59, 130, 246, 0.12);
+}
+
+/* Active state */
+.sidebar-tab.active {
+    background-color: #7c3aed;
+    box-shadow: 0 4px 8px rgba(124, 58, 237, 0.3);
+    transform: translateY(-1px);
+    border: 1px solid #6422ea;
+}
+
+.sidebar-tab.active .tab-icon {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+.sidebar-tab.active .tab-label {
+    color: white;
+    font-weight: 600;
+}
+
+.sidebar-tab.active .tab-icon svg {
+    fill: #ffffff;
+}
+
+.selection-indicator {
     position: absolute;
     left: 0;
     top: 0;
-    width: 4px;
+    width: 3px;
     height: 100%;
-    background-color: #6a31ea;
+    background: #ffffff;
+    opacity: 0;
+    transition: opacity 0.3s;
 }
 
-/* Tab icons */
-.tab-icon {
-    display: inline-block;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    margin-right: 12px;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: 16px;
+.sidebar-tab.active .selection-indicator {
+    opacity: 1;
 }
 
-.create-icon {
-    background-color: #6a31ea;
-    background-image: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14"><path fill="%23FFFFFF" d="M7.75.75a.75.75 0 00-1.5 0V6H.75a.75.75 0 000 1.5H6.25v5.25a.75.75 0 001.5 0V7.5H13a.75.75 0 000-1.5H7.75V.75z"/></svg>');
-}
-
-.manage-icon {
-    background-color: #9b6bff;
-    background-image: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14"><path fill="%23FFFFFF" d="M12.5 3h-11a.5.5 0 01-.5-.5v-1a.5.5 0 01.5-.5h11a.5.5 0 01.5.5v1a.5.5 0 01-.5.5zm0 5h-11a.5.5 0 01-.5-.5v-1a.5.5 0 01.5-.5h11a.5.5 0 01.5.5v1a.5.5 0 01-.5.5zm0 5h-11a.5.5 0 01-.5-.5v-1a.5.5 0 01.5-.5h11a.5.5 0 01.5.5v1a.5.5 0 01-.5.5z"/></svg>');
-}
-
-/* Tab label */
-.tab-label {
-    font-size: 16px;
-    font-weight: 600;
-    color: #16325c;
-}
-
-/* Subtabs container - with animation */
-.sub-tabs-container {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    transition: max-height 0.3s ease-in-out;
-    background-color: #ffffff;
-}
-
-.sub-tabs-container.expanded {
-    max-height: 200px;
-}
-
-.sub-tabs-container.collapsed {
-    max-height: 0;
-}
-
-/* Subtab styling */
-.sub-tab {
-    padding: 8px 16px 8px 40px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    position: relative;
-    font-size: 14px;
-    color: #444;
-    border-left: 3px solid transparent;
-}
-
-.sub-tab:hover {
-    background-color: #f3f3f3;
-}
-
-.sub-tab-active {
-    background-color: #eef1f6;
-    border-left: 3px solid #0176d3;
-    font-weight: 500;
-}
-
-.sub-tab-content {
-    padding: 0px 8px;
-}
-
-/* Filter section at bottom */
+/* Filter section */
 .filter-container {
     margin-top: auto;
     display: flex;
-    padding: 10px 16px;
-    align-items: center;
     justify-content: space-between;
-    border-top: 1px solid #e5e5e5;
-    background-color: #f7f9fb;
-    color: #707070;
-    font-size: 12px;
-    position: relative;
+    align-items: center;
+    padding: 16px 20px;
+    border-top: 1px solid #eaeaea;
+    background: #f5f5f5;
 }
 
 .filter-text {
-    flex-grow: 1;
-}
-
-.filter-icon {
-    cursor: pointer;
-    color: #706e6b;
-    display: flex;
-    align-items: center;
-}
-
-/* Custom chevron and filter icons */
-.chevron-icon {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    text-align: center;
-}
-
-.chevron-right {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    border-top: 2px solid #706e6b;
-    border-right: 2px solid #706e6b;
-    transform: rotate(45deg);
-}
-
-.chevron-down {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    border-top: 2px solid #706e6b;
-    border-right: 2px solid #706e6b;
-    transform: rotate(135deg);
-    margin-top: -3px;
+    font-size: 0.813rem;
+    color: #666;
+    font-weight: 400;
 }
 
 .filter-icon-custom {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    background-image: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="%23706e6b" d="M6 10v3a1 1 0 001 1h2a1 1 0 001-1v-3l4.24-5.1A1 1 0 0014 4H2a1 1 0 00-.76 1.65L6 10zm10-4.35a3 3 0 00-.24-3.07A3 3 0 0012.76 2H3.24a3 3 0 00-2.28 4.42 3 3 0 00.76 1.15L6 12v2a1 1 0 001 1h2a1 1 0 001-1v-2l4.28-4.43a3 3 0 00.76-1.15 2.94 2.94 0 00.96-1.77z"/></svg>');
-    background-position: center;
+    width: 18px;
+    height: 18px;
+    background-image: url('/assets/icons/utility-sprite/svg/symbols.svg#filterlist');
     background-repeat: no-repeat;
-    background-size: contain;
+    background-position: center;
+    display: inline-block;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.filter-icon-custom:hover {
+    opacity: 1;
 }
