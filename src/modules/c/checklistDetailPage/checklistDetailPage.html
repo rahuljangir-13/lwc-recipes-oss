@@ -25,16 +25,19 @@
                     onclick={handleSidebarNavigation}
                 >
                     <div class="sidebar-icon">
-                        <svg class="icon-check" viewBox="0 0 24 24">
+                        <svg class="icon-svg" viewBox="0 0 24 24">
                             <circle
                                 cx="12"
                                 cy="12"
                                 r="10"
+                                stroke="#706e6b"
                                 fill="#0070d2"
+                                class="icon-circle"
                             ></circle>
                             <path
-                                d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
+                                d="M8 11h8v2H8v-2zm0-4h8v2H8V7zm0 8h4v2H8v-2z"
                                 fill="white"
+                                class="icon-path"
                             ></path>
                         </svg>
                     </div>
@@ -48,24 +51,21 @@
                     onclick={handleSidebarNavigation}
                 >
                     <div class="sidebar-icon">
-                        <svg class="icon-circle" viewBox="0 0 24 24">
+                        <svg class="icon-svg" viewBox="0 0 24 24">
                             <circle
                                 cx="12"
                                 cy="12"
                                 r="10"
                                 stroke="#706e6b"
                                 fill="none"
-                                stroke-width="2"
+                                class="icon-circle"
                             ></circle>
                             <path
-                                d="M9 12h6"
+                                d="M12 17h.01M12 7v6"
                                 stroke="#706e6b"
                                 stroke-width="2"
-                            ></path>
-                            <path
-                                d="M12 9v6"
-                                stroke="#706e6b"
-                                stroke-width="2"
+                                stroke-linecap="round"
+                                class="icon-path"
                             ></path>
                         </svg>
                     </div>
@@ -79,19 +79,21 @@
                     onclick={handleSidebarNavigation}
                 >
                     <div class="sidebar-icon">
-                        <svg class="icon-circle" viewBox="0 0 24 24">
+                        <svg class="icon-svg" viewBox="0 0 24 24">
                             <circle
                                 cx="12"
                                 cy="12"
                                 r="10"
                                 stroke="#706e6b"
                                 fill="none"
-                                stroke-width="2"
+                                class="icon-circle"
                             ></circle>
                             <path
-                                d="M8 12h8"
+                                d="M14 8V6H6v12h12v-8h-2v-2h-2zm-2 0h-2V6h2v2z"
                                 stroke="#706e6b"
-                                stroke-width="2"
+                                stroke-width="1"
+                                fill="none"
+                                class="icon-path"
                             ></path>
                         </svg>
                     </div>
@@ -105,15 +107,22 @@
                     onclick={handleSidebarNavigation}
                 >
                     <div class="sidebar-icon">
-                        <svg class="icon-circle" viewBox="0 0 24 24">
+                        <svg class="icon-svg" viewBox="0 0 24 24">
                             <circle
                                 cx="12"
                                 cy="12"
                                 r="10"
                                 stroke="#706e6b"
                                 fill="none"
-                                stroke-width="2"
+                                class="icon-circle"
                             ></circle>
+                            <path
+                                d="M12 7c-3 0-6 4-6 4s3 4 6 4 6-4 6-4-3-4-6-4zm0 6a2 2 0 100-4 2 2 0 000 4z"
+                                stroke="#706e6b"
+                                stroke-width="2"
+                                fill="none"
+                                class="icon-path"
+                            ></path>
                         </svg>
                     </div>
                     <div class="sidebar-text">Preview</div>
