@@ -5,29 +5,40 @@
         ></c-checklist-modal>
     </template>
 
-    <div class="card-container">
-        <div class="header-container">
-            <div class="title-with-icon">
-                <span class="checklist-icon-container">
-                    <img
-                        src="https://img.icons8.com/fluency-systems-filled/24/ffffff/checklist.png"
-                        alt="Checklist Icon"
-                        class="checklist-icon"
-                    />
-                </span>
-                <h2 class="checklist-title">Checklist</h2>
-            </div>
-            <button class="new-button" onclick={handleOpenChecklistModal}>
-                New
-            </button>
-        </div>
+    <template lwc:if={showDetailView}>
+        <c-checklist-detail-page
+            record-id={selectedChecklistId}
+            onback={handleBackToList}
+            onedit={handleEditItem}
+        ></c-checklist-detail-page>
+    </template>
 
-        <div class="checklist-container">
-            <c-checklist
-                items={checklistItems}
-                onedit={handleEditItem}
-                ondelete={handleDeleteItem}
-            ></c-checklist>
+    <template lwc:if={showListView}>
+        <div class="card-container">
+            <div class="header-container">
+                <div class="title-with-icon">
+                    <span class="checklist-icon-container">
+                        <img
+                            src="https://img.icons8.com/fluency-systems-filled/24/ffffff/checklist.png"
+                            alt="Checklist Icon"
+                            class="checklist-icon"
+                        />
+                    </span>
+                    <h2 class="checklist-title">Checklist</h2>
+                </div>
+                <button class="new-button" onclick={handleOpenChecklistModal}>
+                    New
+                </button>
+            </div>
+
+            <div class="checklist-container">
+                <c-checklist
+                    items={checklistItems}
+                    onview={handleViewChecklist}
+                    onedit={handleEditItem}
+                    ondelete={handleDeleteItem}
+                ></c-checklist>
+            </div>
         </div>
-    </div>
+    </template>
 </template>

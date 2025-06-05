@@ -278,21 +278,8 @@ export default class App extends LightningElement {
 
     // Handle view assessments (placeholder)
     handleViewAssessments() {
-        console.log('👁️ Assessments view not implemented yet');
-
-        // Get connectivity status component for toast notification
-        const connectivityStatus = this.template.querySelector(
-            'c-connectivity-status'
-        );
-        if (connectivityStatus) {
-            // Show an info notification instead of alert
-            connectivityStatus.handleSyncComplete({
-                detail: {
-                    message: 'Assessments feature coming soon!',
-                    variant: 'info'
-                }
-            });
-        }
+        console.log('👁️ Switching to Assessments view');
+        this.currentView = 'assessments';
     }
 
     // Handle view checklists
@@ -353,6 +340,10 @@ export default class App extends LightningElement {
         return this.currentView === 'checklists';
     }
 
+    get isAssessmentView() {
+        return this.currentView === 'assessments';
+    }
+
     // Computed classes for tabs
     get accountsTabClass() {
         return this.isAccountView ? 'nav-item active' : 'nav-item';
@@ -364,6 +355,10 @@ export default class App extends LightningElement {
 
     get checklistTabClass() {
         return this.isChecklistView ? 'nav-item active' : 'nav-item';
+    }
+
+    get assessmentTabClass() {
+        return this.isAssessmentView ? 'nav-item active' : 'nav-item';
     }
 
     get accountsTabIndex() {
@@ -379,7 +374,9 @@ export default class App extends LightningElement {
             ? 'Accounts'
             : this.isContactView
               ? 'Contacts'
-              : 'Checklists';
+              : this.isAssessmentView
+                ? 'Assessments'
+                : 'Checklists';
     }
 
     get currentViewDescription() {
@@ -387,7 +384,9 @@ export default class App extends LightningElement {
             ? 'Manage your business accounts'
             : this.isContactView
               ? 'Manage your contacts'
-              : 'Manage your checklists';
+              : this.isAssessmentView
+                ? 'Manage your assessments'
+                : 'Manage your checklists';
     }
 
     get currentViewIcon() {
@@ -395,7 +394,9 @@ export default class App extends LightningElement {
             ? 'standard:account'
             : this.isContactView
               ? 'standard:contact'
-              : 'standard:checklist';
+              : this.isAssessmentView
+                ? 'standard:assessment'
+                : 'standard:checklist';
     }
 
     // Handle connectivity changes

@@ -1,0 +1,296 @@
+/* Assessment Container */
+.assessment-container {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial,
+        sans-serif;
+    color: #2a2a2a;
+    width: 100%;
+}
+
+/* Header with New button */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #16325c;
+    margin: 0;
+}
+
+.new-button {
+    display: flex;
+    align-items: center;
+    background-color: #0070d2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.new-button:hover {
+    background-color: #005fb2;
+}
+
+.new-icon {
+    margin-right: 4px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* Desktop View (Table Layout) */
+.desktop-view {
+    display: block;
+}
+
+.assessment-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.assessment-table thead {
+    background-color: #f7f7f7;
+}
+
+.assessment-table th {
+    padding: 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 14px;
+    color: #444;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.assessment-table td {
+    padding: 16px;
+    font-size: 14px;
+    border-bottom: 1px solid #eaeaea;
+    vertical-align: middle;
+}
+
+.assessment-table tr:last-child td {
+    border-bottom: none;
+}
+
+.assessment-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.assessment-name-link {
+    color: #0070d2;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.assessment-name-link:hover {
+    text-decoration: underline;
+}
+
+/* Status pills */
+.status-active {
+    background-color: #4bca81;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-inactive {
+    background-color: #dddbda;
+    color: #3e3e3c;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-draft {
+    background-color: #ffb75d;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-archived {
+    background-color: #c9c7c5;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Dropdown menu */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.three-dots {
+    cursor: pointer;
+    font-size: 20px;
+    color: #706e6b;
+    padding: 4px 8px;
+}
+
+.three-dots:hover {
+    color: #16325c;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    min-width: 120px;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1;
+}
+
+.dropdown-content.show {
+    display: block;
+}
+
+.dropdown-item {
+    padding: 10px 16px;
+    font-size: 14px;
+    color: #3e3e3c;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background-color: #f7f9fb;
+}
+
+/* Mobile View (Card Layout) - Hidden by default on desktop */
+.mobile-view {
+    display: none;
+}
+
+.assessment-card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 16px;
+    overflow: hidden;
+    padding: 16px;
+}
+
+.card-content {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.card-icon {
+    background-color: #0070d2;
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.assessment-icon {
+    width: 24px;
+    height: 24px;
+    fill: #ffffff;
+}
+
+.card-details {
+    flex: 1;
+}
+
+.card-title {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #2a2a2a;
+    line-height: 1.2;
+}
+
+.card-metadata {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.card-area,
+.card-record-type {
+    font-size: 14px;
+    color: #706e6b;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+}
+
+.card-menu {
+    margin-left: auto;
+}
+
+/* View More Button */
+.view-more-container {
+    text-align: center;
+    margin-top: 16px;
+    margin-bottom: 24px;
+}
+
+.view-more-button {
+    background-color: transparent;
+    border: 1px solid #d8dde6;
+    border-radius: 4px;
+    color: #0070d2;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 16px;
+    transition: all 0.2s ease;
+}
+
+.view-more-button:hover {
+    background-color: #f7f9fb;
+    border-color: #b0bec5;
+}
+
+.no-data {
+    padding: 32px;
+    text-align: center;
+    color: #706e6b;
+    font-size: 16px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .desktop-view {
+        display: none;
+    }
+
+    .mobile-view {
+        display: block;
+    }
+}

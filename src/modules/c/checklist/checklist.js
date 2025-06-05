@@ -71,6 +71,26 @@ export default class Checklist extends LightningElement {
     }
 
     /**
+     * Handle checklist item click
+     */
+    handleChecklistClick(event) {
+        const itemId = event.currentTarget.dataset.id;
+        const selectedItem = this.items.find((item) => item.id === itemId);
+
+        // Dispatch view event with item details
+        if (selectedItem) {
+            this.dispatchEvent(
+                new CustomEvent('view', {
+                    detail: {
+                        itemId: itemId,
+                        item: selectedItem
+                    }
+                })
+            );
+        }
+    }
+
+    /**
      * Handle toggling the dropdown menu
      */
     handleToggleMenu(event) {

@@ -7,6 +7,11 @@ export default class ChecklistDemo extends LightningElement {
     @track selectedChecklist = null;
     @track showChecklistModal = false;
 
+    // Computed property to determine if list view should be shown
+    get showListView() {
+        return !this.showDetailView;
+    }
+
     connectedCallback() {
         // Initialize with sample data when component is inserted into the DOM
         this.initSampleData();
@@ -289,5 +294,17 @@ export default class ChecklistDemo extends LightningElement {
 
     handleCloseChecklistModal() {
         this.showChecklistModal = false;
+    }
+
+    // Handle view checklist event
+    handleViewChecklist(event) {
+        console.log('View checklist event received:', event.detail);
+        const { itemId, item } = event.detail;
+
+        if (itemId && item) {
+            this.selectedChecklistId = itemId;
+            this.selectedChecklist = item;
+            this.showDetailView = true;
+        }
     }
 }

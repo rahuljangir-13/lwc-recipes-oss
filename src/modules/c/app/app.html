@@ -166,6 +166,48 @@
                     </div>
                 </div>
             </template>
+
+            <!-- Assessment Types view -->
+            <template lwc:if={isAssessmentView}>
+                <div class="search-box-container">
+                    <div class="search-box">
+                        <span class="search-icon">
+                            <svg viewBox="0 0 24 24" class="search-svg">
+                                <path
+                                    d="M16.4 15.2l4.4 4.4-1.2 1.2-4.4-4.4c-1.2.9-2.7 1.4-4.2 1.4-4 0-7.2-3.2-7.2-7.2S7 3.4 11 3.4s7.2 3.2 7.2 7.2c0 1.5-.5 3-1.8 4.6zM11 5.6C8.2 5.6 6 7.8 6 10.6s2.2 5 5 5 5-2.2 5-5-2.2-5-5-5z"
+                                ></path>
+                            </svg>
+                        </span>
+                        <input
+                            type="text"
+                            placeholder="Search assessments..."
+                            class="search-input"
+                        />
+                    </div>
+                </div>
+
+                <div class="card-list">
+                    <div class="assessment-container">
+                        <template lwc:if={isLoading}>
+                            <div class="slds-spinner_container">
+                                <div
+                                    role="status"
+                                    class="slds-spinner slds-spinner_medium"
+                                >
+                                    <span class="slds-assistive-text"
+                                        >Loading</span
+                                    >
+                                    <div class="slds-spinner__dot-a"></div>
+                                    <div class="slds-spinner__dot-b"></div>
+                                </div>
+                            </div>
+                        </template>
+                        <template lwc:else>
+                            <c-assessment-type-demo></c-assessment-type-demo>
+                        </template>
+                    </div>
+                </div>
+            </template>
         </main>
 
         <!-- Bottom navigation -->
@@ -182,7 +224,7 @@
                 <div class="nav-icon checklist-icon"></div>
                 <div class="nav-label">Checklists</div>
             </div>
-            <div class="nav-item" onclick={handleViewAssessments}>
+            <div class={assessmentTabClass} onclick={handleViewAssessments}>
                 <div class="nav-icon assessments-icon"></div>
                 <div class="nav-label">Assessments</div>
             </div>

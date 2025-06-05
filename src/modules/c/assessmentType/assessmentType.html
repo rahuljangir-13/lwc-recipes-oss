@@ -1,0 +1,188 @@
+<template>
+    <div class="assessment-container">
+        <!-- Header with New button -->
+        <!-- <div class="header-container">
+            <h2 class="section-title">Assessment Types</h2>
+            <button class="new-button" onclick={handleNewClick}>
+                
+                New
+            </button>
+        </div> -->
+
+        <!-- Desktop View: Table Layout -->
+        <div class="desktop-view">
+            <table class="assessment-table">
+                <thead>
+                    <tr>
+                        <th>Assessment Type</th>
+                        <th>Assessment Area</th>
+                        <th>Record Type</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template if:true={hasItems}>
+                        <template for:each={items} for:item="item">
+                            <tr key={item.id}>
+                                <td>
+                                    <a
+                                        href="javascript:void(0)"
+                                        onclick={handleAssessmentClick}
+                                        data-id={item.id}
+                                        class="assessment-name-link"
+                                        >{item.name}</a
+                                    >
+                                </td>
+                                <td>{item.area}</td>
+                                <td>{item.recordType}</td>
+                                <td>
+                                    <span class={item.statusClass}
+                                        >{item.status}</span
+                                    >
+                                </td>
+                                <td>
+                                    <div class="dropdown">
+                                        <span
+                                            class="three-dots"
+                                            onclick={handleToggleMenu}
+                                            data-id={item.id}
+                                            >&#8230;</span
+                                        >
+                                        <div
+                                            class="dropdown-content"
+                                            data-id={item.id}
+                                        >
+                                            <div
+                                                class="dropdown-item"
+                                                onclick={handleEdit}
+                                                data-id={item.id}
+                                            >
+                                                Edit
+                                            </div>
+                                            <div
+                                                class="dropdown-item"
+                                                onclick={handleDelete}
+                                                data-id={item.id}
+                                            >
+                                                Delete
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                    </template>
+                </tbody>
+            </table>
+            <div if:true={noData} class="no-data">
+                No assessment types found.
+            </div>
+        </div>
+
+        <!-- Mobile View: Card Layout -->
+        <div class="mobile-view">
+            <template if:true={hasItems}>
+                <template for:each={visibleItems} for:item="item">
+                    <div key={item.id} class="assessment-card">
+                        <div class="card-content">
+                            <div class="card-icon">
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    class="assessment-icon"
+                                >
+                                    <path
+                                        d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 2h1.5v3l1-1c.9-.9 2.5-.9 3.4 0 .9.9.9 2.5 0 3.4l-4.9 5.2-4.9-5.2c-.9-.9-.9-2.5 0-3.4.9-.9 2.5-.9 3.4 0l1 1V5zm0 14h-4v-3h4v3zm6 0h-4v-3h4v3z"
+                                    ></path>
+                                </svg>
+                            </div>
+                            <div class="card-details">
+                                <h3 class="card-title">
+                                    <a
+                                        href="javascript:void(0)"
+                                        onclick={handleAssessmentClick}
+                                        data-id={item.id}
+                                        class="assessment-name-link"
+                                        >{item.name}</a
+                                    >
+                                </h3>
+                                <div class="card-metadata">
+                                    <div class="card-area">{item.area}</div>
+                                    <div class="card-record-type">
+                                        {item.recordType}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <span class={item.statusClass}>{item.status}</span>
+                            <div class="card-menu">
+                                <div class="dropdown">
+                                    <span
+                                        class="three-dots"
+                                        onclick={handleToggleMenu}
+                                        data-id={item.id}
+                                        >&#8230;</span
+                                    >
+                                    <div
+                                        class="dropdown-content"
+                                        data-id={item.id}
+                                    >
+                                        <div
+                                            class="dropdown-item"
+                                            onclick={handleEdit}
+                                            data-id={item.id}
+                                        >
+                                            Edit
+                                        </div>
+                                        <div
+                                            class="dropdown-item"
+                                            onclick={handleDelete}
+                                            data-id={item.id}
+                                        >
+                                            Delete
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <!-- View More Button -->
+                <div if:true={showViewMoreButton} class="view-more-container">
+                    <button class="view-more-button" onclick={handleViewMore}>
+                        View More
+                    </button>
+                </div>
+            </template>
+            <div if:true={noData} class="no-data">
+                No assessment types found.
+            </div>
+        </div>
+
+        <!-- Record Type Selection Modal -->
+        <template if:true={showRecordTypeModal}>
+            <c-record-type-modal
+                onclose={handleRecordTypeModalClose}
+                onselect={handleRecordTypeSelect}
+            ></c-record-type-modal>
+        </template>
+
+        <!-- Assessment Modal -->
+        <template if:true={showAssessmentModal}>
+            <c-assessment-modal
+                onclose={handleAssessmentModalClose}
+                onsave={handleSaveAssessment}
+                record-type={selectedRecordType}
+            ></c-assessment-modal>
+        </template>
+
+        <!-- Assessment Area Modal -->
+        <template if:true={showAssessmentAreaModal}>
+            <c-assessment-area-modal
+                onclose={handleAssessmentAreaModalClose}
+                onsave={handleSaveAssessment}
+            ></c-assessment-area-modal>
+        </template>
+    </div>
+</template>
