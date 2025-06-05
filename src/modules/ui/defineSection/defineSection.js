@@ -48,53 +48,52 @@ export default class DefineSection extends LightningElement {
         { name: 'Contributor', group: 'Support', required: false }
     ];
 
+    // Available colors for scoring ranges
+    @track availableColors = [
+        { label: 'Red', value: 'red', colorClass: 'color-indicator red' },
+        {
+            label: 'Yellow',
+            value: 'yellow',
+            colorClass: 'color-indicator yellow'
+        },
+        { label: 'Green', value: 'green', colorClass: 'color-indicator green' },
+        { label: 'Blue', value: 'blue', colorClass: 'color-indicator blue' },
+        {
+            label: 'Purple',
+            value: 'purple',
+            colorClass: 'color-indicator purple'
+        },
+        { label: 'Teal', value: 'teal', colorClass: 'color-indicator teal' },
+        {
+            label: 'Orange',
+            value: 'orange',
+            colorClass: 'color-indicator orange'
+        }
+    ];
+
     @track scoringRanges = [
         {
             id: '1',
-            stageName: 'Lurker',
             from: '0',
-            to: '10',
+            to: '25',
+            color: 'red',
             colorClass: 'color-indicator red',
             isEditing: false
         },
         {
             id: '2',
-            stageName: 'Active',
-            from: '11',
+            from: '26',
             to: '50',
+            color: 'yellow',
             colorClass: 'color-indicator yellow',
             isEditing: false
         },
         {
             id: '3',
-            stageName: 'Super user',
-            from: '96',
-            to: '300',
+            from: '51',
+            to: '100',
+            color: 'teal',
             colorClass: 'color-indicator teal',
-            isEditing: false
-        },
-        {
-            id: '4',
-            stageName: 'Ambassador',
-            from: '301',
-            to: '500',
-            colorClass: 'color-indicator green',
-            isEditing: false
-        },
-        {
-            id: '5',
-            stageName: 'Potential Ambassador',
-            from: '501',
-            to: '1000',
-            colorClass: 'color-indicator blue',
-            isEditing: false
-        },
-        {
-            id: '6',
-            stageName: 'Evangelist',
-            from: '1001',
-            to: '∞',
-            colorClass: 'color-indicator purple',
             isEditing: false
         }
     ];
@@ -287,5 +286,104 @@ export default class DefineSection extends LightningElement {
         );
 
         console.log(`Deleted scoring range: ${rangeId}`);
+    }
+
+    // Add new row functionality for + button
+    handleAddNewRow(event) {
+        const clickedRowId = event.target.dataset.id;
+        console.log('Add new row clicked for:', clickedRowId);
+
+        // Find the clicked row index
+        const clickedRowIndex = this.scoringRanges.findIndex(
+            (range) => range.id === clickedRowId
+        );
+
+        // Create new row object without stageName, with color selection
+        const newRow = {
+            id: 'new_' + Date.now(),
+            from: '',
+            to: '',
+            color: 'red', // default color
+            colorClass: 'color-indicator red',
+            isEditing: true,
+            isNewRow: true
+        };
+
+        // Insert new row below the clicked row
+        const updatedRanges = [...this.scoringRanges];
+        updatedRanges.splice(clickedRowIndex + 1, 0, newRow);
+        this.scoringRanges = updatedRanges;
+    }
+
+    // Handle saving new row
+    handleSaveNewRow(event) {
+        const rowId = event.target.dataset.id;
+        const rowIndex = this.scoringRanges.findIndex(
+            (range) => range.id === rowId
+        );
+
+        if (rowIndex !== -1) {
+            // Update row to non-editing mode
+            this.scoringRanges[rowIndex].isEditing = false;
+            this.scoringRanges[rowIndex].isNewRow = false;
+            this.scoringRanges = [...this.scoringRanges];
+            console.log('New row saved:', this.scoringRanges[rowIndex]);
+        }
+    }
+
+    // Handle canceling new row
+    handleCancelNewRow(event) {
+        const rowId = event.target.dataset.id;
+        const rowIndex = this.scoringRanges.findIndex(
+            (range) => range.id === rowId
+        );
+
+        if (rowIndex !== -1) {
+            // Remove the new row
+            const updatedRanges = [...this.scoringRanges];
+            updatedRanges.splice(rowIndex, 1);
+            this.scoringRanges = updatedRanges;
+            console.log('New row canceled');
+        }
+    }
+
+    // Handle color selection change
+    handleColorChange(event) {
+        const rowId = event.target.dataset.id;
+        const selectedColor = event.target.value;
+
+        this.scoringRanges = this.scoringRanges.map((range) => {
+            if (range.id === rowId) {
+                return {
+                    ...range,
+                    color: selectedColor,
+                    colorClass: `color-indicator ${selectedColor}`
+                };
+            }
+            return range;
+        });
+    }
+
+    // Getter for arrow rotation class
+    get generalInfoArrowClass() {
+        return this.isGeneralInfoOpen
+            ? 'accordion-arrow rotated'
+            : 'accordion-arrow';
+    }
+
+    get rolesArrowClass() {
+        return this.isRolesOpen ? 'accordion-arrow rotated' : 'accordion-arrow';
+    }
+
+    get scoringArrowClass() {
+        return this.isScoringOpen
+            ? 'accordion-arrow rotated'
+            : 'accordion-arrow';
+    }
+
+    get systemInfoArrowClass() {
+        return this.isSystemInfoOpen
+            ? 'accordion-arrow rotated'
+            : 'accordion-arrow';
     }
 }

@@ -63,7 +63,7 @@
 .tab-label {
     font-size: 1.08rem;
     font-weight: 500;
-    color: #444;
+    color: #000000;
     transition: color 0.2s;
 }
 
@@ -72,11 +72,11 @@
     background-color: rgba(81, 85, 92, 0.08);
 }
 
-.sidebar-tab:hover .tab-label {
-    color: #222;
+.sidebar-tab:hover:not(.active) .tab-label {
+    color: #000000;
 }
 
-.sidebar-tab:hover .tab-icon {
+.sidebar-tab:hover:not(.active) .tab-icon {
     background: rgba(59, 130, 246, 0.12);
 }
 
@@ -100,6 +100,37 @@
 
 .sidebar-tab.active .tab-icon svg {
     fill: #ffffff;
+}
+
+/* Ensure normal state is restored when not active or hovered */
+.sidebar-tab:not(.active):not(:hover) {
+    background-color: transparent;
+    box-shadow: none;
+    transform: translateY(0);
+    border: 1px solid transparent;
+}
+
+.sidebar-tab:not(.active):not(:hover) .tab-icon {
+    background: rgba(124, 58, 237, 0.08);
+    transform: scale(1);
+}
+
+.sidebar-tab:not(.active):not(:hover) .tab-label {
+    color: #000000 !important;
+    font-weight: 500;
+}
+
+.sidebar-tab:not(.active):not(:hover) .tab-icon svg {
+    fill: #7c3aed;
+}
+
+/* Force black color for inactive tabs */
+.sidebar-tab:not(.active) .tab-label {
+    color: #000000 !important;
+}
+
+.sidebar-tab:not(.active):hover .tab-label {
+    color: #000000 !important;
 }
 
 .selection-indicator {

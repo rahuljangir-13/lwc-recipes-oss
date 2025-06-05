@@ -22,7 +22,7 @@
     border-radius: 8px;
     box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04);
     border: 1px solid #e5e5e5;
-    margin-bottom: 24px;
+    margin-bottom: 12px;
 }
 
 .slds-card__header {
@@ -491,6 +491,7 @@ abbr.slds-required {
 .to-column {
     flex: 1;
     color: #444;
+    font-weight: 500;
 }
 
 .actions-column {
@@ -846,4 +847,85 @@ abbr.slds-required {
         font-size: 1rem;
         padding-right: 0;
     }
+}
+
+/* Accordion arrow rotation styles */
+.accordion-arrow {
+    transition: transform 0.3s ease;
+    display: inline-block;
+    transform-origin: center;
+    font-size: 14px;
+    color: #666;
+    margin-right: 12px;
+}
+
+.accordion-arrow.rotated {
+    transform: rotate(90deg);
+}
+
+/* Color indicator classes for scoring ranges */
+.color-indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-block;
+    border: 1px solid #ddd;
+}
+
+.color-indicator.red {
+    background-color: #ef4444;
+}
+
+.color-indicator.yellow {
+    background-color: #fbbf24;
+}
+
+.color-indicator.green {
+    background-color: #10b981;
+}
+
+.color-indicator.blue {
+    background-color: #3b82f6;
+}
+
+.color-indicator.purple {
+    background-color: #8b5cf6;
+}
+
+.color-indicator.teal {
+    background-color: #14b8a6;
+}
+
+.color-indicator.orange {
+    background-color: #f97316;
+}
+
+/* Color picker styles */
+.color-picker-container {
+    position: relative;
+    display: inline-block;
+}
+
+.color-picker-select {
+    padding: 8px 12px;
+    border: 1px solid #d8dde6;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    min-width: 120px;
+}
+
+.color-picker-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+}
+
+.color-preview {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: inline-block;
+    border: 1px solid #ddd;
 }
