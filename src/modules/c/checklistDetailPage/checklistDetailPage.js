@@ -5,7 +5,7 @@ export default class ChecklistDetailPage extends LightningElement {
     @track checklistDetail = {
         assessmentName: 'Assessment 16-05',
         category: 'Health & Safety',
-        checklistName: 'SIF Alert',
+        checklistName: 'Checklist11-B1',
         occurrence: 'One Time',
         startDate: '5/1/2025',
         endDate: '5/31/2025',

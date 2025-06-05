@@ -5,7 +5,9 @@
     color: #2a2a2a;
     width: 100%;
 }
-
+.checklist-name-link {
+    text-decoration: none;
+}
 /* Desktop View (Table Layout) */
 .desktop-view {
     display: block;

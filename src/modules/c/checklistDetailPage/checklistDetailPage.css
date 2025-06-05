@@ -127,26 +127,31 @@
 }
 
 .action-button {
-    padding: 0.5rem 1rem;
+    height: 25px;
+    padding-bottom: 4px;
+    padding-top: 0px;
+    /* padding: 0.5rem 1rem; */
     border-radius: 4px;
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
     border: none;
-    background-color: white;
-    color: #0070d2;
+    background-color: #0070d2;
+    color: white;
 }
 
 .action-button.edit-button {
-    color: #0070d2;
+    background-color: #0070d2;
+    color: white;
+    padding-bottom: 3px;
+    padding-top: 2px;
 }
 
 .action-button.back-button {
-    background-color: transparent;
-}
-
-.action-button:hover {
-    background-color: #f4f6f9;
+    background-color: #0070d2;
+    color: white;
+    padding-bottom: 3px;
+    padding-top: 2px;
 }
 
 /* Tab Navigation */
@@ -455,10 +460,11 @@
 .detail-page-container {
     font-family: 'Salesforce Sans', Arial, sans-serif;
     background-color: #f8f8f8;
-    max-width: 1200px;
+    max-width: 1750px;
     margin: 0 auto;
     padding: 1rem;
     color: #16325c;
+    padding-top: 100px;
 }
 
 /* Header styles */
@@ -586,7 +592,7 @@
     align-items: center;
     padding: 0.75rem 1.5rem;
     border-bottom: 1px solid #f1f1f1;
-    background-color: #f9f9f9;
+    background-color: #f9f9f975;
 }
 
 .section-title {
@@ -735,4 +741,31 @@ h2 {
     .field {
         margin-bottom: 1rem;
     }
+}
+
+/* Add these styles to handle the active state for icons */
+.sidebar-item .icon-circle {
+    fill: none;
+    stroke: #706e6b;
+    stroke-width: 2;
+}
+
+.sidebar-item .icon-path {
+    stroke: #706e6b;
+    fill: none;
+}
+
+.sidebar-item.active .icon-circle {
+    fill: #0070d2;
+    stroke: #0070d2;
+}
+
+.sidebar-item.active .icon-path {
+    fill: white;
+    stroke: white;
+}
+
+.icon-svg {
+    width: 24px;
+    height: 24px;
 }

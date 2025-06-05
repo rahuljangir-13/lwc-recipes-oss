@@ -41,12 +41,18 @@
     align-items: center;
     padding: 16px 24px;
     border-bottom: 1px solid #e0e5ee;
+
+    background-color: #0070d2; /* Salesforce Blue */
+    /* padding: 1rem 1.5rem; */
+    /* border-top-left-radius: 12px;
+    border-top-right-radius: 12px; */
+    color: white;
 }
 
 .modal__title {
     font-size: 20px;
     font-weight: 600;
-    color: #16325c;
+    color: #f0f0f0;
     margin: 0;
 }
 
@@ -54,7 +60,7 @@
     background: none;
     border: none;
     font-size: 24px;
-    color: #747474;
+    color: #ffffff;
     cursor: pointer;
     padding: 0;
     width: 32px;
@@ -65,9 +71,9 @@
     transition: color 0.2s ease;
 }
 
-.modal__close:hover {
+/* .modal__close:hover {
     color: #16325c;
-}
+} */
 
 .modal__body {
     padding: 24px;

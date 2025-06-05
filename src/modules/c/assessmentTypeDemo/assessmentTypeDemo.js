@@ -1,4 +1,4 @@
-import { LightningElement, track } from 'lwc';
+import { LightningElement, track, api } from 'lwc';
 
 export default class AssessmentTypeDemo extends LightningElement {
     @track assessmentItems = [
@@ -98,32 +98,6 @@ export default class AssessmentTypeDemo extends LightningElement {
         },
         {
             id: 'ast8',
-            name: 'Assessment Type',
-            area: 'trial',
-            recordType: 'Assessment Area',
-            status: 'Archived',
-            createdBy: 'John Doe',
-            lastModifiedBy: 'Jane Smith',
-            lastModifiedDate: new Date().toISOString(),
-            createdDate: new Date(
-                Date.now() - 90 * 24 * 60 * 60 * 1000
-            ).toISOString()
-        },
-        {
-            id: 'ast9',
-            name: 'Assessment Type',
-            area: 'Test',
-            recordType: 'Assessment Area',
-            status: 'Active',
-            createdBy: 'John Doe',
-            lastModifiedBy: 'Jane Smith',
-            lastModifiedDate: new Date().toISOString(),
-            createdDate: new Date(
-                Date.now() - 105 * 24 * 60 * 60 * 1000
-            ).toISOString()
-        },
-        {
-            id: 'ast10',
             name: 'New',
             area: null,
             recordType: 'Assessment Type',
@@ -136,7 +110,7 @@ export default class AssessmentTypeDemo extends LightningElement {
             ).toISOString()
         },
         {
-            id: 'ast11',
+            id: 'ast9',
             name: 'New',
             area: 'Trial1',
             recordType: 'Assessment Area',
@@ -150,12 +124,64 @@ export default class AssessmentTypeDemo extends LightningElement {
         }
     ];
 
+    @track originalAssessmentItems = [];
+    @track searchTerm = '';
     @track showRecordTypeModal = false;
     @track showAssessmentModal = false;
     @track showAssessmentAreaModal = false;
     @track selectedRecordType = null;
     @track editingAssessment = null;
     @track selectedAssessment = null;
+
+    connectedCallback() {
+        // Store the original items for filtering
+        this.originalAssessmentItems = [...this.assessmentItems];
+    }
+
+    // New method for filtering items based on search term
+    @api
+    filterItems(searchTerm) {
+        this.searchTerm = searchTerm;
+
+        if (!searchTerm) {
+            // If search term is empty, restore original items
+            this.assessmentItems = [...this.originalAssessmentItems];
+
+            // Pass the updated items to the assessment type component
+            this.updateAssessmentTypeItems();
+            return;
+        }
+
+        // Filter items based on the search term
+        this.assessmentItems = this.originalAssessmentItems.filter((item) => {
+            // Search in name, area, recordType, status, and other relevant fields
+            return (
+                (item.name && item.name.toLowerCase().includes(searchTerm)) ||
+                (item.area && item.area.toLowerCase().includes(searchTerm)) ||
+                (item.recordType &&
+                    item.recordType.toLowerCase().includes(searchTerm)) ||
+                (item.status &&
+                    item.status.toLowerCase().includes(searchTerm)) ||
+                (item.createdBy &&
+                    item.createdBy.toLowerCase().includes(searchTerm)) ||
+                (item.lastModifiedBy &&
+                    item.lastModifiedBy.toLowerCase().includes(searchTerm))
+            );
+        });
+
+        // Pass the updated items to the assessment type component
+        this.updateAssessmentTypeItems();
+    }
+
+    // Helper method to update the assessmentType component with filtered items
+    updateAssessmentTypeItems() {
+        const assessmentTypeComponent =
+            this.template.querySelector('c-assessment-type');
+        if (assessmentTypeComponent) {
+            // We need to pass the filtered items to the child component
+            assessmentTypeComponent.items = this.assessmentItems;
+        }
+    }
 
     // Handle New button click - show record type selection modal
     handleNewClick() {
