@@ -97,41 +97,69 @@
     text-decoration: underline;
 }
 
-/* Status pills */
-.status-active {
-    background-color: #4bca81;
-    color: white;
+/* Status pills - updated to handle all status types */
+.status-active,
+.status-inactive,
+.status-draft,
+.status-archived,
+.status-completed,
+.status-pending,
+.status-in-progress,
+.status-blocked,
+.status-default {
+    display: inline-block;
     padding: 4px 8px;
     border-radius: 4px;
     font-size: 12px;
     font-weight: 500;
+    text-align: center;
+    white-space: nowrap;
+    min-width: 60px;
+}
+
+.status-active {
+    background-color: #4bca81;
+    color: white;
 }
 
 .status-inactive {
     background-color: #dddbda;
     color: #3e3e3c;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
 }
 
 .status-draft {
     background-color: #ffb75d;
     color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
 }
 
 .status-archived {
     background-color: #c9c7c5;
     color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
+}
+
+.status-completed {
+    background-color: #4bca81;
+    color: white;
+}
+
+.status-in-progress {
+    background-color: #1589ee;
+    color: white;
+}
+
+.status-pending {
+    background-color: #ffb75d;
+    color: white;
+}
+
+.status-blocked {
+    background-color: #ea5c46;
+    color: white;
+}
+
+.status-default {
+    background-color: #706e6b;
+    color: white;
 }
 
 /* Dropdown menu */
@@ -244,6 +272,8 @@
     justify-content: space-between;
     align-items: center;
     margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid #f3f3f3;
 }
 
 .card-menu {
@@ -253,25 +283,26 @@
 /* View More Button */
 .view-more-container {
     text-align: center;
-    margin-top: 16px;
-    margin-bottom: 24px;
+    margin: 16px 0;
 }
 
 .view-more-button {
-    background-color: transparent;
-    border: 1px solid #d8dde6;
+    background-color: #0070d2;
+    color: white;
+    border: 1px solid #dddbda;
     border-radius: 4px;
-    color: #0070d2;
-    cursor: pointer;
+    padding: 8px 16px;
     font-size: 14px;
     font-weight: 500;
-    padding: 8px 16px;
-    transition: all 0.2s ease;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    width: 100%;
+    max-width: 200px;
 }
 
 .view-more-button:hover {
-    background-color: #f7f9fb;
-    border-color: #b0bec5;
+    background-color: #f3f3f3;
+    border-color: #c9c7c5;
 }
 
 .no-data {

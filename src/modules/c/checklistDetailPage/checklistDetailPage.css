@@ -460,7 +460,7 @@
 .detail-page-container {
     font-family: 'Salesforce Sans', Arial, sans-serif;
     background-color: #f8f8f8;
-    max-width: 1200px;
+    max-width: 1750px;
     margin: 0 auto;
     padding: 1rem;
     color: #16325c;
@@ -592,7 +592,7 @@
     align-items: center;
     padding: 0.75rem 1.5rem;
     border-bottom: 1px solid #f1f1f1;
-    background-color: #f9f9f9;
+    background-color: #f9f9f975;
 }
 
 .section-title {

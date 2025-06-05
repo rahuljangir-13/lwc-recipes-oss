@@ -8,6 +8,8 @@ export default class App extends LightningElement {
     @track syncingContacts = false;
     @track contentClass = 'slds-m-around_medium';
     @track isLoading = true;
+    @track checklistSearchTerm = '';
+    @track assessmentSearchTerm = '';
 
     connectedCallback() {
         // Initialize offline storage with mock data
@@ -416,6 +418,30 @@ export default class App extends LightningElement {
             } else {
                 connectivityStatus.handleOffline();
             }
+        }
+    }
+
+    handleChecklistSearch(event) {
+        this.checklistSearchTerm = event.target.value.toLowerCase().trim();
+
+        // Get the checklist demo component
+        const checklistDemo = this.template.querySelector('c-checklist-demo');
+        if (checklistDemo) {
+            // Pass the search term to the checklist component
+            checklistDemo.filterItems(this.checklistSearchTerm);
+        }
+    }
+
+    handleAssessmentSearch(event) {
+        this.assessmentSearchTerm = event.target.value.toLowerCase().trim();
+
+        // Get the assessment type demo component
+        const assessmentTypeDemo = this.template.querySelector(
+            'c-assessment-type-demo'
+        );
+        if (assessmentTypeDemo) {
+            // Pass the search term to the assessment component
+            assessmentTypeDemo.filterItems(this.assessmentSearchTerm);
         }
     }
 }

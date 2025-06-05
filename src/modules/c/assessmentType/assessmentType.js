@@ -2,8 +2,28 @@ import { LightningElement, api, track } from 'lwc';
 
 export default class AssessmentType extends LightningElement {
     @api recordId;
-    @track items = [];
-    @track visibleItemCount = 5;
+
+    // Update items property to be an API property with getter/setter
+    _items = [];
+
+    @api
+    get items() {
+        return this._items;
+    }
+
+    set items(value) {
+        this._items = Array.isArray(value)
+            ? value.map((item) => ({
+                  ...item,
+                  statusClass: this.getStatusClass(item.status)
+              }))
+            : [];
+        // Reset view state when items change
+        this.visibleItemCount = this.initialVisibleItems;
+    }
+
+    initialVisibleItems = 2; // Initial number of cards to show
+    @track visibleItemCount = this.initialVisibleItems;
     @track openDropdown = null;
     @track showRecordTypeModal = false;
     @track showAssessmentModal = false;
@@ -11,8 +31,10 @@ export default class AssessmentType extends LightningElement {
     @track selectedRecordType = null;
 
     connectedCallback() {
-        // Initialize mock data
-        this.loadMockData();
+        // Initialize mock data only if items is empty
+        if (this._items.length === 0) {
+            this.loadMockData();
+        }
 
         // Add click event listener to document to close dropdowns
         document.addEventListener('click', this.handleDocumentClick.bind(this));
@@ -28,28 +50,28 @@ export default class AssessmentType extends LightningElement {
 
     // Getters for rendering
     get hasItems() {
-        return this.items.length > 0;
+        return this._items.length > 0;
     }
 
     get noData() {
-        return this.items.length === 0;
+        return this._items.length === 0;
     }
 
     get visibleItems() {
-        return this.items.slice(0, this.visibleItemCount);
+        return this._items.slice(0, this.visibleItemCount);
     }
 
     /**
      * Returns true if we should show the View More button
      */
     get showViewMoreButton() {
-        return this.items.length > this.visibleItemCount;
+        return this._items.length > this.visibleItemCount;
     }
 
     // Event handlers
     handleAssessmentClick(event) {
         const id = event.currentTarget.dataset.id;
-        const selectedItem = this.items.find((item) => item.id === id);
+        const selectedItem = this._items.find((item) => item.id === id);
 
         // Dispatch view event with the selected item
         this.dispatchEvent(
@@ -119,10 +141,13 @@ export default class AssessmentType extends LightningElement {
 
     // Handle save from assessment modal
     handleSaveAssessment(event) {
-        const newAssessment = event.detail;
+        const newAssessment = {
+            ...event.detail,
+            statusClass: this.getStatusClass(event.detail.status)
+        };
 
         // Add the new assessment to the items array
-        this.items = [newAssessment, ...this.items];
+        this._items = [newAssessment, ...this._items];
 
         // Close the modal
         this.showAssessmentModal = false;
@@ -132,7 +157,7 @@ export default class AssessmentType extends LightningElement {
 
     handleEdit(event) {
         const id = event.currentTarget.dataset.id;
-        const selectedItem = this.items.find((item) => item.id === id);
+        const selectedItem = this._items.find((item) => item.id === id);
 
         // Dispatch edit event with the selected item
         this.dispatchEvent(
@@ -149,7 +174,7 @@ export default class AssessmentType extends LightningElement {
         const id = event.currentTarget.dataset.id;
 
         // Remove the item from the array
-        this.items = this.items.filter((item) => item.id !== id);
+        this._items = this._items.filter((item) => item.id !== id);
 
         // Close the dropdown
         this.closeAllDropdowns();
@@ -173,14 +198,13 @@ export default class AssessmentType extends LightningElement {
 
     loadMockData() {
         // Mock data for demo purposes
-        this.items = [
+        const mockItems = [
             {
                 id: 'ast1',
                 name: 'Site Safety Assessment',
                 area: 'Safety',
                 recordType: 'Assessment Type',
                 status: 'Active',
-                statusClass: 'status-active',
                 createdBy: 'John Doe',
                 lastModifiedBy: 'Jane Smith',
                 createdDate: '2023-05-15',
@@ -192,7 +216,6 @@ export default class AssessmentType extends LightningElement {
                 area: 'Quality',
                 recordType: 'Assessment Type',
                 status: 'Draft',
-                statusClass: 'status-draft',
                 createdBy: 'Jane Smith',
                 lastModifiedBy: 'Jane Smith',
                 createdDate: '2023-06-10',
@@ -204,12 +227,53 @@ export default class AssessmentType extends LightningElement {
                 area: 'Compliance',
                 recordType: 'Assessment Type',
                 status: 'Inactive',
-                statusClass: 'status-inactive',
                 createdBy: 'John Doe',
                 lastModifiedBy: 'John Doe',
                 createdDate: '2023-04-22',
                 lastModifiedDate: '2023-05-10'
             }
         ];
+
+        // Map each item to include the statusClass
+        this._items = mockItems.map((item) => ({
+            ...item,
+            statusClass: this.getStatusClass(item.status)
+        }));
+    }
+
+    // Helper method to get the appropriate status class
+    getStatusClass(status) {
+        if (!status) return 'status-default';
+
+        const normalizedStatus = status.toLowerCase();
+
+        switch (normalizedStatus) {
+            case 'active':
+                return 'status-active';
+            case 'inactive':
+                return 'status-inactive';
+            case 'draft':
+                return 'status-draft';
+            case 'archived':
+                return 'status-archived';
+            case 'completed':
+            case 'done':
+            case 'finished':
+                return 'status-completed';
+            case 'in progress':
+            case 'ongoing':
+            case 'started':
+                return 'status-in-progress';
+            case 'pending':
+            case 'not started':
+            case 'todo':
+                return 'status-pending';
+            case 'blocked':
+            case 'stopped':
+            case 'halted':
+                return 'status-blocked';
+            default:
+                return 'status-default';
+        }
     }
 }

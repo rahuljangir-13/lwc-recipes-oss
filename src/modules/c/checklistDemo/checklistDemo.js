@@ -1,4 +1,4 @@
-import { LightningElement, track } from 'lwc';
+import { LightningElement, track, api } from 'lwc';
 
 export default class ChecklistDemo extends LightningElement {
     @track checklistItems = [];
@@ -6,6 +6,8 @@ export default class ChecklistDemo extends LightningElement {
     @track selectedChecklistId = null;
     @track selectedChecklist = null;
     @track showChecklistModal = false;
+    @track originalChecklistItems = [];
+    @track searchTerm = '';
 
     // Computed property to determine if list view should be shown
     get showListView() {
@@ -101,6 +103,9 @@ export default class ChecklistDemo extends LightningElement {
                 lastModifiedDate: now.toISOString()
             }
         ];
+
+        // Store the original items for filtering
+        this.originalChecklistItems = [...this.checklistItems];
     }
 
     handleAddItem() {
@@ -305,6 +310,52 @@ export default class ChecklistDemo extends LightningElement {
             this.selectedChecklistId = itemId;
             this.selectedChecklist = item;
             this.showDetailView = true;
+        }
+    }
+
+    @api
+    filterItems(searchTerm) {
+        this.searchTerm = searchTerm;
+
+        if (!searchTerm) {
+            // If search term is empty, restore original items
+            this.checklistItems = [...this.originalChecklistItems];
+
+            // Update the checklist component with the filtered items
+            this.updateChecklistItems();
+            return;
+        }
+
+        // Filter items based on the search term
+        this.checklistItems = this.originalChecklistItems.filter((item) => {
+            // Search in name, status, category, and other relevant fields
+            return (
+                (item.name && item.name.toLowerCase().includes(searchTerm)) ||
+                (item.status &&
+                    item.status.toLowerCase().includes(searchTerm)) ||
+                (item.category &&
+                    item.category.toLowerCase().includes(searchTerm)) ||
+                (item.customer &&
+                    item.customer.toLowerCase().includes(searchTerm)) ||
+                (item.createdBy &&
+                    item.createdBy.toLowerCase().includes(searchTerm)) ||
+                (item.lastModifiedBy &&
+                    item.lastModifiedBy.toLowerCase().includes(searchTerm))
+            );
+        });
+
+        // Update the checklist component with the filtered items
+        this.updateChecklistItems();
+    }
+
+    // Helper method to update the checklist component with filtered items
+    updateChecklistItems() {
+        if (this.showListView) {
+            const checklistComponent =
+                this.template.querySelector('c-checklist');
+            if (checklistComponent) {
+                checklistComponent.items = this.checklistItems;
+            }
         }
     }
 }
