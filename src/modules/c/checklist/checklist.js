@@ -1,10 +1,16 @@
 import { LightningElement, api } from 'lwc';
+import { isOnline } from 'c/utils';
+
+// Salesforce REST API endpoint for Assessment Templates
+const ASSESSMENT_TEMPLATES_ENDPOINT =
+    'https://customization-app-1405-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/assessmenttemplates';
 
 export default class Checklist extends LightningElement {
     @api
     get items() {
         return this._items || [];
     }
+
     set items(value) {
         this._items = Array.isArray(value)
             ? value.map((item) => {
@@ -33,6 +39,8 @@ export default class Checklist extends LightningElement {
     initialVisibleItems = 2; // Initial number of cards to show
     visibleItemCount = this.initialVisibleItems;
     activeDropdown = null; // Tracks which dropdown is currently open
+    isLoading = true;
+    error = null;
 
     /**
      * Returns the items that should be visible in the mobile view
@@ -52,7 +60,7 @@ export default class Checklist extends LightningElement {
      * Returns true if there are no items to display
      */
     get noData() {
-        return !this.hasItems;
+        return !this.hasItems && !this.isLoading;
     }
 
     /**
@@ -136,6 +144,165 @@ export default class Checklist extends LightningElement {
         // Add click event listener to document to close dropdown when clicking outside
         this.documentClickListener = this.handleDocumentClick.bind(this);
         document.addEventListener('click', this.documentClickListener);
+
+        // Fetch data from Salesforce org
+        this.fetchTemplatesFromSalesforce();
+    }
+
+    /**
+     * Fetch assessment templates from Salesforce using REST API
+     */
+    fetchTemplatesFromSalesforce() {
+        if (isOnline()) {
+            console.log(
+                '🌐 Online: Fetching assessment templates from Salesforce'
+            );
+            this.isLoading = true;
+            this.error = null;
+
+            // Get an OAuth token or session ID
+            // In a real app, you would have a proper OAuth flow
+            const sessionId =
+                '00DO500000ZIhWy!AQEAQGHZ0lYxoF28T9aVgGLkahxEmJU.W4VBgGKKqbcYMJWfUGjfUDL_ez_004TFATKVmZbY24U4mCfw7jotQpA7ewLKMoVs';
+
+            const headers = {
+                Authorization: `Bearer ${sessionId}`,
+                'Content-Type': 'application/json'
+            };
+
+            fetch(ASSESSMENT_TEMPLATES_ENDPOINT, {
+                method: 'GET',
+                headers: headers,
+                mode: 'cors'
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        return response.text().then((text) => {
+                            console.error(
+                                `❌ HTTP error! status: ${response.status}, message: ${text}`
+                            );
+                            throw new Error(
+                                `HTTP error! status: ${response.status}, message: ${text}`
+                            );
+                        });
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    console.log('✅ Fetched assessment templates:', data);
+
+                    // Transform the data to match our component's format
+                    const formattedItems = this.transformTemplateData(data);
+
+                    // Update the items
+                    this._items = formattedItems;
+
+                    //Dispatch an event to notify the parent component that data has loaded
+                    this.dispatchEvent(
+                        new CustomEvent('dataloaded', {
+                            detail: {
+                                items: this._items
+                            }
+                        })
+                    );
+                })
+                .catch((error) => {
+                    console.error(
+                        '❌ Error fetching assessment templates:',
+                        error
+                    );
+                    this.error = error.message;
+
+                    // In case of error, load some fallback data
+                    this.loadFallbackData();
+                })
+                .finally(() => {
+                    this.isLoading = false;
+                });
+        } else {
+            console.log('📴 Offline: Using cached or sample data');
+            this.error = 'You are currently offline. Showing cached data.';
+            this.loadFallbackData();
+        }
+    }
+
+    /**
+     * Transform Salesforce template data to the format expected by our component
+     */
+    transformTemplateData(data) {
+        // Check if data is an array (direct response) or has a data property (wrapped response)
+        const templates = Array.isArray(data) ? data : data.data || [];
+
+        return templates.map((template) => {
+            return {
+                id: template.id,
+                name: template.name,
+                status: template.status,
+                category: 'Assessment Template',
+                createdBy: 'Salesforce User',
+                lastModifiedBy: 'Salesforce User',
+                createdDate: template.createdDate,
+                lastModifiedDate: template.lastModifiedDate,
+                statusClass: this.getStatusClass(template.status),
+                formattedLastModifiedDate: this.formatDate(
+                    template.lastModifiedDate
+                ),
+                formattedCreatedDate: this.formatSimpleDate(
+                    template.createdDate
+                )
+            };
+        });
+    }
+
+    /**
+     * Load fallback data when offline or on error
+     */
+    loadFallbackData() {
+        // Get current date and some past dates for fallback data
+        const now = new Date();
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+
+        const lastWeek = new Date(now);
+        lastWeek.setDate(lastWeek.getDate() - 7);
+
+        // Sample data
+        const fallbackItems = [
+            {
+                id: 'item1',
+                name: 'Safety Assessment Template',
+                status: 'Active',
+                category: 'Safety',
+                createdBy: 'System Admin',
+                lastModifiedBy: 'System Admin',
+                createdDate: lastWeek.toISOString(),
+                lastModifiedDate: yesterday.toISOString()
+            },
+            {
+                id: 'item2',
+                name: 'Quality Control Template',
+                status: 'Draft',
+                category: 'Quality',
+                createdBy: 'System Admin',
+                lastModifiedBy: 'System Admin',
+                createdDate: lastWeek.toISOString(),
+                lastModifiedDate: now.toISOString()
+            }
+        ];
+
+        // Format the items
+        this._items = fallbackItems.map((item) => {
+            return {
+                ...item,
+                statusClass: this.getStatusClass(item.status),
+                formattedLastModifiedDate: this.formatDate(
+                    item.lastModifiedDate
+                ),
+                formattedCreatedDate: this.formatSimpleDate(item.createdDate)
+            };
+        });
+
+        this.isLoading = false;
     }
 
     disconnectedCallback() {
@@ -223,6 +390,7 @@ export default class Checklist extends LightningElement {
             case 'completed':
             case 'done':
             case 'finished':
+            case 'active':
                 return 'status-completed';
 
             case 'in progress':
@@ -233,11 +401,13 @@ export default class Checklist extends LightningElement {
             case 'pending':
             case 'not started':
             case 'todo':
+            case 'draft':
                 return 'status-pending';
 
             case 'blocked':
             case 'stopped':
             case 'halted':
+            case 'inactive':
                 return 'status-blocked';
 
             default:
