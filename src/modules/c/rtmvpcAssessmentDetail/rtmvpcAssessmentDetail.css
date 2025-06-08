@@ -3308,3 +3308,36 @@ body {
     color: #dc3545;
     margin-right: 10px;
 }
+
+.task-section {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e1e1e1;
+}
+
+.related-task {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+}
+
+.related-task h5 {
+    color: #5a3e84;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.task-details {
+    margin-left: 0.5rem;
+}
+
+.task-details p {
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+}
+
+.task-details strong {
+    color: #666;
+}

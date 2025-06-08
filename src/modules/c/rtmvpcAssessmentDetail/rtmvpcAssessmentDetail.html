@@ -855,15 +855,76 @@
                                                             {finding.status}
                                                         </p>
                                                     </div>
-                                                    <!-- Create Task Button -->
-                                                    <div class="action-buttons">
-                                                        <button
-                                                            class="slds-button slds-button_brand"
-                                                            onclick={handleCreateTask}
-                                                            data-finding-id={finding.id}
+
+                                                    <!-- Task Section -->
+                                                    <div class="task-section">
+                                                        <template
+                                                            if:true={finding.hasTask}
                                                         >
-                                                            Create New Task
-                                                        </button>
+                                                            <div
+                                                                class="related-task"
+                                                            >
+                                                                <h5>
+                                                                    Related Task
+                                                                </h5>
+                                                                <div
+                                                                    class="task-details"
+                                                                >
+                                                                    <p>
+                                                                        <strong
+                                                                            >Subject:</strong
+                                                                        >
+                                                                        {finding.relatedTask.Subject}
+                                                                    </p>
+                                                                    <p>
+                                                                        <strong
+                                                                            >Status:</strong
+                                                                        >
+                                                                        {finding.relatedTask.Status}
+                                                                    </p>
+                                                                    <p>
+                                                                        <strong
+                                                                            >Priority:</strong
+                                                                        >
+                                                                        {finding.relatedTask.Priority}
+                                                                    </p>
+                                                                    <p>
+                                                                        <strong
+                                                                            >Due
+                                                                            Date:</strong
+                                                                        >
+                                                                        {finding.relatedTask.ActivityDate}
+                                                                    </p>
+                                                                    <template
+                                                                        if:true={finding.relatedTask.Description}
+                                                                    >
+                                                                        <p>
+                                                                            <strong
+                                                                                >Description:</strong
+                                                                            >
+                                                                            {finding.relatedTask.Description}
+                                                                        </p>
+                                                                    </template>
+                                                                </div>
+                                                            </div>
+                                                        </template>
+                                                        <template
+                                                            if:false={finding.hasTask}
+                                                        >
+                                                            <!-- Create Task Button -->
+                                                            <div
+                                                                class="action-buttons"
+                                                            >
+                                                                <button
+                                                                    class="slds-button slds-button_brand"
+                                                                    onclick={handleCreateTask}
+                                                                    data-finding-id={finding.id}
+                                                                >
+                                                                    Create New
+                                                                    Task
+                                                                </button>
+                                                            </div>
+                                                        </template>
                                                     </div>
                                                 </div>
                                             </template>
@@ -1151,15 +1212,75 @@
                                                         {finding.status}
                                                     </p>
                                                 </div>
-                                                <!-- Create Task Button -->
-                                                <div class="action-buttons">
-                                                    <button
-                                                        class="slds-button slds-button_brand"
-                                                        onclick={handleCreateTask}
-                                                        data-finding-id={finding.id}
+
+                                                <!-- Task Section -->
+                                                <div class="task-section">
+                                                    <template
+                                                        if:true={finding.hasTask}
                                                     >
-                                                        Create New Task
-                                                    </button>
+                                                        <div
+                                                            class="related-task"
+                                                        >
+                                                            <h5>
+                                                                Related Task
+                                                            </h5>
+                                                            <div
+                                                                class="task-details"
+                                                            >
+                                                                <p>
+                                                                    <strong
+                                                                        >Subject:</strong
+                                                                    >
+                                                                    {finding.relatedTask.Subject}
+                                                                </p>
+                                                                <p>
+                                                                    <strong
+                                                                        >Status:</strong
+                                                                    >
+                                                                    {finding.relatedTask.Status}
+                                                                </p>
+                                                                <p>
+                                                                    <strong
+                                                                        >Priority:</strong
+                                                                    >
+                                                                    {finding.relatedTask.Priority}
+                                                                </p>
+                                                                <p>
+                                                                    <strong
+                                                                        >Due
+                                                                        Date:</strong
+                                                                    >
+                                                                    {finding.relatedTask.ActivityDate}
+                                                                </p>
+                                                                <template
+                                                                    if:true={finding.relatedTask.Description}
+                                                                >
+                                                                    <p>
+                                                                        <strong
+                                                                            >Description:</strong
+                                                                        >
+                                                                        {finding.relatedTask.Description}
+                                                                    </p>
+                                                                </template>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                    <template
+                                                        if:false={finding.hasTask}
+                                                    >
+                                                        <!-- Create Task Button -->
+                                                        <div
+                                                            class="action-buttons"
+                                                        >
+                                                            <button
+                                                                class="slds-button slds-button_brand"
+                                                                onclick={handleCreateTask}
+                                                                data-finding-id={finding.id}
+                                                            >
+                                                                Create New Task
+                                                            </button>
+                                                        </div>
+                                                    </template>
                                                 </div>
                                             </div>
                                         </template>
@@ -1660,14 +1781,23 @@
                                 <label for="task-assigned-to"
                                     >Assigned To</label
                                 >
-                                <input
-                                    type="text"
+                                <select
                                     id="task-assigned-to"
-                                    value={taskAssignedTo}
+                                    class="form-select"
+                                    value={selectedUserId}
                                     onchange={handleTaskInputChange}
-                                    data-field="taskAssignedTo"
+                                    data-field="selectedUserId"
                                     required
-                                />
+                                >
+                                    <template
+                                        for:each={assignedToOptions}
+                                        for:item="user"
+                                    >
+                                        <option key={user.id} value={user.id}>
+                                            {user.name}
+                                        </option>
+                                    </template>
+                                </select>
                             </div>
 
                             <div class="form-element file-upload">

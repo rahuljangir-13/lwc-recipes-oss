@@ -217,7 +217,7 @@ export default class RtmvpcAssessmentDetail extends LightningElement {
     @track taskDueDate = '';
     @track taskPriority = '';
     @track taskStatus = '';
-    @track taskAssignedTo = '';
+    @track selectedUserId = '';
     @track taskUploadedFiles = []; // Property to store uploaded files for tasks
 
     // Map to track findings created per assessment area
@@ -229,6 +229,9 @@ export default class RtmvpcAssessmentDetail extends LightningElement {
 
     // Track property for current finding ID
     @track currentFindingId;
+
+    // Add users property
+    @track users = [];
 
     // Computed property to check if not in editing mode
     get isNotEditing() {
@@ -246,35 +249,10 @@ export default class RtmvpcAssessmentDetail extends LightningElement {
     }
 
     // Assessment findings data
-    @track assessmentFindings = [
-        {
-            id: 'a047z00000FGQtzAAH',
-            name: 'hiii',
-            description: 'jic',
-            type: 'Major Non-Conformance',
-            rootCause: 'Poor Documentations',
-            repeatFinding: 'Yes',
-            resolutionTimeFrame: '60 days',
-            assessmentArea: 'Test Area',
-            status: 'Open'
-        }
-    ];
+    @track assessmentFindings = [];
 
     // Task data
-    @track assessmentTasks = [
-        {
-            id: 'task1',
-            subject: 'Tech Debt',
-            comments: 'Review technical debt identified in the assessment.',
-            dueDate: '2025-05-29'
-        },
-        {
-            id: 'task2',
-            subject: 'System Integration',
-            comments: 'Follow up on system integration findings.',
-            dueDate: '2025-06-15'
-        }
-    ];
+    @track assessmentTasks = [];
 
     // Track save timeout
     saveTimeout;
@@ -687,7 +665,7 @@ export default class RtmvpcAssessmentDetail extends LightningElement {
             console.log('Fetching findings with params:', params.toString());
 
             const sessionId =
-                '00D7z00000P3CKp!AQEAQEOcTkolXNAP1u_lmEfucc5Nn0QdJRQ1Gr1RnMbh2J7LW0kcNdvuIhwDARvMwWOwvxk0p5okjJ.JoKdnCNo3PexQ68_P';
+                '00D7z00000P3CKp!AQEAQNnxnNd986.Mk_Xv3FDEejM5aKsAbrNQdEpzBV7TBeHYnb44D.Ag936gZGinWSxcS8FvVrAwMOyNnzuolgS.iN6lPzjo';
 
             const headers = {
                 Authorization: `Bearer ${sessionId}`,
@@ -715,12 +693,6 @@ export default class RtmvpcAssessmentDetail extends LightningElement {
                     : rawResult;
 
             console.log('Parsed API Response:', result);
-            console.log('Response validation:', {
-                hasResult: !!result,
-                successValue: result.success,
-                hasData: !!result.data,
-                dataType: typeof result.data
-            });
 
             if (result && result.success && result.data) {
                 // Map the API response to our findings format
@@ -756,10 +728,55 @@ export default class RtmvpcAssessmentDetail extends LightningElement {
 
                 // Update assessmentFindings to show current question's findings
                 this.assessmentFindings = this.findingsPerQuestion[questionId];
-                console.log(
-                    'Final processed findings:',
-                    this.assessmentFindings
-                );
+
+                // For each finding, fetch related tasks
+                for (const finding of this.assessmentFindings) {
+                    try {
+                        const taskParams = new URLSearchParams({
+                            operation: 'getTaskRelatedToFindings',
+                            recordId: finding.id // This is the WhatId for the task
+                        });
+
+                        const taskResponse = fetch(
+                            `${FINDINGS_ENDPOINT}?${taskParams.toString()}`,
+                            {
+                                method: 'GET',
+                                mode: 'cors',
+                                headers: headers
+                            }
+                        );
+
+                        if (!taskResponse.ok) {
+                            throw new Error(
+                                `HTTP error! status: ${taskResponse.status}`
+                            );
+                        }
+
+                        const taskResult = taskResponse.json();
+                        const parsedTaskResult =
+                            typeof taskResult === 'string'
+                                ? JSON.parse(taskResult)
+                                : taskResult;
+
+                        if (
+                            parsedTaskResult &&
+                            parsedTaskResult.success &&
+                            parsedTaskResult.data
+                        ) {
+                            // Store task data with the finding
+                            finding.relatedTask = parsedTaskResult.data;
+                            finding.hasTask = true;
+                        } else {
+                            finding.hasTask = false;
+                        }
+                    } catch (error) {
+                        console.error(
+                            `Error fetching tasks for finding ${finding.id}:`,
+                            error
+                        );
+                        finding.hasTask = false;
+                    }
+                }
 
                 // Show findings with create task option
                 this.isFindingCreated = true;
@@ -1133,7 +1150,9 @@ export default class RtmvpcAssessmentDetail extends LightningElement {
     // Handle input changes for Task form
     handleTaskInputChange(event) {
         const field = event.target.dataset.field;
-        this[field] = event.target.value;
+        const value = event.target.value;
+        console.log(`Changing ${field} to:`, value);
+        this[field] = value;
     }
 
     handleTaskUploadButtonClick() {
@@ -1148,6 +1167,65 @@ export default class RtmvpcAssessmentDetail extends LightningElement {
         // You might want to display the selected file names to the user
     }
 
+    async createTaskInSalesforce(taskPayload) {
+        try {
+            // Updated endpoint URL to match the @RestResource URL mapping
+            const TASK_ENDPOINT =
+                'https://nosoftware-ability-6323-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/findings/';
+            const sessionId =
+                '00D7z00000P3CKp!AQEAQNnxnNd986.Mk_Xv3FDEejM5aKsAbrNQdEpzBV7TBeHYnb44D.Ag936gZGinWSxcS8FvVrAwMOyNnzuolgS.iN6lPzjo';
+
+            // Modify the payload to match the Apex method's expected format
+            const modifiedPayload = {
+                operation: 'createTask',
+                isSubmit: true,
+                taskData: [taskPayload.taskData]
+            };
+
+            console.log('Sending task payload:', modifiedPayload);
+
+            const response = await fetch(TASK_ENDPOINT, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${sessionId}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(modifiedPayload)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log('Task creation response:', result);
+
+            if (result) {
+                // Close the modal and show success message
+                this.handleCloseTaskModal();
+                this.showCustomToast(
+                    'Success',
+                    'Task created successfully!',
+                    'success'
+                );
+
+                // Reset form and update UI
+                this.resetTaskForm();
+                this.showCapaForm = true;
+                this.showTasksSection = false;
+            } else {
+                throw new Error(result.message || 'Failed to create task');
+            }
+        } catch (error) {
+            console.error('Error creating task:', error);
+            this.showCustomToast(
+                'Error',
+                'Failed to create task. Please try again.',
+                'error'
+            );
+        }
+    }
+
     handleSaveTask() {
         // Basic validation for mandatory task fields
         const mandatoryTaskFields = [
@@ -1155,7 +1233,7 @@ export default class RtmvpcAssessmentDetail extends LightningElement {
             'taskDueDate',
             'taskPriority',
             'taskStatus',
-            'taskAssignedTo'
+            'selectedUserId'
         ];
         let allTaskFieldsValid = true;
         const missingFields = [];
@@ -1188,12 +1266,11 @@ export default class RtmvpcAssessmentDetail extends LightningElement {
                     taskData: {
                         Subject: this.taskSubject,
                         Description: this.taskComments,
-                        Due_Date__c: this.taskDueDate,
+                        ActivityDate: this.taskDueDate,
                         Priority: this.taskPriority,
                         Status: this.taskStatus,
-                        Assigned_To__c: this.taskAssignedTo,
-                        questionId: this.currentQuestionId,
-                        areaId: this.currentAreaId
+                        OwnerId: this.selectedUserId,
+                        WhatId: this.currentFindingId
                     }
                 };
 
@@ -1224,62 +1301,13 @@ export default class RtmvpcAssessmentDetail extends LightningElement {
         }
     }
 
-    async createTaskInSalesforce(taskPayload) {
-        try {
-            const TASK_ENDPOINT =
-                'https://nosoftware-ability-6323-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/tasks/';
-            const sessionId =
-                '00D7z00000P3CKp!AQEAQEOcTkolXNAP1u_lmEfucc5Nn0QdJRQ1Gr1RnMbh2J7LW0kcNdvuIhwDARvMwWOwvxk0p5okjJ.JoKdnCNo3PexQ68_P';
-
-            const response = await fetch(TASK_ENDPOINT, {
-                method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${sessionId}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(taskPayload)
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const result = await response.json();
-            console.log('Task creation response:', result);
-
-            if (result.success) {
-                // Close the modal and show success message
-                this.handleCloseTaskModal();
-                this.showCustomToast(
-                    'Success',
-                    'Task created successfully!',
-                    'success'
-                );
-
-                // Reset form and update UI
-                this.resetTaskForm();
-                this.showCapaForm = true;
-                this.showTasksSection = false;
-            } else {
-                throw new Error(result.message || 'Failed to create task');
-            }
-        } catch (error) {
-            console.error('Error creating task:', error);
-            this.showCustomToast(
-                'Error',
-                'Failed to create task. Please try again.',
-                'error'
-            );
-        }
-    }
-
     resetTaskForm() {
         this.taskSubject = '';
         this.taskComments = '';
         this.taskDueDate = '';
         this.taskPriority = '';
         this.taskStatus = '';
-        this.taskAssignedTo = '';
+        this.selectedUserId = '';
         this.taskUploadedFiles = [];
     }
 
@@ -1449,12 +1477,74 @@ export default class RtmvpcAssessmentDetail extends LightningElement {
             'https://nosoftware-ability-6323-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/lwcossaccounts/?operation=getQuestions&recordId=a087z00000VgzJoAAJ';
         console.log('🌐 Online: Getting counts from Apex REST API');
         const sessionId =
-            '00D7z00000P3CKp!AQEAQEOcTkolXNAP1u_lmEfucc5Nn0QdJRQ1Gr1RnMbh2J7LW0kcNdvuIhwDARvMwWOwvxk0p5okjJ.JoKdnCNo3PexQ68_P';
+            '00D7z00000P3CKp!AQEAQNnxnNd986.Mk_Xv3FDEejM5aKsAbrNQdEpzBV7TBeHYnb44D.Ag936gZGinWSxcS8FvVrAwMOyNnzuolgS.iN6lPzjo';
 
         const headers = {
             Authorization: `Bearer ${sessionId}`,
             'Content-Type': 'application/json'
         };
+
+        const APEX_REST_ENDPOINT_URL_USER =
+            'https://nosoftware-ability-6323-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/findings/?operation=getAllUsers';
+
+        // Fetch users first
+        fetch(APEX_REST_ENDPOINT_URL_USER, {
+            method: 'GET',
+            mode: 'cors',
+            headers: headers
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log('Raw user data:', data);
+                try {
+                    const parsedData =
+                        typeof data === 'string' ? JSON.parse(data) : data;
+                    console.log('Parsed user data:', parsedData);
+
+                    if (
+                        parsedData &&
+                        parsedData.data &&
+                        Array.isArray(parsedData.data)
+                    ) {
+                        this.users = parsedData.data.map((user) => ({
+                            id: user.Id,
+                            name:
+                                user.Name ||
+                                `${user.FirstName || ''} ${user.LastName || ''}`.trim() ||
+                                user.Username
+                        }));
+                    } else if (parsedData && Array.isArray(parsedData)) {
+                        this.users = parsedData.map((user) => ({
+                            id: user.Id,
+                            name:
+                                user.Name ||
+                                `${user.FirstName || ''} ${user.LastName || ''}`.trim() ||
+                                user.Username
+                        }));
+                    }
+                    console.log('Processed users:', this.users);
+                } catch (error) {
+                    console.error('Error parsing user data:', error);
+                    this.showCustomToast(
+                        'Error',
+                        'Failed to parse users data',
+                        'error'
+                    );
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching users:', error);
+                this.showCustomToast(
+                    'Error',
+                    'Failed to fetch users list',
+                    'error'
+                );
+            });
 
         // First fetch questions to get section IDs
         fetch(APEX_REST_ENDPOINT_URL_2, {
@@ -1724,5 +1814,11 @@ export default class RtmvpcAssessmentDetail extends LightningElement {
             hasFindings: hasFindings
         });
         return hasFindings;
+    }
+
+    // Add a getter for users
+    get assignedToOptions() {
+        console.log('Current users in getter:', this.users);
+        return [{ id: '', name: '-- Select User --' }, ...this.users];
     }
 }
