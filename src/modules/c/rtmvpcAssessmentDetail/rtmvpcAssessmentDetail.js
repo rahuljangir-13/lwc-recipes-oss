@@ -729,54 +729,79 @@ export default class RtmvpcAssessmentDetail extends LightningElement {
                 // Update assessmentFindings to show current question's findings
                 this.assessmentFindings = this.findingsPerQuestion[questionId];
 
-                // For each finding, fetch related tasks
-                for (const finding of this.assessmentFindings) {
-                    try {
-                        const taskParams = new URLSearchParams({
-                            operation: 'getTaskRelatedToFindings',
-                            recordId: finding.id // This is the WhatId for the task
-                        });
+                // Fetch tasks for all findings in parallel
+                const taskPromises = this.assessmentFindings.map((finding) => {
+                    const taskParams = new URLSearchParams({
+                        operation: 'getTaskRelatedToFindings',
+                        recordId: finding.id // This is the WhatId for the task
+                    });
 
-                        const taskResponse = fetch(
-                            `${FINDINGS_ENDPOINT}?${taskParams.toString()}`,
-                            {
-                                method: 'GET',
-                                mode: 'cors',
-                                headers: headers
+                    return fetch(
+                        `${FINDINGS_ENDPOINT}?${taskParams.toString()}`,
+                        {
+                            method: 'GET',
+                            mode: 'cors',
+                            headers: headers
+                        }
+                    )
+                        .then((response1) => {
+                            if (!response1.ok) {
+                                throw new Error(
+                                    `HTTP error! status: ${response1.status}`
+                                );
                             }
-                        );
-
-                        if (!taskResponse.ok) {
-                            throw new Error(
-                                `HTTP error! status: ${taskResponse.status}`
+                            return response1.json();
+                        })
+                        .then((taskResult) => {
+                            const parsedTaskResult =
+                                typeof taskResult === 'string'
+                                    ? JSON.parse(taskResult)
+                                    : taskResult;
+                            return {
+                                findingId: finding.id,
+                                taskData: parsedTaskResult
+                            };
+                        })
+                        .catch((error) => {
+                            console.error(
+                                `Error fetching tasks for finding ${finding.id}:`,
+                                error
                             );
-                        }
+                            return {
+                                findingId: finding.id,
+                                error: true
+                            };
+                        });
+                });
 
-                        const taskResult = taskResponse.json();
-                        const parsedTaskResult =
-                            typeof taskResult === 'string'
-                                ? JSON.parse(taskResult)
-                                : taskResult;
+                // Wait for all task requests to complete
+                const taskResults = await Promise.all(taskPromises);
 
-                        if (
-                            parsedTaskResult &&
-                            parsedTaskResult.success &&
-                            parsedTaskResult.data
-                        ) {
-                            // Store task data with the finding
-                            finding.relatedTask = parsedTaskResult.data;
-                            finding.hasTask = true;
-                        } else {
-                            finding.hasTask = false;
-                        }
-                    } catch (error) {
-                        console.error(
-                            `Error fetching tasks for finding ${finding.id}:`,
-                            error
+                // Update findings with task data
+                this.assessmentFindings = this.assessmentFindings.map(
+                    (finding) => {
+                        const taskResult = taskResults.find(
+                            (result1) => result1.findingId === finding.id
                         );
-                        finding.hasTask = false;
+                        if (
+                            taskResult &&
+                            !taskResult.error &&
+                            taskResult.taskData &&
+                            taskResult.taskData.success &&
+                            taskResult.taskData.data
+                        ) {
+                            return {
+                                ...finding,
+                                relatedTask: taskResult.taskData.data,
+                                hasTask: true
+                            };
+                        }
+                        return {
+                            ...finding,
+                            hasTask: false
+                        };
                     }
-                }
+                );
 
                 // Show findings with create task option
                 this.isFindingCreated = true;
