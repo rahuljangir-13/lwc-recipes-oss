@@ -99,10 +99,18 @@
 }
 
 .form-element label {
-    font-size: 14px;
+    /* font-size: 14px;
     font-weight: 500;
     color: #16325c;
-    margin-bottom: 8px;
+    margin-bottom: 8px; */
+
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #23272f;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
 }
 
 .required {

@@ -3,7 +3,7 @@ import { isOnline } from 'c/utils';
 
 // Salesforce REST API endpoint for Assessment Templates
 const ASSESSMENT_TEMPLATES_ENDPOINT =
-    'https://customization-app-1405-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/assessmenttemplates';
+    'https://nosoftware-ability-6323-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/assessmenttemplates';
 
 export default class Checklist extends LightningElement {
     @api
@@ -95,6 +95,7 @@ export default class Checklist extends LightningElement {
                     }
                 })
             );
+            console.log('Selected checklist item:', selectedItem);
         }
     }
 
@@ -163,7 +164,7 @@ export default class Checklist extends LightningElement {
             // Get an OAuth token or session ID
             // In a real app, you would have a proper OAuth flow
             const sessionId =
-                '00DO500000ZIhWy!AQEAQGHZ0lYxoF28T9aVgGLkahxEmJU.W4VBgGKKqbcYMJWfUGjfUDL_ez_004TFATKVmZbY24U4mCfw7jotQpA7ewLKMoVs';
+                '00D7z00000P3CKp!AQEAQFKwmwBkDRjyqOFqec8P6JFs.lSfwBSthHyGfPUCPpJN2vUXUz6QE4UUMIAViND2smQ0Pwb2JY0vWTGLNsSW_sx8W1.Z';
 
             const headers = {
                 Authorization: `Bearer ${sessionId}`,
@@ -301,6 +302,15 @@ export default class Checklist extends LightningElement {
                 formattedCreatedDate: this.formatSimpleDate(item.createdDate)
             };
         });
+
+        // Also dispatch dataloaded event with fallback data
+        this.dispatchEvent(
+            new CustomEvent('dataloaded', {
+                detail: {
+                    items: this._items
+                }
+            })
+        );
 
         this.isLoading = false;
     }

@@ -304,13 +304,13 @@ export default class ChecklistDemo extends LightningElement {
     // Handle view checklist event
     handleViewChecklist(event) {
         console.log('View checklist event received:', event.detail);
-        const { itemId, item } = event.detail;
 
-        if (itemId && item) {
-            this.selectedChecklistId = itemId;
-            this.selectedChecklist = item;
-            this.showDetailView = true;
-        }
+        // Store the selected checklist ID and item data
+        this.selectedChecklistId = event.detail.itemId;
+        this.selectedChecklist = event.detail.item;
+
+        // Switch to detail view
+        this.showDetailView = true;
     }
 
     @api
@@ -356,6 +356,28 @@ export default class ChecklistDemo extends LightningElement {
             if (checklistComponent) {
                 checklistComponent.items = this.checklistItems;
             }
+        }
+    }
+
+    // Handle data loaded from API
+    handleDataLoaded(event) {
+        console.log('Data loaded from API:', event.detail.items);
+
+        // Update the items array with the data from the API
+        if (
+            event.detail &&
+            event.detail.items &&
+            event.detail.items.length > 0
+        ) {
+            // Store the loaded data as the current items
+            this.checklistItems = [...event.detail.items];
+
+            // Also update the original items array used for filtering
+            this.originalChecklistItems = [...event.detail.items];
+
+            console.log(
+                'Updated checklistItems and originalChecklistItems with API data'
+            );
         }
     }
 }

@@ -3,6 +3,7 @@ import { LightningElement, api, track } from 'lwc';
 export default class ChecklistDetailPage extends LightningElement {
     @api recordId;
     @track checklistDetail = {
+        id: null,
         assessmentName: 'Assessment 16-05',
         category: 'Health & Safety',
         checklistName: 'Checklist11-B1',
@@ -15,20 +16,29 @@ export default class ChecklistDetailPage extends LightningElement {
     };
 
     @track currentSection = 'details';
+    @track templateId = null; // ID of the template/checklist for questions
 
     connectedCallback() {
         // In a real application, you would load the data based on recordId
-        // For now, we're using mock data in the checklistDetail object
         console.log(
             'ChecklistDetailPage initialized with recordId:',
             this.recordId
         );
+
+        // If recordId is available, set it as the templateId for questions
+        if (this.recordId) {
+            this.templateId = this.recordId;
+        }
     }
 
     @api
     setChecklistData(data) {
         if (data) {
+            // Store the item ID for questions fetch
+            this.templateId = data.id;
+
             this.checklistDetail = {
+                id: data.id,
                 assessmentName: data.name || 'Assessment 16-05',
                 category: data.category || 'Health & Safety',
                 checklistName: data.name || 'SIF Alert',
@@ -39,6 +49,34 @@ export default class ChecklistDetailPage extends LightningElement {
                 description: data.description || 'description',
                 orgComponent: data.orgComponent || 'Spare Parts Room'
             };
+
+            console.log('Set template ID for questions:', this.templateId);
+
+            // If we're already on the questions tab, notify the questions component
+            if (this.currentSection === 'questions') {
+                this.refreshQuestionsForTemplate();
+            }
+        }
+    }
+
+    // When the questions component has been added to the DOM, initialize it with the templateId
+    renderedCallback() {
+        if (this.currentSection === 'questions' && this.templateId) {
+            this.refreshQuestionsForTemplate();
+        }
+    }
+
+    // Tell the questions component to load questions for the current template
+    refreshQuestionsForTemplate() {
+        const questionsComponent = this.template.querySelector(
+            'c-checklist-questions-tree'
+        );
+        if (questionsComponent) {
+            console.log(
+                'Setting template ID on questions component:',
+                this.templateId
+            );
+            questionsComponent.templateId = this.templateId;
         }
     }
 
@@ -106,6 +144,16 @@ export default class ChecklistDetailPage extends LightningElement {
             });
 
             console.log('Navigated to section:', section);
+
+            // If we navigated to the questions tab, make sure the questions component is initialized
+            if (section === 'questions' && this.templateId) {
+                this.refreshQuestionsForTemplate();
+            }
         }
+    }
+
+    // Handle event when questions are loaded
+    handleQuestionsLoaded(event) {
+        console.log('Questions loaded for template:', event.detail.templateId);
     }
 }

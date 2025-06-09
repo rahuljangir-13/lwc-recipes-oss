@@ -1,10 +1,17 @@
 import { LightningElement, api, track } from 'lwc';
+import { isOnline } from 'c/utils';
+
+// Salesforce REST API endpoint for Assessment Templates
+const ASSESSMENT_TYPE_ENDPOINT =
+    'https://nosoftware-ability-6323-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/assessmenttype';
 
 export default class AssessmentType extends LightningElement {
     @api recordId;
 
     // Update items property to be an API property with getter/setter
     _items = [];
+    @track isLoading = true; // Track loading state
+    @track error = null; // Track error state
 
     @api
     get items() {
@@ -20,6 +27,11 @@ export default class AssessmentType extends LightningElement {
             : [];
         // Reset view state when items change
         this.visibleItemCount = this.initialVisibleItems;
+
+        // If items are set externally, we're no longer loading
+        if (value && value.length > 0) {
+            this.isLoading = false;
+        }
     }
 
     initialVisibleItems = 2; // Initial number of cards to show
@@ -31,6 +43,9 @@ export default class AssessmentType extends LightningElement {
     @track selectedRecordType = null;
 
     connectedCallback() {
+        // Set loading state to true when component is initialized
+        this.isLoading = true;
+
         // Initialize mock data only if items is empty
         if (this._items.length === 0) {
             this.loadMockData();
@@ -38,6 +53,149 @@ export default class AssessmentType extends LightningElement {
 
         // Add click event listener to document to close dropdowns
         document.addEventListener('click', this.handleDocumentClick.bind(this));
+
+        // Fetch real data from Salesforce
+        this.fetchTemplatesFromSalesforce();
+    }
+
+    fetchTemplatesFromSalesforce() {
+        if (isOnline()) {
+            console.log(
+                '🌐 Online: Fetching assessment templates from Salesforce'
+            );
+            this.isLoading = true;
+            this.error = null;
+
+            // Get an OAuth token or session ID
+            // In a real app, you would have a proper OAuth flow
+            const sessionId =
+                '00D7z00000P3CKp!AQEAQFKwmwBkDRjyqOFqec8P6JFs.lSfwBSthHyGfPUCPpJN2vUXUz6QE4UUMIAViND2smQ0Pwb2JY0vWTGLNsSW_sx8W1.Z';
+
+            const headers = {
+                Authorization: `Bearer ${sessionId}`,
+                'Content-Type': 'application/json'
+            };
+
+            fetch(ASSESSMENT_TYPE_ENDPOINT, {
+                method: 'GET',
+                headers: headers,
+                mode: 'cors'
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        return response.text().then((text) => {
+                            console.error(
+                                `❌ HTTP error! status: ${response.status}, message: ${text}`
+                            );
+                            throw new Error(
+                                `HTTP error! status: ${response.status}, message: ${text}`
+                            );
+                        });
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    console.log('✅ Fetched assessment templates:', data);
+
+                    // Transform the data to match our component's format
+                    const formattedItems = this.transformTemplateData(data);
+
+                    // Update the items
+                    this._items = formattedItems;
+
+                    //Dispatch an event to notify the parent component that data has loaded
+                    this.dispatchEvent(
+                        new CustomEvent('dataloaded', {
+                            detail: {
+                                items: this._items
+                            }
+                        })
+                    );
+                })
+                .catch((error) => {
+                    console.error(
+                        '❌ Error fetching assessment templates:',
+                        error
+                    );
+                    this.error = error.message;
+
+                    // In case of error, load some fallback data
+                    this.loadFallbackData();
+                })
+                .finally(() => {
+                    this.isLoading = false;
+                });
+        } else {
+            console.log('📴 Offline: Using cached or sample data');
+            this.error = 'You are currently offline. Showing cached data.';
+            this.loadFallbackData();
+            this.isLoading = false;
+        }
+    }
+
+    transformTemplateData(data) {
+        // Check if data is an array (direct response) or has a data property (wrapped response)
+        const templates = Array.isArray(data) ? data : data.data || [];
+
+        return templates.map((template) => {
+            return {
+                id: template.id,
+                name: template.name,
+                status: template.status,
+                assessmentArea: template.assessmentArea,
+                recordType: template.recordType,
+                statusClass: this.getStatusClass(template.status)
+            };
+        });
+    }
+
+    // Method to retry fetching data if there was an error
+    retryFetch() {
+        if (this.error) {
+            this.error = null;
+            this.fetchTemplatesFromSalesforce();
+        }
+    }
+
+    // Load fallback data in case of error or offline
+    loadFallbackData() {
+        const now = new Date();
+
+        // Create fallback data
+        const fallbackItems = [
+            {
+                id: 'at001',
+                name: 'Safety Assessment',
+                status: 'Active',
+                assessmentArea: 'Workplace Safety',
+                recordType: 'Standard',
+                statusClass: this.getStatusClass('Active'),
+                createdDate: now.toISOString()
+            },
+            {
+                id: 'at002',
+                name: 'Quality Control',
+                status: 'Draft',
+                assessmentArea: 'Manufacturing',
+                recordType: 'Standard',
+                statusClass: this.getStatusClass('Draft'),
+                createdDate: now.toISOString()
+            }
+        ];
+
+        // Update the items array
+        this._items = fallbackItems;
+
+        // Notify parent component that data is loaded (even though it's fallback data)
+        this.dispatchEvent(
+            new CustomEvent('dataloaded', {
+                detail: {
+                    items: this._items
+                }
+            })
+        );
+
+        this.isLoading = false;
     }
 
     disconnectedCallback() {
@@ -54,7 +212,7 @@ export default class AssessmentType extends LightningElement {
     }
 
     get noData() {
-        return this._items.length === 0;
+        return !this.isLoading && this._items.length === 0 && !this.error;
     }
 
     get visibleItems() {
@@ -196,49 +354,51 @@ export default class AssessmentType extends LightningElement {
         this.closeAllDropdowns();
     }
 
+    /**
+     * Load mock data for demonstration purposes
+     */
     loadMockData() {
-        // Mock data for demo purposes
-        const mockItems = [
+        // Sample data for the component
+        const now = new Date();
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+
+        // Mock assessment type data
+        this._items = [
             {
-                id: 'ast1',
-                name: 'Site Safety Assessment',
-                area: 'Safety',
-                recordType: 'Assessment Type',
+                id: 'type1',
+                name: 'Safety Assessment',
                 status: 'Active',
-                createdBy: 'John Doe',
-                lastModifiedBy: 'Jane Smith',
-                createdDate: '2023-05-15',
-                lastModifiedDate: '2023-06-01'
+                assessmentArea: 'Safety',
+                recordType: 'Standard Assessment',
+                createdDate: now.toISOString(),
+                lastModifiedDate: now.toISOString(),
+                statusClass: this.getStatusClass('Active')
             },
             {
-                id: 'ast2',
-                name: 'Quality Control Audit',
-                area: 'Quality',
-                recordType: 'Assessment Type',
+                id: 'type2',
+                name: 'Quality Control',
                 status: 'Draft',
-                createdBy: 'Jane Smith',
-                lastModifiedBy: 'Jane Smith',
-                createdDate: '2023-06-10',
-                lastModifiedDate: '2023-06-10'
+                assessmentArea: 'Quality',
+                recordType: 'Standard Assessment',
+                createdDate: yesterday.toISOString(),
+                lastModifiedDate: yesterday.toISOString(),
+                statusClass: this.getStatusClass('Draft')
             },
             {
-                id: 'ast3',
-                name: 'Environmental Compliance',
-                area: 'Compliance',
-                recordType: 'Assessment Type',
+                id: 'type3',
+                name: 'Compliance Review',
                 status: 'Inactive',
-                createdBy: 'John Doe',
-                lastModifiedBy: 'John Doe',
-                createdDate: '2023-04-22',
-                lastModifiedDate: '2023-05-10'
+                assessmentArea: 'Compliance',
+                recordType: 'Regulatory Assessment',
+                createdDate: yesterday.toISOString(),
+                lastModifiedDate: now.toISOString(),
+                statusClass: this.getStatusClass('Inactive')
             }
         ];
 
-        // Map each item to include the statusClass
-        this._items = mockItems.map((item) => ({
-            ...item,
-            statusClass: this.getStatusClass(item.status)
-        }));
+        // Set loading to false since we now have data
+        this.isLoading = false;
     }
 
     // Helper method to get the appropriate status class
