@@ -2,8 +2,8 @@
     <div class="main-container">
         <!-- Tab Navigation
         <div class="tab-container">
-            <button type="button" class={activeTab === 'responses' ? 'tab active' : 'tab'} aria-selected={activeTab === 'responses'} data-tab="responses" onclick={handleTabSwitch}>Responses</button>
-            <button type="button" class={activeTab === 'reports' ? 'tab active' : 'tab'} aria-selected={activeTab === 'reports'} data-tab="reports" onclick={handleTabSwitch}>Reports</button>
+            <button type="button" class={responsesTabClass} aria-selected={isResponsesTabActive} data-tab="responses" onclick={handleTabSwitch}>Responses</button>
+            <button type="button" class={reportsTabClass} aria-selected={isReportsTabActive} data-tab="reports" onclick={handleTabSwitch}>Reports</button>
         </div>
     -->
 
@@ -365,7 +365,9 @@
 
                                 <!-- Export dropdown -->
                                 <template if:true={showdownloadIcon}>
-                                    <div class="dropdown-wrapper">
+                                    <div
+                                        class="dropdown-wrapper filter-wrapper"
+                                    >
                                         <button
                                             class="icon-button export-button"
                                             onclick={toggleExportMenu}
@@ -579,7 +581,7 @@
                                                             onclick={showComments}
                                                             data-area-id={area.id}
                                                             data-question-id={question.id}
-                                                            title="Comments"
+                                                            title="Follow-up"
                                                         >
                                                             <svg
                                                                 xmlns="http://www.w3.org/2000/svg"
@@ -598,7 +600,7 @@
                                                             </svg>
                                                             <span
                                                                 class="action-label"
-                                                                >Comments</span
+                                                                >Follow-up</span
                                                             >
                                                         </button>
                                                         <button
@@ -740,48 +742,83 @@
                             </div>
                             <div class="panel-content">
                                 <template if:true={openReviewComments}>
-                                    <div class="comments-section">
-                                        <div class="comment">
-                                            <div class="comment-header">
-                                                <span class="comment-author"
-                                                    >User User</span
+                                    <div
+                                        class="comments-section chat-container"
+                                    >
+                                        <!-- Chat Messages - Displayed as alternating left/right messages -->
+                                        <div class="chat-messages">
+                                            <template
+                                                for:each={chatMessagesWithClasses}
+                                                for:item="message"
+                                            >
+                                                <div
+                                                    key={message.id}
+                                                    class={message.cssClass}
                                                 >
-                                                <span class="comment-date"
-                                                    >May-29-2025</span
-                                                >
-                                            </div>
-                                            <div class="comment-body">
-                                                <p>
-                                                    This assessment needs
-                                                    additional details on
-                                                    technical debt requirements.
-                                                </p>
-                                            </div>
+                                                    <div
+                                                        class="chat-message-content"
+                                                    >
+                                                        <div
+                                                            class="chat-message-header"
+                                                        >
+                                                            <span
+                                                                class="chat-message-sender"
+                                                                >{message.sender}</span
+                                                            >
+                                                            <span
+                                                                class="chat-message-time"
+                                                                >{message.timestamp}</span
+                                                            >
+                                                        </div>
+                                                        <div
+                                                            class="chat-message-body"
+                                                        >
+                                                            <p>
+                                                                {message.content}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </template>
                                         </div>
-                                        <div class="comment">
-                                            <div class="comment-header">
-                                                <span class="comment-author"
-                                                    >System Admin</span
-                                                >
-                                                <span class="comment-date"
-                                                    >May-28-2025</span
-                                                >
-                                            </div>
-                                            <div class="comment-body">
-                                                <p>
-                                                    Assessment started. Please
-                                                    review all sections.
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="comment-input">
+
+                                        <!-- Chat Input with Salesforce Blue Send Icon -->
+                                        <div class="chat-input-container">
                                             <textarea
-                                                placeholder="Add a comment..."
+                                                class="chat-input"
+                                                placeholder="Type your message..."
+                                                value={newChatMessage}
+                                                onkeypress={handleChatKeyPress}
+                                                onchange={handleChatInputChange}
                                             ></textarea>
                                             <button
-                                                class="send-button create-button"
+                                                class="chat-send-button"
+                                                onclick={handleSendChatMessage}
+                                                title="Send Message"
                                             >
-                                                Send
+                                                <svg
+                                                    class="send-icon"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    width="20"
+                                                    height="20"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                >
+                                                    <path
+                                                        d="M22 2L11 13"
+                                                        stroke="#0070d2"
+                                                        stroke-width="2"
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                    />
+                                                    <path
+                                                        d="M22 2L15 22L11 13L2 9L22 2Z"
+                                                        stroke="#0070d2"
+                                                        stroke-width="2"
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                    />
+                                                </svg>
                                             </button>
                                         </div>
                                     </div>
@@ -1104,48 +1141,79 @@
                         </div>
                         <div class="modal-content">
                             <template if:true={openReviewComments}>
-                                <div class="comments-section">
-                                    <div class="comment">
-                                        <div class="comment-header">
-                                            <span class="comment-author"
-                                                >User User</span
+                                <div class="comments-section chat-container">
+                                    <!-- Chat Messages - Displayed as alternating left/right messages -->
+                                    <div class="chat-messages">
+                                        <template
+                                            for:each={chatMessagesWithClasses}
+                                            for:item="message"
+                                        >
+                                            <div
+                                                key={message.id}
+                                                class={message.cssClass}
                                             >
-                                            <span class="comment-date"
-                                                >May-29-2025</span
-                                            >
-                                        </div>
-                                        <div class="comment-body">
-                                            <p>
-                                                This assessment needs additional
-                                                details on technical debt
-                                                requirements.
-                                            </p>
-                                        </div>
+                                                <div
+                                                    class="chat-message-content"
+                                                >
+                                                    <div
+                                                        class="chat-message-header"
+                                                    >
+                                                        <span
+                                                            class="chat-message-sender"
+                                                            >{message.sender}</span
+                                                        >
+                                                        <span
+                                                            class="chat-message-time"
+                                                            >{message.timestamp}</span
+                                                        >
+                                                    </div>
+                                                    <div
+                                                        class="chat-message-body"
+                                                    >
+                                                        <p>{message.content}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </template>
                                     </div>
-                                    <div class="comment">
-                                        <div class="comment-header">
-                                            <span class="comment-author"
-                                                >System Admin</span
-                                            >
-                                            <span class="comment-date"
-                                                >May-28-2025</span
-                                            >
-                                        </div>
-                                        <div class="comment-body">
-                                            <p>
-                                                Assessment started. Please
-                                                review all sections.
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="comment-input">
+
+                                    <!-- Chat Input with Salesforce Blue Send Icon -->
+                                    <div class="chat-input-container">
                                         <textarea
-                                            placeholder="Add a comment..."
+                                            class="chat-input"
+                                            placeholder="Type your message..."
+                                            value={newChatMessage}
+                                            onkeypress={handleChatKeyPress}
+                                            onchange={handleChatInputChange}
                                         ></textarea>
                                         <button
-                                            class="send-button create-button"
+                                            class="chat-send-button"
+                                            onclick={handleSendChatMessage}
+                                            title="Send Message"
                                         >
-                                            Send
+                                            <svg
+                                                class="send-icon"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="20"
+                                                height="20"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                            >
+                                                <path
+                                                    d="M22 2L11 13"
+                                                    stroke="#0070d2"
+                                                    stroke-width="2"
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                />
+                                                <path
+                                                    d="M22 2L15 22L11 13L2 9L22 2Z"
+                                                    stroke="#0070d2"
+                                                    stroke-width="2"
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                />
+                                            </svg>
                                         </button>
                                     </div>
                                 </div>

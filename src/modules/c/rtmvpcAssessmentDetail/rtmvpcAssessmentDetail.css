@@ -13,6 +13,7 @@ body {
     overflow: hidden; /* Disable page-level scroll */
     margin: 0;
     padding: 0;
+    width: 100%;
 }
 
 /* Main container - only element with scroll */
@@ -1254,99 +1255,190 @@ body {
     .cad-timeline_slidebase {
         width: 100%;
         margin: 10px 0;
+        margin-bottom: 12px;
+        min-height: 42px;
+        padding: 13px;
+        position: relative; /* Position for dot alignment */
+        box-sizing: border-box;
     }
 
     .timeline-scroll::before {
-        left: 20px; /* Adjust line position for mobile */
+        left: 22%; /* Center line like desktop */
+        transform: translateX(-50%);
+        top: 0;
+        bottom: 0;
+        width: 0; /* Use border instead of width */
+        border-left: 2px dashed #007bff; /* Ensure dashed style */
     }
 
     .timeline-dot-container {
-        left: 20px; /* Align dots with the line on mobile */
-        transform: none;
+        position: absolute;
+        left: 21%; /* Match timeline line */
+        transform: translateX(-50%);
+        top: 8px; /* Position vertically */
+        width: 25px;
+        margin-left: 0 !important;
+        z-index: 2;
+    }
+
+    /* Date wrapper alignment */
+    .timeline-date-wrapper {
+        width: 50px;
+        padding-right: 6px;
+        min-height: 34px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    /* Day and date text sizes */
+    .timeline-day {
+        font-size: 0.95rem;
+        color: #374151;
+        font-weight: 600;
+    }
+
+    .timeline-date {
+        font-size: 0.75rem;
+        color: #6b7280;
+    }
+
+    /* Dot styling */
+    .timeline-dot {
+        width: 12px;
+        height: 12px;
+        border: 2px solid #ffffff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        box-shadow: 0 0 0 2px #007bff;
+    }
+
+    /* Content alignment */
+    .timeline-content {
+        margin-left: 40px; /* Push content right of dots */
+        padding: 8px 14px;
+        min-height: 40px;
+        max-width: calc(100% - 80px);
+        box-sizing: border-box;
+        background-color: #ffffff;
+        border-radius: 8px;
+        border: 1px solid #e0e6ed;
     }
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .timeline-container {
-        padding: 6px 15px; /* Further reduced vertical padding for mobile */
-        max-width: 100%;
+        padding: 6px 15px; /* Maintain some padding */
     }
 
-    .timeline-scroll::before {
-        left: 44px; /* Adjusted for tighter mobile spacing */
-        top: 8px; /* Start line closer to top on mobile */
-    }
+    /* Already defined above - deleting this section */
+    /* .timeline-scroll::before {
+        left: 44px;
+        top: 8px;
+    } */
 
-    .cad-timeline_slidebase {
-        margin-bottom: 10px; /* More compact on mobile */
-        min-height: 38px; /* Smaller on mobile */
-    }
+    /* Already defined above - deleting this section */
+    /* .cad-timeline_slidebase {
+        margin-bottom: 10px;
+        min-height: 38px;
+    } */
 
-    .timeline-date-wrapper {
-        width: 42px; /* Reduced for tighter mobile spacing */
-        padding-right: 4px; /* Reduced padding */
-        min-height: 32px; /* Compact mobile height */
-    }
+    /* Already defined above - deleting this section */
+    /* .timeline-date-wrapper {
+        width: 42px;
+        padding-right: 4px;
+        min-height: 32px;
+    } */
 
-    .timeline-day {
+    /* Already defined above - deleting this section */
+    /* .timeline-day {
         font-size: 0.85rem;
     }
 
     .timeline-date {
         font-size: 0.7rem;
-    }
+    } */
 
-    .timeline-dot-container {
-        width: 22px; /* Reduced for tighter spacing */
-        min-height: 32px; /* Compact mobile height */
-        margin-left: 28px; /* Reduced for tighter mobile spacing */
-    }
+    /* Already defined above - deleting this section */
+    /* .timeline-dot-container {
+        width: 22px;
+        min-height: 32px;
+        margin-left: 28px;
+    } */
 
-    .timeline-dot {
+    /* Already defined above - deleting this section */
+    /* .timeline-dot {
         width: 12px;
         height: 12px;
         border: 1.5px solid #ffffff;
         box-shadow: 0 0 0 1px rgba(0, 123, 255, 0.7);
-    }
+    } */
 
+    /* Apply these status-specific styles for dot colors */
     .cad-timeline_submited .timeline-dot {
-        box-shadow: 0 0 0 1px rgba(40, 167, 69, 0.7);
+        box-shadow: 0 0 0 2px #28a745;
+        border-color: #ffffff;
     }
 
     .cad-timeline_default .timeline-dot {
-        box-shadow: 0 0 0 1px rgba(108, 117, 125, 0.7);
+        box-shadow: 0 0 0 2px #6c757d;
+        border-color: #ffffff;
     }
 
-    .timeline-date-wrapper {
-        min-height: 35px; /* Match mobile dot container */
-    }
-
+    /* Applying SVG styles */
     .timeline-dot svg {
-        width: 7px;
-        height: 7px;
+        width: 8px;
+        height: 8px;
         stroke-width: 2.5;
     }
 
-    .timeline-content {
-        padding: 5px 10px; /* More compact mobile padding */
-        max-width: calc(100% - 100px); /* Reduced for tighter mobile spacing */
-        min-height: 28px; /* Compact mobile height */
-        margin-left: 3px; /* Reduced margin for tighter gap */
+    /* Already defined above - deleting this section */
+    /* .timeline-content {
+        padding: 5px 10px;
+        max-width: calc(100% - 100px);
+        min-height: 28px;
+        margin-left: 3px;
         box-sizing: border-box;
-    }
+    } */
 
+    /* Text styles */
     .timeline-title {
-        font-size: 0.75rem; /* Compact mobile text */
+        font-size: 0.85rem;
+        font-weight: 600;
         margin-bottom: 1px;
-        line-height: 1;
+        line-height: 1.2;
     }
 
     .timeline-user {
-        font-size: 0.65rem; /* Compact mobile text */
-        line-height: 1;
+        font-size: 0.75rem;
+        line-height: 1.2;
     }
 }
+
+/* Remove the conflicting RESPONSIVE PATCH */
+/* ----------- RESPONSIVE PATCH (Mobile) ----------- */
+/* @media (max-width: 768px) {
+    .timeline-dot-container {
+        left: 50%;
+        transform: translateX(-50%);
+        margin-left: 0 !important;
+    }
+
+    .timeline-scroll::before {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .timeline-content {
+        margin-left: 20px;
+        max-width: calc(100% - 50px);
+    }
+} */
 
 /* ----------- TIMELINE PANEL FIX: Full height match to parent ----------- */
 .timeline-panel {
@@ -2226,7 +2318,7 @@ body {
 
 .comment-author {
     font-weight: 600;
-    color: #5a3e84;
+    color: #0176d3;
 }
 
 .comment-date {
@@ -2242,12 +2334,14 @@ body {
 }
 
 .comment-input input {
-    width: 100%;
-    height: 80px;
+    width: 95%;
+    height: 16px;
     padding: 8px;
     border: 1px solid #d8d8d8;
     border-radius: 4px;
-    resize: none;
+    resize: vertical;
+    min-height: 60px;
+    margin-bottom: 10px;
 }
 
 .send-button {
@@ -2281,7 +2375,7 @@ body {
 
 .finding h4 {
     margin: 0 0 5px 0;
-    color: #5a3e84;
+    color: #0176d3;
 }
 
 .finding-meta {
@@ -2395,7 +2489,7 @@ body {
 
 .email-subject {
     font-weight: 600;
-    color: #5a3e84;
+    color: #0176d3;
 }
 
 .email-date {
@@ -2461,13 +2555,13 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #f9f9f9;
+    background-color: #0176d3;
 }
 
 .modal-header h2 {
     margin: 0;
-    font-size: 1.2rem;
-    color: #5a3e84;
+    font-size: 1.1rem;
+    color: white;
 }
 
 .modal-content {
@@ -2484,7 +2578,7 @@ body {
     display: block;
     margin-bottom: 5px;
     font-weight: 500;
-    color: #5a3e84;
+    color: black;
 }
 
 .form-element input[type='text'],
@@ -2574,8 +2668,8 @@ body {
 }
 
 .modal-footer .close-button {
-    background-color: #ffffff;
-    color: #5a3e84;
+    background-color: #e7e7e7;
+    color: black;
     border: 1px solid #d8d8d8;
 }
 
@@ -2616,7 +2710,7 @@ body {
 }
 
 .filter-icon {
-    fill: currentColor;
+    fill: rgb(90, 62, 132);
     display: block;
 }
 
@@ -2916,7 +3010,7 @@ body {
 .timeline-dot {
     position: relative;
     left: -75px; /* Adjusted to center the dot on the line */
-    top: -10px;
+    top: -19px;
     transform: translateY(-50%);
     width: 12px;
     height: 12px;
@@ -3264,6 +3358,8 @@ body {
     flex: 1;
     overflow: visible !important;
     height: auto !important;
+    position: relative;
+    padding: 0;
 }
 
 /* Make sure timeline panel doesn't scroll either */
@@ -3272,72 +3368,380 @@ body {
     height: auto !important;
 }
 
-.submit-response-button {
-    background-color: #5a3e84;
-    color: white;
-    border: none;
-    padding: 8px 16px;
+/* Filter button styles */
+.filter-button {
+    position: relative;
+}
+
+.filter-button:hover {
+    color: #0070d2;
+}
+
+.filter-icon {
+    fill: #5a3e84;
+    display: block;
+}
+
+.filter-button {
+    position: relative;
     border-radius: 4px;
-    cursor: pointer;
-    margin-left: 10px;
+    padding: 6px;
+}
+
+.filter-button:hover {
+    background-color: #f4f6f9;
+}
+
+.filter-button:focus {
+    outline: none;
+    box-shadow: 0 0 3px 0 #0070d2;
+}
+
+/* Export button styles - matched to filter button */
+.export-button {
+    position: relative;
+    border-radius: 4px;
+    padding: 6px;
+}
+
+.export-button:hover {
+    background-color: #f4f6f9;
+    color: #0070d2;
+}
+
+.export-button:focus {
+    outline: none;
+    box-shadow: 0 0 3px 0 #0070d2;
+}
+
+.export-icon {
+    fill: currentColor;
+    display: block;
+}
+
+/* Responsive adjustments for mobile timeline */
+@media (max-width: 768px) {
+    .timeline-container {
+        padding: 6px 15px; /* Maintain some padding */
+    }
+
+    /* Center the vertical line like desktop */
+    .timeline-scroll::before {
+        left: 22%; /* Match desktop positioning */
+        transform: translateX(-50%);
+        top: 0;
+        bottom: 0;
+        background-color: #007bff; /* Blue dashed line */
+        border-left: 2px dashed #007bff; /* Ensure dashed style */
+        width: 0; /* Use border instead of width */
+    }
+
+    /* Styling for the timeline items */
+    .cad-timeline_slidebase {
+        margin-bottom: 12px;
+        min-height: 42px;
+        padding: 13px;
+        width: 100%; /* Full width on mobile */
+        box-sizing: border-box;
+        position: relative; /* Position for dot alignment */
+    }
+
+    /* Date wrapper alignment */
+    .timeline-date-wrapper {
+        width: 50px;
+        padding-right: 6px;
+        min-height: 34px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    .saved {
+        color: #28a745;
+        margin-right: 10px;
+    }
+
+    .error {
+        color: #dc3545;
+        margin-right: 10px;
+    }
+
+    .task-section {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e1e1e1;
+    }
+
+    .related-task {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 4px;
+        margin-top: 0.5rem;
+    }
+
+    .related-task h5 {
+        color: #5a3e84;
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+
+    .task-details {
+        margin-left: 0.5rem;
+    }
+
+    .task-details p {
+        margin: 0.25rem 0;
+        font-size: 0.9rem;
+    }
+
+    .task-details strong {
+        color: #666;
+    }
+    /* Day and date text sizes */
+    .timeline-day {
+        font-size: 0.95rem;
+        color: #374151;
+        font-weight: 600;
+    }
+
+    .timeline-date {
+        font-size: 0.75rem;
+        color: #6b7280;
+    }
+
+    /* Dot container positioning - critical for alignment */
+    .timeline-dot-container {
+        position: absolute;
+        left: 22%; /* Match vertical line */
+        transform: translateX(-50%);
+        margin-left: 0 !important;
+        min-height: 64px;
+        width: 25px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2;
+        top: 8px; /* Adjusted to better align dots */
+    }
+
+    /* Dot styling */
+    .timeline-dot {
+        width: 12px;
+        height: 12px;
+        border: 2px solid #ffffff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        box-shadow: 0 0 0 2px #007bff;
+    }
+
+    /* SVG icon inside dots */
+    .timeline-dot svg {
+        width: 8px;
+        height: 8px;
+        color: #0070d2;
+        stroke-width: 3;
+    }
+
+    /* Content alignment */
+    .timeline-content {
+        padding: 8px 14px;
+        min-height: 40px;
+        max-width: calc(100% - 80px);
+        margin-left: 40px; /* Push content right of dots */
+        box-sizing: border-box;
+    }
+
+    /* Text styles */
+    .timeline-title {
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 1px;
+    }
+
+    .timeline-user {
+        font-size: 0.7rem;
+        color: #6b7280;
+    }
+}
+
+/* Chat Container Styles */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 400px;
+    padding: 0;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.chat-messages {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    overflow-y: auto;
+    flex-grow: 1;
+    max-height: calc(100% - 70px);
+    margin-bottom: 70px; /* Space for input */
+}
+
+/* Chat Message Styles */
+.chat-message {
+    display: flex;
+    margin-bottom: 16px;
+    max-width: 80%;
+}
+
+.chat-message-left {
+    align-self: flex-start;
+}
+
+.chat-message-right {
+    align-self: flex-end;
+}
+
+.chat-message-content {
+    border-radius: 8px;
+    padding: 12px 16px;
+    position: relative;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.chat-message-left .chat-message-content {
+    background-color: #f0f0f0;
+    color: #2a2a2a;
+    margin-right: auto;
+    border-bottom-left-radius: 2px;
+    border-left: 3px solid #d8d8d8;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chat-message-right .chat-message-content {
+    background-color: #0070d2; /* Salesforce Blue */
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 2px;
+    border-right: 3px solid #005fb2;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chat-message-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 12px;
+}
+
+.chat-message-right .chat-message-header {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.chat-message-sender {
+    font-weight: bold;
+}
+
+.chat-message-time {
+    opacity: 0.8;
+    margin-left: 8px;
+}
+
+.chat-message-body {
     font-size: 14px;
-    transition: background-color 0.2s;
+    line-height: 1.4;
 }
 
-.submit-response-button:hover {
-    background-color: #4a3270;
+.chat-message-body p {
+    margin: 0;
 }
 
-.submit-response-button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-}
-
-.response-status {
+/* Chat Input Styles */
+.chat-input-container {
     display: flex;
     align-items: center;
-    margin-top: 8px;
+    padding: 3px;
+    background-color: #ffffff;
+    border-top: 1px solid #e0e6ed;
+    border-radius: 0 0 8px 8px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.saved {
-    color: #28a745;
-    margin-right: 10px;
+.chat-input {
+    flex-grow: 1;
+    border: 1px solid #d8d8d8;
+    border-radius: 60px;
+    padding: 8px 40px 8px 12px;
+    resize: none;
+    min-height: 25px;
+    max-height: 25px;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.4;
+    outline: none;
+    transition: border-color 0.2s ease;
 }
 
-.error {
-    color: #dc3545;
-    margin-right: 10px;
+.chat-input:focus {
+    border-color: #0070d2;
+    box-shadow: 0 0 3px 0 rgba(0, 112, 210, 0.25);
 }
 
-.task-section {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid #e1e1e1;
+.chat-send-button {
+    position: absolute;
+    right: 10px;
+    bottom: 15px;
+    background: none;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
 }
 
-.related-task {
-    background-color: #f8f9fa;
-    padding: 1rem;
-    border-radius: 4px;
-    margin-top: 0.5rem;
+.chat-send-button:hover {
+    background-color: rgba(0, 112, 210, 0.1);
 }
 
-.related-task h5 {
-    color: #5a3e84;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
+.send-icon {
+    width: 20px;
+    height: 20px;
 }
 
-.task-details {
-    margin-left: 0.5rem;
-}
+/* Override default styles for mobile view */
+@media (max-width: 768px) {
+    .chat-message {
+        max-width: 90%;
+    }
 
-.task-details p {
-    margin: 0.25rem 0;
-    font-size: 0.9rem;
-}
+    .chat-input-container {
+        padding: 8px;
+        height: 70px;
+    }
 
-.task-details strong {
-    color: #666;
+    .chat-messages {
+        margin-bottom: 80px;
+    }
+
+    .chat-container {
+        min-height: 350px;
+    }
 }
