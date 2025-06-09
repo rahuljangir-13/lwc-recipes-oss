@@ -1,6 +1,12 @@
+//checklistModal.js
 import { LightningElement, track } from 'lwc';
-import * as utils from 'c/utils';
 import { isOnline } from 'c/utils';
+
+// Endpoints for getting users and assessment types
+const USERS_ENDPOINT =
+    'https://nosoftware-ability-6323-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/findings/?operation=getAllUsers';
+const ASSESSMENT_TYPES_ENDPOINT =
+    'https://nosoftware-ability-6323-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/findings/?operation=getAllAssessmentType';
 
 const STATUS_OPTIONS = [
     { label: 'Draft', value: 'Draft' },
@@ -14,10 +20,6 @@ const CATEGORY_OPTIONS = [
     { label: 'Compliance', value: 'compliance' }
 ];
 
-function generateId() {
-    return Date.now().toString() + Math.random().toString(36).substring(2, 9);
-}
-
 export default class ChecklistModal extends LightningElement {
     @track form = {
         checklistName: '',
@@ -30,8 +32,14 @@ export default class ChecklistModal extends LightningElement {
     };
 
     @track errors = {};
+    @track isLoading = false;
+    @track error = null;
 
-    // Form UI classes
+    // Dropdown options
+    @track userOptions = [];
+    @track assessmentTypeOptions = [];
+
+    // Field class getters
     get checklistNameClass() {
         return this.errors.checklistName
             ? 'form-group has-error'
@@ -54,7 +62,7 @@ export default class ChecklistModal extends LightningElement {
             : 'form-group';
     }
 
-    // Aria invalid flags
+    // aria-invalid getters
     get isChecklistNameInvalid() {
         return this.errors.checklistName ? 'true' : 'false';
     }
@@ -71,7 +79,6 @@ export default class ChecklistModal extends LightningElement {
         return this.errors.assessmentType ? 'true' : 'false';
     }
 
-    // Picklist options
     get statusOptions() {
         return STATUS_OPTIONS;
     }
@@ -79,14 +86,12 @@ export default class ChecklistModal extends LightningElement {
         return CATEGORY_OPTIONS;
     }
 
-    // Field change handler
     handleInputChange(event) {
         const { name, value } = event.target;
         this.form[name] = value;
         this.errors[name] = '';
     }
 
-    // Basic validation
     validate() {
         let valid = true;
         this.errors = {};
@@ -99,7 +104,7 @@ export default class ChecklistModal extends LightningElement {
             valid = false;
         }
         if (!this.form.createdFor) {
-            this.errors.createdFor = 'Complete this field.';
+            this.errors.createdFor = 'Select a user.';
             valid = false;
         }
         if (!this.form.checklistCategory) {
@@ -107,69 +112,24 @@ export default class ChecklistModal extends LightningElement {
             valid = false;
         }
         if (!this.form.assessmentType) {
-            this.errors.assessmentType = 'Complete this field.';
+            this.errors.assessmentType = 'Select an assessment type.';
             valid = false;
         }
         return valid;
     }
 
-    // Offline-first create
-    async createChecklistOffline() {
-        const newChecklist = {
-            ...this.form,
-            id: generateId(),
-            createdDate: new Date().toISOString(),
-            lastModifiedDate: new Date().toISOString()
-        };
-
-        console.log('📴 Creating checklist offline:', newChecklist);
-
-        try {
-            await utils.saveItem(utils.STORE_NAMES.CHECKLISTS, newChecklist);
-            console.log('💾 Checklist saved to IndexedDB');
-
-            await utils.addPendingOperation({
-                type: 'CREATE_CHECKLIST',
-                timestamp: Date.now(),
-                data: newChecklist
-            });
-
-            console.log('📝 Checklist queued for sync');
-            return newChecklist;
-        } catch (error) {
-            console.error('❌ Failed to save checklist offline:', error);
-            throw error;
-        }
-    }
-
-    // Save handler
-    async handleSave(event) {
+    handleSave(event) {
         event.preventDefault();
         if (this.validate()) {
-            if (isOnline()) {
-                console.log(
-                    '🌐 Online mode: checklist save not implemented yet'
-                );
-                // Future: call API here
-            } else {
-                await this.createChecklistOffline();
-            }
+            // TODO: Save logic
             this.closeModal();
         }
     }
 
-    // Save and reset form
-    async handleSaveAndNew(event) {
+    handleSaveAndNew(event) {
         event.preventDefault();
         if (this.validate()) {
-            if (isOnline()) {
-                console.log(
-                    '🌐 Online mode: checklist save not implemented yet'
-                );
-                // Future: call API here
-            } else {
-                await this.createChecklistOffline();
-            }
+            // TODO: Save logic
             this.resetForm();
         }
     }
@@ -198,5 +158,149 @@ export default class ChecklistModal extends LightningElement {
 
     connectedCallback() {
         console.log('ChecklistModal connectedCallback: modal is rendered');
+        // Fetch users and assessment types when component is connected
+        this.fetchUsers();
+        this.fetchAssessmentTypes();
+    }
+
+    fetchUsers() {
+        this.isLoading = true;
+
+        if (!isOnline()) {
+            this.error = 'You are currently offline. Cannot fetch users.';
+            this.isLoading = false;
+            this.loadSampleUsers();
+            return;
+        }
+
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+
+        fetch(USERS_ENDPOINT, {
+            method: 'GET',
+            headers: headers,
+            credentials: 'same-origin'
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log('Fetched users data:', data);
+                this.processUsersData(data);
+            })
+            .catch((error) => {
+                console.error('Error fetching users:', error);
+                this.error = `Failed to fetch users: ${error.message}`;
+                this.loadSampleUsers();
+            })
+            .finally(() => {
+                this.isLoading = false;
+            });
+    }
+
+    fetchAssessmentTypes() {
+        this.isLoading = true;
+
+        if (!isOnline()) {
+            this.error =
+                'You are currently offline. Cannot fetch assessment types.';
+            this.isLoading = false;
+            this.loadSampleAssessmentTypes();
+            return;
+        }
+
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+
+        fetch(ASSESSMENT_TYPES_ENDPOINT, {
+            method: 'GET',
+            headers: headers,
+            credentials: 'same-origin'
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log('Fetched assessment types data:', data);
+                this.processAssessmentTypesData(data);
+            })
+            .catch((error) => {
+                console.error('Error fetching assessment types:', error);
+                this.error = `Failed to fetch assessment types: ${error.message}`;
+                this.loadSampleAssessmentTypes();
+            })
+            .finally(() => {
+                this.isLoading = false;
+            });
+    }
+
+    processUsersData(data) {
+        try {
+            // Parse the data if it's a string
+            const parsedData =
+                typeof data === 'string' ? JSON.parse(data) : data;
+
+            // Check if data has the expected format
+            const userData = parsedData.data || parsedData;
+
+            if (Array.isArray(userData)) {
+                this.userOptions = userData.map((user) => ({
+                    label: user.name || 'Unknown User',
+                    value: user.id || user.userId || ''
+                }));
+            } else {
+                throw new Error('Invalid user data format');
+            }
+        } catch (error) {
+            console.error('Error processing user data:', error);
+            this.loadSampleUsers();
+        }
+    }
+
+    processAssessmentTypesData(data) {
+        try {
+            // Parse the data if it's a string
+            const parsedData =
+                typeof data === 'string' ? JSON.parse(data) : data;
+
+            // Check if data has the expected format
+            const assessmentTypeData = parsedData.data || parsedData;
+
+            if (Array.isArray(assessmentTypeData)) {
+                this.assessmentTypeOptions = assessmentTypeData.map((type) => ({
+                    label: type.name || 'Unknown Type',
+                    value: type.id || type.typeId || ''
+                }));
+            } else {
+                throw new Error('Invalid assessment type data format');
+            }
+        } catch (error) {
+            console.error('Error processing assessment type data:', error);
+            this.loadSampleAssessmentTypes();
+        }
+    }
+
+    loadSampleUsers() {
+        this.userOptions = [
+            { label: 'John Doe', value: 'user1' },
+            { label: 'Jane Smith', value: 'user2' },
+            { label: 'Robert Johnson', value: 'user3' }
+        ];
+    }
+
+    loadSampleAssessmentTypes() {
+        this.assessmentTypeOptions = [
+            { label: 'Safety Assessment', value: 'type1' },
+            { label: 'Quality Control', value: 'type2' },
+            { label: 'Environmental Compliance', value: 'type3' }
+        ];
     }
 }

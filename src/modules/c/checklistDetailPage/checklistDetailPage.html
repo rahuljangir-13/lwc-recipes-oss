@@ -144,14 +144,16 @@
                             <h2>General Information</h2>
                         </div>
                         <div class="section-status">
-                            <span class="status-pill">Closed</span>
+                            <span class="status-pill"
+                                >{checklistDetail.status}</span
+                            >
                         </div>
                     </div>
 
                     <div class="section-content">
                         <div class="field-row">
                             <div class="field">
-                                <div class="field-label">Assessment Name</div>
+                                <div class="field-label">Assessment Type</div>
                                 <div class="field-value">
                                     {checklistDetail.assessmentName}
                                 </div>
@@ -172,35 +174,20 @@
                                 </div>
                             </div>
                             <div class="field">
-                                <div class="field-label">Occurrence</div>
-                                <div class="field-value">
-                                    {checklistDetail.occurrence}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="field-row">
-                            <div class="field">
-                                <div class="field-label">Start Date</div>
-                                <div class="field-value">
-                                    {checklistDetail.startDate}
-                                </div>
-                            </div>
-                            <div class="field">
-                                <div class="field-label">End Date</div>
-                                <div class="field-value">
-                                    {checklistDetail.endDate}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="field-row">
-                            <div class="field">
                                 <div class="field-label">
-                                    Associated Customer
+                                    Number of Assessments
                                 </div>
+                                <div class="field-value">
+                                    {checklistDetail.numberOfAssessment}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field-row">
+                            <div class="field">
+                                <div class="field-label">Created For</div>
                                 <div class="field-value customer-value">
-                                    {checklistDetail.customer}
+                                    {checklistDetail.createdFor}
                                 </div>
                             </div>
                             <div class="field">
@@ -213,9 +200,17 @@
 
                         <div class="field-row">
                             <div class="field">
-                                <div class="field-label">Org Component</div>
+                                <div class="field-label">Created Date</div>
                                 <div class="field-value">
-                                    {checklistDetail.orgComponent}
+                                    {checklistDetail.createdDate}
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="field-label">
+                                    Last Modified Date
+                                </div>
+                                <div class="field-value">
+                                    {checklistDetail.lastModifiedDate}
                                 </div>
                             </div>
                         </div>
@@ -224,7 +219,11 @@
 
                 <!-- Questions Tab -->
                 <div class="tab-content" data-tab="questions">
-                    <c-checklist-questions-tree></c-checklist-questions-tree>
+                    <c-checklist-questions-tree
+                        template-id={templateId}
+                        onquestionsloaded={handleQuestionsLoaded}
+                    >
+                    </c-checklist-questions-tree>
                 </div>
 
                 <!-- Files Tab -->

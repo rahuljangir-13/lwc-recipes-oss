@@ -1,3 +1,4 @@
+//checklistDemo.js
 import { LightningElement, track, api } from 'lwc';
 
 export default class ChecklistDemo extends LightningElement {
@@ -304,13 +305,23 @@ export default class ChecklistDemo extends LightningElement {
     // Handle view checklist event
     handleViewChecklist(event) {
         console.log('View checklist event received:', event.detail);
-        const { itemId, item } = event.detail;
 
-        if (itemId && item) {
-            this.selectedChecklistId = itemId;
-            this.selectedChecklist = item;
-            this.showDetailView = true;
+        if (!event.detail || !event.detail.itemId || !event.detail.item) {
+            console.error('Invalid event detail received:', event.detail);
+            return;
         }
+
+        // Store the selected checklist ID and item data
+        this.selectedChecklistId = event.detail.itemId;
+        this.selectedChecklist = event.detail.item;
+
+        console.log('Setting selectedChecklistId:', this.selectedChecklistId);
+        console.log('Setting selectedChecklist:', this.selectedChecklist);
+
+        // Switch to detail view
+        this.showDetailView = true;
+
+        console.log('Showing detail view:', this.showDetailView);
     }
 
     @api
@@ -357,5 +368,67 @@ export default class ChecklistDemo extends LightningElement {
                 checklistComponent.items = this.checklistItems;
             }
         }
+    }
+
+    // Handle data loaded from API
+    handleDataLoaded(event) {
+        console.log('Data loaded from API:', event.detail.items);
+
+        // Update the items array with the data from the API
+        if (
+            event.detail &&
+            event.detail.items &&
+            event.detail.items.length > 0
+        ) {
+            // Store the loaded data as the current items
+            this.checklistItems = [...event.detail.items];
+
+            // Also update the original items array used for filtering
+            this.originalChecklistItems = [...event.detail.items];
+
+            console.log(
+                'Updated checklistItems and originalChecklistItems with API data'
+            );
+        }
+    }
+
+    handleSaveChecklist(event) {
+        const checklistData = event.detail;
+        console.log('Received checklist data to save:', checklistData);
+
+        // Generate a unique ID for the new checklist
+        const now = new Date();
+        const newId = 'checklist-' + now.getTime();
+
+        // Create a new checklist item with the received data
+        const newChecklist = {
+            id: newId,
+            name: checklistData.name,
+            status: checklistData.status,
+            category: checklistData.categoryName,
+            createdBy: 'Current User',
+            lastModifiedBy: 'Current User',
+            createdDate: now.toISOString(),
+            lastModifiedDate: now.toISOString(),
+            createdFor: checklistData.createdForName,
+            description: checklistData.description,
+            assessmentType: checklistData.assessmentTypeName,
+            numberOfAssessment: checklistData.numberOfAssessments || 0
+        };
+
+        // Add the new checklist to the list
+        this.checklistItems = [newChecklist, ...this.checklistItems];
+
+        // Also update the original items array used for filtering
+        this.originalChecklistItems = [
+            newChecklist,
+            ...this.originalChecklistItems
+        ];
+
+        // Show success notification
+        this.showNotification(
+            `Checklist "${checklistData.name}" created successfully`,
+            'success'
+        );
     }
 }
