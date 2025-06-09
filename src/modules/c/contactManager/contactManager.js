@@ -1,6 +1,8 @@
 import { LightningElement, track, api } from 'lwc';
 import * as contactService from 'c/contactService';
 import * as accountService from 'c/accountService';
+import pubsub from 'c/pubsub';
+import userDataService from 'c/userDataService';
 
 const VIEW_STATES = {
     LIST: 'list',
@@ -22,9 +24,45 @@ export default class ContactManager extends LightningElement {
     @track itemToDeleteId = null;
     @api hideNewButton = false;
 
+    // User Data related properties
+    @track userData = null;
+
     connectedCallback() {
         this.loadContacts();
         this.loadAccounts();
+
+        // Subscribe to user data updates
+        pubsub.subscribe(
+            'userDataUpdate',
+            this.handleUserDataUpdate.bind(this)
+        );
+
+        // Load any existing user data
+        this.loadExistingUserData();
+    }
+
+    disconnectedCallback() {
+        // Unsubscribe from user data updates
+        pubsub.unsubscribe(
+            'userDataUpdate',
+            this.handleUserDataUpdate.bind(this)
+        );
+    }
+
+    // User Data Methods
+    loadExistingUserData() {
+        const storedData = userDataService.getStoredUserData();
+        if (storedData) {
+            this.userData = storedData;
+        }
+    }
+
+    handleUserDataUpdate(message) {
+        if (message.type === 'update') {
+            this.userData = message.data;
+        } else if (message.type === 'clear') {
+            this.userData = null;
+        }
     }
 
     // API Methods
@@ -37,7 +75,8 @@ export default class ContactManager extends LightningElement {
             email: '',
             phone: '',
             mobilePhone: '',
-            accountId: accountId || ''
+            accountId: accountId || '',
+            employeeType: 'Full Time' // Hardcoded as requested
         };
         this.selectedAccountId = accountId;
         this.isNew = true;
@@ -51,6 +90,7 @@ export default class ContactManager extends LightningElement {
         contactService
             .getContact(contactId)
             .then((contact) => {
+                console.log('Editing contact:', contact);
                 this.currentContact = contact;
                 this.selectedAccountId = contact.accountId;
                 this.isNew = false;
@@ -59,6 +99,7 @@ export default class ContactManager extends LightningElement {
             })
             .catch((error) => {
                 this.error = error.message || 'Error loading contact for edit';
+                console.error('Error loading contact for edit:', error);
                 this.isLoading = false;
             });
     }
@@ -71,12 +112,14 @@ export default class ContactManager extends LightningElement {
         contactService
             .getContact(contactId)
             .then((contact) => {
+                console.log('Contact details loaded:', contact);
                 this.currentContact = contact;
                 this.viewState = VIEW_STATES.DETAIL;
                 this.isLoading = false;
             })
             .catch((error) => {
                 this.error = error.message || 'Error loading contact details';
+                console.error('Error loading contact details:', error);
                 this.isLoading = false;
             });
     }
@@ -134,6 +177,7 @@ export default class ContactManager extends LightningElement {
         contactService
             .getContacts()
             .then((result) => {
+                console.log('Contacts loaded:', result);
                 this.contacts = result.map((contact) => ({
                     ...contact,
                     accountName: this.accountMap[contact.accountId] || '',
@@ -143,6 +187,7 @@ export default class ContactManager extends LightningElement {
             })
             .catch((error) => {
                 this.error = error.message || 'Error loading contacts';
+                console.error('Error loading contacts:', error);
                 this.isLoading = false;
             });
     }
@@ -153,6 +198,7 @@ export default class ContactManager extends LightningElement {
         accountService
             .getAccounts()
             .then((result) => {
+                console.log('Accounts loaded:', result);
                 this.accounts = result;
                 // Create a map of account ids to names for quick lookup
                 this.accountMap = result.reduce((map, account) => {
@@ -170,6 +216,7 @@ export default class ContactManager extends LightningElement {
             })
             .catch((error) => {
                 this.error = error.message || 'Error loading accounts';
+                console.error('Error loading accounts:', error);
                 this.isLoading = false;
             });
     }
@@ -191,7 +238,8 @@ export default class ContactManager extends LightningElement {
             email: '',
             phone: '',
             mobilePhone: '',
-            accountId: ''
+            accountId: '',
+            employeeType: 'Full Time' // Hardcoded as requested
         };
         this.isNew = true;
         this.viewState = VIEW_STATES.FORM;
@@ -204,6 +252,8 @@ export default class ContactManager extends LightningElement {
 
         this.isLoading = true;
         this.error = null;
+
+        console.log('Saving contact:', this.currentContact);
 
         const saveOperation = this.isNew
             ? contactService.createContact(this.currentContact)
@@ -234,6 +284,10 @@ export default class ContactManager extends LightningElement {
                 this.error =
                     error.message ||
                     `Error ${this.isNew ? 'creating' : 'updating'} contact`;
+                console.error(
+                    `Error ${this.isNew ? 'creating' : 'updating'} contact:`,
+                    error
+                );
                 this.isLoading = false;
             })
             .finally(() => {
@@ -271,6 +325,7 @@ export default class ContactManager extends LightningElement {
         contactService
             .getContact(contactId)
             .then((contact) => {
+                console.log('Editing contact:', contact);
                 this.currentContact = contact;
                 this.isNew = false;
                 this.viewState = VIEW_STATES.FORM;
@@ -278,6 +333,7 @@ export default class ContactManager extends LightningElement {
             })
             .catch((error) => {
                 this.error = error.message || 'Error loading contact for edit';
+                console.error('Error loading contact for edit:', error);
                 this.isLoading = false;
             });
     }
@@ -303,9 +359,12 @@ export default class ContactManager extends LightningElement {
         this.isLoading = true;
         this.error = null;
 
+        console.log('Deleting contact with ID:', contactId);
+
         contactService
             .deleteContact(contactId)
             .then(() => {
+                console.log('Contact deleted successfully');
                 this.loadContacts();
 
                 // Dispatch delete success event
@@ -321,6 +380,7 @@ export default class ContactManager extends LightningElement {
             })
             .catch((error) => {
                 this.error = error.message || 'Error deleting contact';
+                console.error('Error deleting contact:', error);
                 this.isLoading = false;
             });
     }
@@ -355,11 +415,7 @@ export default class ContactManager extends LightningElement {
             return false;
         }
 
-        if (!this.currentContact.accountId) {
-            this.error = 'Please select an Account';
-            return false;
-        }
-
+        // Account is no longer required
         return true;
     }
 

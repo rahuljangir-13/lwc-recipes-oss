@@ -1,0 +1,181 @@
+.assessment-list-container {
+    padding: 1rem;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.header {
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #e5e5e5;
+    padding-bottom: 1rem;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #181818;
+    margin: 0 0 0.5rem 0;
+}
+
+.subtitle {
+    color: #666;
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+.table-container {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+}
+
+.assessment-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+}
+
+.assessment-table th {
+    background-color: #f8f9fa;
+    padding: 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 2px solid #dee2e6;
+    white-space: nowrap;
+}
+
+.assessment-table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #dee2e6;
+    vertical-align: top;
+}
+
+.assessment-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.cell-content {
+    word-wrap: break-word;
+    max-width: 200px;
+}
+
+/* Status badge styles */
+.status-completed {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: inline-block;
+}
+
+.status-in-progress {
+    background-color: #fff3cd;
+    color: #856404;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: inline-block;
+}
+
+.status-pending {
+    background-color: #cce7ff;
+    color: #004085;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: inline-block;
+}
+
+.status-not-started {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: inline-block;
+}
+
+.status-default {
+    background-color: #e9ecef;
+    color: #495057;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: inline-block;
+}
+
+.footer {
+    padding-top: 1rem;
+    border-top: 1px solid #e5e5e5;
+    text-align: center;
+}
+
+.record-count {
+    color: #666;
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+/* Responsive design for mobile */
+@media (max-width: 768px) {
+    .assessment-table,
+    .assessment-table thead,
+    .assessment-table tbody,
+    .assessment-table th,
+    .assessment-table td,
+    .assessment-table tr {
+        display: block;
+    }
+
+    .assessment-table thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    .assessment-table tr {
+        border: 1px solid #ccc;
+        margin-bottom: 1rem;
+        padding: 0.5rem;
+        border-radius: 8px;
+        background: #fff;
+    }
+
+    .assessment-table td {
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding-left: 40% !important;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+
+    .assessment-table td:before {
+        content: attr(data-label) ': ';
+        position: absolute;
+        left: 6px;
+        width: 35%;
+        padding-right: 10px;
+        white-space: nowrap;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .cell-content {
+        max-width: none;
+    }
+}

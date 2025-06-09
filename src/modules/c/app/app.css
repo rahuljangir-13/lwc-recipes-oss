@@ -1,7 +1,8 @@
 .app-container {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 100%;
+    width: 100%;
     background-color: #f4f6f9;
 }
 
@@ -208,8 +209,14 @@
 }
 
 .assessments-icon {
-    background: url('/assets/icons/standard-sprite/svg/symbols.svg#task') center
-        no-repeat;
+    background: url('/assets/icons/standard-sprite/svg/symbols.svg#calibration')
+        center no-repeat;
+    background-size: 24px;
+}
+
+.checklist-icon {
+    background: url('/assets/icons/standard-sprite/svg/symbols.svg#task2')
+        center no-repeat;
     background-size: 24px;
 }
 
