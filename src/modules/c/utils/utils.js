@@ -69,10 +69,11 @@ export function generateId() {
 // --------------- IndexedDB Storage ---------------
 
 const DB_NAME = 'salesforceOfflineDB';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 export const STORE_NAMES = {
     ACCOUNTS: 'accounts',
     CONTACTS: 'contacts',
+    CHECKLISTS: 'CHECKLISTS',
     PENDING_OPERATIONS: 'pendingOperations'
 };
 
@@ -107,6 +108,9 @@ function initDB() {
 
             if (!db.objectStoreNames.contains(STORE_NAMES.CONTACTS)) {
                 db.createObjectStore(STORE_NAMES.CONTACTS, { keyPath: 'id' });
+            }
+            if (!db.objectStoreNames.contains(STORE_NAMES.CHECKLISTS)) {
+                db.createObjectStore(STORE_NAMES.CHECKLISTS, { keyPath: 'id' }); // ✅ ADD THIS
             }
 
             // Create object store for pending operations (offline actions)

@@ -1,4 +1,6 @@
 import { LightningElement, track } from 'lwc';
+import * as utils from 'c/utils';
+import { isOnline } from 'c/utils';
 
 const STATUS_OPTIONS = [
     { label: 'Draft', value: 'Draft' },
@@ -11,6 +13,10 @@ const CATEGORY_OPTIONS = [
     { label: 'Safety', value: 'safety' },
     { label: 'Compliance', value: 'compliance' }
 ];
+
+function generateId() {
+    return Date.now().toString() + Math.random().toString(36).substring(2, 9);
+}
 
 export default class ChecklistModal extends LightningElement {
     @track form = {
@@ -25,7 +31,7 @@ export default class ChecklistModal extends LightningElement {
 
     @track errors = {};
 
-    // Field class getters
+    // Form UI classes
     get checklistNameClass() {
         return this.errors.checklistName
             ? 'form-group has-error'
@@ -48,7 +54,7 @@ export default class ChecklistModal extends LightningElement {
             : 'form-group';
     }
 
-    // aria-invalid getters
+    // Aria invalid flags
     get isChecklistNameInvalid() {
         return this.errors.checklistName ? 'true' : 'false';
     }
@@ -65,6 +71,7 @@ export default class ChecklistModal extends LightningElement {
         return this.errors.assessmentType ? 'true' : 'false';
     }
 
+    // Picklist options
     get statusOptions() {
         return STATUS_OPTIONS;
     }
@@ -72,12 +79,14 @@ export default class ChecklistModal extends LightningElement {
         return CATEGORY_OPTIONS;
     }
 
+    // Field change handler
     handleInputChange(event) {
         const { name, value } = event.target;
         this.form[name] = value;
         this.errors[name] = '';
     }
 
+    // Basic validation
     validate() {
         let valid = true;
         this.errors = {};
@@ -104,18 +113,63 @@ export default class ChecklistModal extends LightningElement {
         return valid;
     }
 
-    handleSave(event) {
+    // Offline-first create
+    async createChecklistOffline() {
+        const newChecklist = {
+            ...this.form,
+            id: generateId(),
+            createdDate: new Date().toISOString(),
+            lastModifiedDate: new Date().toISOString()
+        };
+
+        console.log('📴 Creating checklist offline:', newChecklist);
+
+        try {
+            await utils.saveItem(utils.STORE_NAMES.CHECKLISTS, newChecklist);
+            console.log('💾 Checklist saved to IndexedDB');
+
+            await utils.addPendingOperation({
+                type: 'CREATE_CHECKLIST',
+                timestamp: Date.now(),
+                data: newChecklist
+            });
+
+            console.log('📝 Checklist queued for sync');
+            return newChecklist;
+        } catch (error) {
+            console.error('❌ Failed to save checklist offline:', error);
+            throw error;
+        }
+    }
+
+    // Save handler
+    async handleSave(event) {
         event.preventDefault();
         if (this.validate()) {
-            // TODO: Save logic
+            if (isOnline()) {
+                console.log(
+                    '🌐 Online mode: checklist save not implemented yet'
+                );
+                // Future: call API here
+            } else {
+                await this.createChecklistOffline();
+            }
             this.closeModal();
         }
     }
 
-    handleSaveAndNew(event) {
+    // Save and reset form
+    async handleSaveAndNew(event) {
         event.preventDefault();
         if (this.validate()) {
-            // TODO: Save logic
+            if (isOnline()) {
+                console.log(
+                    '🌐 Online mode: checklist save not implemented yet'
+                );
+                // Future: call API here
+            } else {
+                await this.createChecklistOffline();
+            }
             this.resetForm();
         }
     }
@@ -143,8 +197,6 @@ export default class ChecklistModal extends LightningElement {
     }
 
     connectedCallback() {
-        // Step 5: Log lifecycle
-        // eslint-disable-next-line no-console
         console.log('ChecklistModal connectedCallback: modal is rendered');
     }
 }

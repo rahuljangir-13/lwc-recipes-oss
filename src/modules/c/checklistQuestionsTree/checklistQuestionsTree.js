@@ -1,6 +1,8 @@
 import { LightningElement, track } from 'lwc';
 export default class ChecklistQuestionsTree extends LightningElement {
     @track menuOpen = false;
+    @track showAssessmentModal = false;
+    @track showAssessmentAreaModal = false;
     @track areas = [
         {
             id: 'area1',
@@ -167,5 +169,18 @@ export default class ChecklistQuestionsTree extends LightningElement {
             }
             return area;
         });
+    }
+    handleNewArea() {
+        console.log('new Area');
+        this.showAssessmentAreaModal = true;
+    }
+    handleCloseAssessmentAreaModal() {
+        this.showAssessmentAreaModal = false;
+    }
+    handleNewQuestion() {
+        this.showAssessmentModal = true;
+    }
+    handleCloseAssessmentModal() {
+        this.showAssessmentModal = false;
     }
 }

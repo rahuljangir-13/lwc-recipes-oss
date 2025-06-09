@@ -1,4 +1,12 @@
 <template>
+    <button
+        class="floating-new-button"
+        onclick={handleOpenChecklistModal}
+        title="New Checklist"
+    >
+        +
+    </button>
+
     <template lwc:if={showChecklistModal}>
         <c-checklist-modal
             onclose={handleCloseChecklistModal}
@@ -26,9 +34,9 @@
                     </span>
                     <h2 class="checklist-title">Checklist</h2>
                 </div>
-                <button class="new-button" onclick={handleOpenChecklistModal}>
+                <!-- <button class="new-button" onclick={handleOpenChecklistModal}>
                     New
-                </button>
+                </button> -->
             </div>
 
             <div class="checklist-container">

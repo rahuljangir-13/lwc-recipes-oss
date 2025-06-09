@@ -151,3 +151,28 @@ button {
         transform: translateY(0);
     }
 }
+
+.floating-new-button {
+    position: fixed;
+    bottom: 72px; /* <--- changed from 16px */
+    right: 16px;
+    width: 56px;
+    height: 56px;
+    background-color: #0070d2;
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+.floating-new-button:hover {
+    background-color: #005fb2;
+}
