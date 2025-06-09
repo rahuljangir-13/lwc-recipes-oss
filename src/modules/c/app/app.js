@@ -8,6 +8,8 @@ export default class App extends LightningElement {
     @track syncingContacts = false;
     @track contentClass = 'slds-m-around_medium';
     @track isLoading = true;
+    @track checklistSearchTerm = '';
+    @track assessmentSearchTerm = '';
 
     connectedCallback() {
         // Initialize offline storage with mock data
@@ -189,15 +191,28 @@ export default class App extends LightningElement {
     // Refresh the current view after syncing
     refreshCurrentView() {
         console.log('🔄 Refreshing current view:', this.currentView);
-        const currentViewComponent = this.isAccountView
-            ? this.template.querySelector('c-account-manager')
-            : this.template.querySelector('c-contact-manager');
+        let currentViewComponent;
+
+        if (this.isAccountView) {
+            currentViewComponent =
+                this.template.querySelector('c-account-manager');
+        } else if (this.isContactView) {
+            currentViewComponent =
+                this.template.querySelector('c-contact-manager');
+        } else if (this.isChecklistView) {
+            currentViewComponent =
+                this.template.querySelector('c-checklist-demo');
+        }
 
         if (currentViewComponent) {
             if (this.isAccountView) {
                 currentViewComponent.loadAccounts();
-            } else {
+            } else if (this.isContactView) {
                 currentViewComponent.loadContacts();
+            } else if (this.isChecklistView) {
+                // No need to refresh checklist demo as it doesn't have a load method
+                // Just log that we're in checklist view
+                console.log('Refreshed checklist view');
             }
         }
     }
@@ -265,21 +280,14 @@ export default class App extends LightningElement {
 
     // Handle view assessments (placeholder)
     handleViewAssessments() {
-        console.log('👁️ Assessments view not implemented yet');
+        console.log('👁️ Switching to Assessments view');
+        this.currentView = 'assessments';
+    }
 
-        // Get connectivity status component for toast notification
-        const connectivityStatus = this.template.querySelector(
-            'c-connectivity-status'
-        );
-        if (connectivityStatus) {
-            // Show an info notification instead of alert
-            connectivityStatus.handleSyncComplete({
-                detail: {
-                    message: 'Assessments feature coming soon!',
-                    variant: 'info'
-                }
-            });
-        }
+    // Handle view checklists
+    handleViewChecklists() {
+        console.log('👁️ Switching to Checklists view');
+        this.currentView = 'checklists';
     }
 
     // Handle edit success notifications from child components
@@ -330,6 +338,14 @@ export default class App extends LightningElement {
         return this.currentView === 'contacts';
     }
 
+    get isChecklistView() {
+        return this.currentView === 'checklists';
+    }
+
+    get isAssessmentView() {
+        return this.currentView === 'assessments';
+    }
+
     // Computed classes for tabs
     get accountsTabClass() {
         return this.isAccountView ? 'nav-item active' : 'nav-item';
@@ -337,6 +353,14 @@ export default class App extends LightningElement {
 
     get contactsTabClass() {
         return this.isContactView ? 'nav-item active' : 'nav-item';
+    }
+
+    get checklistTabClass() {
+        return this.isChecklistView ? 'nav-item active' : 'nav-item';
+    }
+
+    get assessmentTabClass() {
+        return this.isAssessmentView ? 'nav-item active' : 'nav-item';
     }
 
     get accountsTabIndex() {
@@ -348,17 +372,33 @@ export default class App extends LightningElement {
     }
 
     get currentViewTitle() {
-        return this.isAccountView ? 'Accounts' : 'Contacts';
+        return this.isAccountView
+            ? 'Accounts'
+            : this.isContactView
+              ? 'Contacts'
+              : this.isAssessmentView
+                ? 'Assessments'
+                : 'Checklists';
     }
 
     get currentViewDescription() {
         return this.isAccountView
             ? 'Manage your business accounts'
-            : 'Manage your contacts';
+            : this.isContactView
+              ? 'Manage your contacts'
+              : this.isAssessmentView
+                ? 'Manage your assessments'
+                : 'Manage your checklists';
     }
 
     get currentViewIcon() {
-        return this.isAccountView ? 'standard:account' : 'standard:contact';
+        return this.isAccountView
+            ? 'standard:account'
+            : this.isContactView
+              ? 'standard:contact'
+              : this.isAssessmentView
+                ? 'standard:assessment'
+                : 'standard:checklist';
     }
 
     // Handle connectivity changes
@@ -378,6 +418,30 @@ export default class App extends LightningElement {
             } else {
                 connectivityStatus.handleOffline();
             }
+        }
+    }
+
+    handleChecklistSearch(event) {
+        this.checklistSearchTerm = event.target.value.toLowerCase().trim();
+
+        // Get the checklist demo component
+        const checklistDemo = this.template.querySelector('c-checklist-demo');
+        if (checklistDemo) {
+            // Pass the search term to the checklist component
+            checklistDemo.filterItems(this.checklistSearchTerm);
+        }
+    }
+
+    handleAssessmentSearch(event) {
+        this.assessmentSearchTerm = event.target.value.toLowerCase().trim();
+
+        // Get the assessment type demo component
+        const assessmentTypeDemo = this.template.querySelector(
+            'c-assessment-type-demo'
+        );
+        if (assessmentTypeDemo) {
+            // Pass the search term to the assessment component
+            assessmentTypeDemo.filterItems(this.assessmentSearchTerm);
         }
     }
 }
