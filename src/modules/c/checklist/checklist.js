@@ -102,6 +102,7 @@ export default class Checklist extends LightningElement {
                     }
                 })
             );
+            console.log('Selected checklist item:', selectedItem);
         }
     }
 
@@ -311,6 +312,15 @@ export default class Checklist extends LightningElement {
                 formattedCreatedDate: this.formatSimpleDate(item.createdDate)
             };
         });
+
+        // Also dispatch dataloaded event with fallback data
+        this.dispatchEvent(
+            new CustomEvent('dataloaded', {
+                detail: {
+                    items: this._items
+                }
+            })
+        );
 
         // Also dispatch dataloaded event with fallback data
         this.dispatchEvent(

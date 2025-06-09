@@ -1,5 +1,21 @@
 <template>
     <div class="checklist-container">
+        <!-- Loading spinner -->
+        <template if:true={isLoading}>
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+                <div class="loading-text">Loading checklists...</div>
+            </div>
+        </template>
+
+        <!-- Error message -->
+        <template if:true={error}>
+            <div class="error-message">
+                <div class="error-icon">⚠️</div>
+                <div class="error-text">{error}</div>
+            </div>
+        </template>
+
         <!-- Desktop View: Table Layout -->
         <div class="desktop-view">
             <table class="checklist-table">

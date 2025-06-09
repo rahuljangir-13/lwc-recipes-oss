@@ -286,4 +286,29 @@ export default class AssessmentTypeDemo extends LightningElement {
         this.editingAssessment = null;
         this.selectedRecordType = null;
     }
+
+    // Handle data loaded from API
+    handleDataLoaded(event) {
+        console.log(
+            'Assessment type data loaded from API:',
+            event.detail.items
+        );
+
+        // Update the items array with the data from the API
+        if (
+            event.detail &&
+            event.detail.items &&
+            event.detail.items.length > 0
+        ) {
+            // Store the loaded data as the current items
+            this.assessmentItems = [...event.detail.items];
+
+            // Also update the original items array used for filtering
+            this.originalAssessmentItems = [...event.detail.items];
+
+            console.log(
+                'Updated assessmentItems and originalAssessmentItems with API data'
+            );
+        }
+    }
 }

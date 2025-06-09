@@ -39,46 +39,16 @@ export default class ChecklistDetailPage extends LightningElement {
             this.templateId = data.id;
 
             this.checklistDetail = {
-                id: data.id,
-                assessmentName: data.assessmentType || 'Assessment Template',
-                category: data.category || 'Default Category',
-                checklistName: data.name || 'Default Name',
-                numberOfAssessment: data.numberOfAssessment || '0',
-                createdFor: data.createdFor || 'Not Specified',
-                description: data.description || 'No description available',
-                status: data.status || 'Active',
-                createdDate: data.formattedCreatedDate || 'Unknown',
-                lastModifiedDate: data.formattedLastModifiedDate || 'Unknown'
+                assessmentName: data.name || 'Assessment 16-05',
+                category: data.category || 'Health & Safety',
+                checklistName: data.name || 'SIF Alert',
+                occurrence: data.occurrence || 'One Time',
+                startDate: data.startDate || '5/1/2025',
+                endDate: data.endDate || '5/31/2025',
+                customer: data.customer || 'Alpha Corporation',
+                description: data.description || 'description',
+                orgComponent: data.orgComponent || 'Spare Parts Room'
             };
-
-            console.log('Set template ID for questions:', this.templateId);
-            console.log('Set checklist detail data:', this.checklistDetail);
-
-            // If we're already on the questions tab, notify the questions component
-            if (this.currentSection === 'questions') {
-                this.refreshQuestionsForTemplate();
-            }
-        }
-    }
-
-    // When the questions component has been added to the DOM, initialize it with the templateId
-    renderedCallback() {
-        if (this.currentSection === 'questions' && this.templateId) {
-            this.refreshQuestionsForTemplate();
-        }
-    }
-
-    // Tell the questions component to load questions for the current template
-    refreshQuestionsForTemplate() {
-        const questionsComponent = this.template.querySelector(
-            'c-checklist-questions-tree'
-        );
-        if (questionsComponent) {
-            console.log(
-                'Setting template ID on questions component:',
-                this.templateId
-            );
-            questionsComponent.templateId = this.templateId;
         }
     }
 

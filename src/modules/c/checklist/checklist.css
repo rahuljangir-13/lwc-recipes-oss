@@ -264,6 +264,23 @@
     .mobile-view {
         display: block;
     }
+
+    /* Status styles for mobile view */
+    .mobile-view .status-completed,
+    .mobile-view .status-done,
+    .mobile-view .status-finished,
+    .mobile-view .status-in-progress,
+    .mobile-view .status-ongoing,
+    .mobile-view .status-started,
+    .mobile-view .status-pending,
+    .mobile-view .status-not-started,
+    .mobile-view .status-todo,
+    .mobile-view .status-blocked,
+    .mobile-view .status-stopped,
+    .mobile-view .status-halted,
+    .mobile-view .status-default {
+        margin-left: 50px;
+    }
 }
 
 /* View More Button */
