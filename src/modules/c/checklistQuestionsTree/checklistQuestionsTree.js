@@ -11,6 +11,7 @@ export default class ChecklistQuestionsTree extends LightningElement {
     @track areas = [];
     @track isLoading = true;
     @track error = null;
+    @track showAssessmentAreaModal = false;
 
     @api
     get templateId() {
@@ -389,5 +390,12 @@ export default class ChecklistQuestionsTree extends LightningElement {
         } else {
             console.error('No template ID available for retry.');
         }
+    }
+
+    handleNewArea() {
+        this.showAssessmentAreaModal = true;
+    }
+    handleCloseAssessmentAreaModal() {
+        this.showAssessmentAreaModal = false;
     }
 }

@@ -1,4 +1,25 @@
 <template>
+    <button
+        class="fab-button"
+        onclick={handleOpenChecklistModal}
+        aria-label="Create New Checklist"
+    >
+        <svg
+            viewBox="0 0 24 24"
+            class="fab-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+        >
+            <path
+                d="M12 5v14M5 12h14"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            />
+        </svg>
+    </button>
+
     <template lwc:if={showChecklistModal}>
         <c-checklist-modal
             onclose={handleCloseChecklistModal}
@@ -27,9 +48,9 @@
                     </span>
                     <h2 class="checklist-title">Checklist</h2>
                 </div>
-                <button class="new-button" onclick={handleOpenChecklistModal}>
+                <!-- <button class="new-button" onclick={handleOpenChecklistModal}>
                     New
-                </button>
+                </button> -->
             </div>
 
             <div class="checklist-container">
