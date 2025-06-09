@@ -173,7 +173,11 @@ export default class ChecklistModal extends LightningElement {
             return;
         }
 
+        // In a real app, you would have a proper OAuth flow
+        const sessionId =
+            '00D7z00000P3CKp!AQEAQFKwmwBkDRjyqOFqec8P6JFs.lSfwBSthHyGfPUCPpJN2vUXUz6QE4UUMIAViND2smQ0Pwb2JY0vWTGLNsSW_sx8W1.Z';
         const headers = {
+            Authorization: `Bearer ${sessionId}`,
             'Content-Type': 'application/json'
         };
 
@@ -213,7 +217,11 @@ export default class ChecklistModal extends LightningElement {
             return;
         }
 
+        // In a real app, you would have a proper OAuth flow
+        const sessionId =
+            '00D7z00000P3CKp!AQEAQFKwmwBkDRjyqOFqec8P6JFs.lSfwBSthHyGfPUCPpJN2vUXUz6QE4UUMIAViND2smQ0Pwb2JY0vWTGLNsSW_sx8W1.Z';
         const headers = {
+            Authorization: `Bearer ${sessionId}`,
             'Content-Type': 'application/json'
         };
 
@@ -250,11 +258,11 @@ export default class ChecklistModal extends LightningElement {
 
             // Check if data has the expected format
             const userData = parsedData.data || parsedData;
-
+            console.log('line 261', userData);
             if (Array.isArray(userData)) {
                 this.userOptions = userData.map((user) => ({
-                    label: user.name || 'Unknown User',
-                    value: user.id || user.userId || ''
+                    label: user.Name || 'Unknown User',
+                    value: user.Id || user.userId || ''
                 }));
             } else {
                 throw new Error('Invalid user data format');
@@ -276,8 +284,8 @@ export default class ChecklistModal extends LightningElement {
 
             if (Array.isArray(assessmentTypeData)) {
                 this.assessmentTypeOptions = assessmentTypeData.map((type) => ({
-                    label: type.name || 'Unknown Type',
-                    value: type.id || type.typeId || ''
+                    label: type.Name || 'Unknown Type',
+                    value: type.Id || type.typeId || ''
                 }));
             } else {
                 throw new Error('Invalid assessment type data format');
