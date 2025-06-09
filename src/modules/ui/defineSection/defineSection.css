@@ -208,38 +208,110 @@ abbr.slds-required {
     display: block;
 }
 
-/* Assessment Roles Search Bar */
+/* Assessment Roles Search Bar with Dropdown */
 .role-search-bar {
     display: flex;
     align-items: center;
     position: relative;
     margin-top: 4px;
     margin-bottom: 8px;
+    width: 100%;
 }
+
 .role-search-input {
     width: 100%;
-    padding: 7px 36px 7px 12px;
-    border: 1.5px solid #d8dde6;
-    border-radius: 20px;
+    padding: 0.5rem 2rem 0.5rem 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
     background: #fff;
-    font-size: 1rem;
+    font-size: 0.875rem;
     color: #222;
     font-weight: 400;
     outline: none;
     transition: border 0.2s;
+    cursor: pointer;
 }
+
 .role-search-input:focus {
-    border-color: #7c3aed;
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
+
 .role-search-icon {
     position: absolute;
-    right: 12px;
+    right: 0.75rem;
     top: 50%;
     transform: translateY(-50%);
-    color: #888;
-    pointer-events: none;
-    display: flex;
-    align-items: center;
+    color: #666;
+    cursor: pointer;
+    font-size: 0.8rem;
+    user-select: none;
+}
+
+/* Dropdown that appears only when clicked */
+.role-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-top: 2px;
+}
+
+.role-option {
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.875rem;
+    color: #333;
+    transition: background-color 0.2s ease;
+}
+
+.role-option:hover {
+    background-color: #f8f9fa;
+}
+
+.role-option:last-child {
+    border-bottom: none;
+}
+
+.role-option:active {
+    background-color: #e3f2fd;
+}
+
+/* Role options list styling - simple display */
+.role-options-list {
+    margin-top: 0.5rem;
+    padding: 0;
+}
+
+.role-option-display {
+    padding: 0.375rem 0.75rem;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    margin-bottom: 0.375rem;
+    font-size: 0.875rem;
+    color: #333;
+    font-weight: 400;
+    display: block;
+    line-height: 1.4;
+}
+
+.role-option-display:last-child {
+    margin-bottom: 0;
+}
+
+.role-option-display:hover {
+    background-color: #e9ecef;
+    cursor: default;
 }
 
 /* Scoring Ranges */
@@ -765,6 +837,15 @@ abbr.slds-required {
     background: #43a047;
     color: #fff;
     letter-spacing: 0.5px;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    padding: 4px 8px;
+    background-color: #04844b;
+    color: white;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
 }
 .info-grid-simple {
     display: flex;
@@ -928,4 +1009,70 @@ abbr.slds-required {
     border-radius: 50%;
     display: inline-block;
     border: 1px solid #ddd;
+}
+
+/* Loading Spinner */
+.slds-spinner_container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+/* Online/Offline Status */
+.status-online {
+    display: flex;
+    align-items: center;
+    color: #04844b;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background-color: #f3f9f4;
+    border-radius: 0.25rem;
+    border: 1px solid #04844b;
+}
+
+.status-offline {
+    display: flex;
+    align-items: center;
+    color: #c23934;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background-color: #fef7f7;
+    border-radius: 0.25rem;
+    border: 1px solid #c23934;
+}
+
+/* Error Messages */
+.slds-notify {
+    margin: 1rem;
+    padding: 1rem;
+    border-radius: 0.25rem;
+}
+
+.slds-alert_error {
+    background-color: #fef7f7;
+    border: 1px solid #ea001e;
+    color: #8a1b1b;
+}
+
+/* Status badge styles */
+.status-image {
+    height: 20px;
+    width: 80px;
+    border: 0;
+    display: block;
+}
+
+.status-text {
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
 }

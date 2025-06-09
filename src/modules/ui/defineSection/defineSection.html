@@ -24,9 +24,20 @@
                 <span class="slds-text-heading_medium info-section-title"
                     >General Information</span
                 >
-                <span class="slds-badge slds-badge_success info-badge"
-                    >Closed</span
-                >
+                <span class="slds-badge slds-badge_success info-badge">
+                    <template if:true={statusInfo.hasImage}>
+                        <img
+                            src={statusInfo.imageUrl}
+                            alt={statusInfo.altText}
+                            class="status-image"
+                            onerror={handleImageError}
+                            onload={handleImageLoad}
+                        />
+                    </template>
+                    <template if:false={statusInfo.hasImage}>
+                        <span class="status-text">{statusInfo.text}</span>
+                    </template>
+                </span>
             </div>
             <template if:true={isGeneralInfoOpen}>
                 <hr class="section-divider" />
@@ -38,34 +49,44 @@
                             <div>
                                 <div class="info-label">Assessment Name</div>
                                 <div class="info-value info-bold">
-                                    Assessment 16-05
+                                    {assessmentData.name}
                                 </div>
                             </div>
                             <div>
                                 <div class="info-label">Category</div>
-                                <div class="info-value">Health & Safety</div>
+                                <div class="info-value">
+                                    {assessmentData.category}
+                                </div>
                             </div>
                         </div>
                         <div class="info-row-2col">
                             <div>
                                 <div class="info-label">Checklist Name</div>
                                 <div class="info-value">
-                                    <a href="#" class="info-link">SIF Alert</a>
+                                    <a href="#" class="info-link"
+                                        >{assessmentData.checklistName}</a
+                                    >
                                 </div>
                             </div>
                             <div>
                                 <div class="info-label">Occurrence</div>
-                                <div class="info-value">One Time</div>
+                                <div class="info-value">
+                                    {assessmentData.occurrence}
+                                </div>
                             </div>
                         </div>
                         <div class="info-row-2col">
                             <div>
                                 <div class="info-label">Start Date</div>
-                                <div class="info-value">5/1/2025</div>
+                                <div class="info-value">
+                                    {assessmentData.startDate}
+                                </div>
                             </div>
                             <div>
                                 <div class="info-label">End Date</div>
-                                <div class="info-value">5/31/2025</div>
+                                <div class="info-value">
+                                    {assessmentData.endDate}
+                                </div>
                             </div>
                         </div>
                         <div class="info-row-2col">
@@ -75,13 +96,15 @@
                                 </div>
                                 <div class="info-value">
                                     <a href="#" class="info-link"
-                                        >Alpha Corporation</a
+                                        >{assessmentData.associatedCustomer}</a
                                     >
                                 </div>
                             </div>
                             <div>
                                 <div class="info-label">Description</div>
-                                <div class="info-value">description</div>
+                                <div class="info-value">
+                                    {assessmentData.description}
+                                </div>
                             </div>
                         </div>
                         <div class="info-row-2col">
@@ -131,7 +154,7 @@
                                 <div
                                     class="info-label"
                                     onclick={handleLabelClick}
-                                    data-role="Administrators"
+                                    data-role="administrators"
                                 >
                                     Administrators
                                 </div>
@@ -140,26 +163,46 @@
                                         class="role-search-input"
                                         type="text"
                                         placeholder="Select an Option..."
-                                        readonly={isAdminReadonly}
+                                        value={selectedRoles.administrators}
+                                        readonly
+                                        onclick={handleRoleDropdownToggle}
+                                        data-role="administrators"
                                     />
-                                    <span class="role-search-icon">
-                                        <!-- <svg
-                                            class="slds-icon slds-icon_x-small"
-                                            aria-hidden="true"
-                                            style="width: 18px; height: 18px"
-                                        >
-                                            <use
-                                                xlink:href="/assets/icons/utility-sprint/svg/incon8-search.svg"
-                                            ></use>
-                                        </svg> -->
+                                    <span
+                                        class="role-search-icon"
+                                        onclick={handleRoleDropdownToggle}
+                                        data-role="administrators"
+                                    >
+                                        ▼
                                     </span>
+                                    <template
+                                        if:true={showDropdowns.administrators}
+                                    >
+                                        <div class="role-dropdown">
+                                            <template
+                                                for:each={roleOptions.administrators}
+                                                for:item="option"
+                                            >
+                                                <div
+                                                    key={option.id}
+                                                    class="role-option"
+                                                    onclick={handleRoleSelection}
+                                                    data-role="administrators"
+                                                    data-label={option.label}
+                                                    data-value={option.value}
+                                                >
+                                                    {option.label}
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
                             <div>
                                 <div
                                     class="info-label"
                                     onclick={handleLabelClick}
-                                    data-role="Approvers"
+                                    data-role="approvers"
                                 >
                                     Approvers
                                 </div>
@@ -168,19 +211,37 @@
                                         class="role-search-input"
                                         type="text"
                                         placeholder="Select an Option..."
-                                        readonly={isApproverReadonly}
+                                        value={selectedRoles.approvers}
+                                        readonly
+                                        onclick={handleRoleDropdownToggle}
+                                        data-role="approvers"
                                     />
-                                    <span class="role-search-icon">
-                                        <svg
-                                            class="slds-icon slds-icon_x-small"
-                                            aria-hidden="true"
-                                            style="width: 18px; height: 18px"
-                                        >
-                                            <use
-                                                xlink:href="/assets/icons/utility-sprint/svg/incon8-search.svg#icon8-search"
-                                            ></use>
-                                        </svg>
+                                    <span
+                                        class="role-search-icon"
+                                        onclick={handleRoleDropdownToggle}
+                                        data-role="approvers"
+                                    >
+                                        ▼
                                     </span>
+                                    <template if:true={showDropdowns.approvers}>
+                                        <div class="role-dropdown">
+                                            <template
+                                                for:each={roleOptions.approvers}
+                                                for:item="option"
+                                            >
+                                                <div
+                                                    key={option.id}
+                                                    class="role-option"
+                                                    onclick={handleRoleSelection}
+                                                    data-role="approvers"
+                                                    data-label={option.label}
+                                                    data-value={option.value}
+                                                >
+                                                    {option.label}
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
                         </div>
@@ -189,7 +250,7 @@
                                 <div
                                     class="info-label"
                                     onclick={handleLabelClick}
-                                    data-role="Initiators"
+                                    data-role="initiators"
                                 >
                                     Initiators
                                 </div>
@@ -198,26 +259,46 @@
                                         class="role-search-input"
                                         type="text"
                                         placeholder="Select an Option..."
-                                        readonly={isInitiatorReadonly}
+                                        value={selectedRoles.initiators}
+                                        readonly
+                                        onclick={handleRoleDropdownToggle}
+                                        data-role="initiators"
                                     />
-                                    <span class="role-search-icon">
-                                        <svg
-                                            class="slds-icon slds-icon_x-small"
-                                            aria-hidden="true"
-                                            style="width: 18px; height: 18px"
-                                        >
-                                            <use
-                                                xlink:href="/assets/icons/utility-sprint/svg/incon8-search.svg#icon8-search"
-                                            ></use>
-                                        </svg>
+                                    <span
+                                        class="role-search-icon"
+                                        onclick={handleRoleDropdownToggle}
+                                        data-role="initiators"
+                                    >
+                                        ▼
                                     </span>
+                                    <template
+                                        if:true={showDropdowns.initiators}
+                                    >
+                                        <div class="role-dropdown">
+                                            <template
+                                                for:each={roleOptions.initiators}
+                                                for:item="option"
+                                            >
+                                                <div
+                                                    key={option.id}
+                                                    class="role-option"
+                                                    onclick={handleRoleSelection}
+                                                    data-role="initiators"
+                                                    data-label={option.label}
+                                                    data-value={option.value}
+                                                >
+                                                    {option.label}
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
                             <div>
                                 <div
                                     class="info-label"
                                     onclick={handleLabelClick}
-                                    data-role="Respondents"
+                                    data-role="respondents"
                                 >
                                     Respondents
                                 </div>
@@ -226,19 +307,39 @@
                                         class="role-search-input"
                                         type="text"
                                         placeholder="Select an Option..."
-                                        readonly={isRespondentReadonly}
+                                        value={selectedRoles.respondents}
+                                        readonly
+                                        onclick={handleRoleDropdownToggle}
+                                        data-role="respondents"
                                     />
-                                    <span class="role-search-icon">
-                                        <svg
-                                            class="slds-icon slds-icon_x-small"
-                                            aria-hidden="true"
-                                            style="width: 18px; height: 18px"
-                                        >
-                                            <use
-                                                xlink:href="/assets/icons/utility-sprint/svg/incon8-search.svg#icon8-search"
-                                            ></use>
-                                        </svg>
+                                    <span
+                                        class="role-search-icon"
+                                        onclick={handleRoleDropdownToggle}
+                                        data-role="respondents"
+                                    >
+                                        ▼
                                     </span>
+                                    <template
+                                        if:true={showDropdowns.respondents}
+                                    >
+                                        <div class="role-dropdown">
+                                            <template
+                                                for:each={roleOptions.respondents}
+                                                for:item="option"
+                                            >
+                                                <div
+                                                    key={option.id}
+                                                    class="role-option"
+                                                    onclick={handleRoleSelection}
+                                                    data-role="respondents"
+                                                    data-label={option.label}
+                                                    data-value={option.value}
+                                                >
+                                                    {option.label}
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
                         </div>
@@ -247,7 +348,7 @@
                                 <div
                                     class="info-label"
                                     onclick={handleLabelClick}
-                                    data-role="Reviewers"
+                                    data-role="reviewers"
                                 >
                                     Reviewers
                                 </div>
@@ -256,26 +357,44 @@
                                         class="role-search-input"
                                         type="text"
                                         placeholder="Select an Option..."
-                                        readonly={isReviewerReadonly}
+                                        value={selectedRoles.reviewers}
+                                        readonly
+                                        onclick={handleRoleDropdownToggle}
+                                        data-role="reviewers"
                                     />
-                                    <span class="role-search-icon">
-                                        <svg
-                                            class="slds-icon slds-icon_x-small"
-                                            aria-hidden="true"
-                                            style="width: 18px; height: 18px"
-                                        >
-                                            <use
-                                                xlink:href="/assets/icons/utility-sprint/svg/incon8-search.svg#icon8-search"
-                                            ></use>
-                                        </svg>
+                                    <span
+                                        class="role-search-icon"
+                                        onclick={handleRoleDropdownToggle}
+                                        data-role="reviewers"
+                                    >
+                                        ▼
                                     </span>
+                                    <template if:true={showDropdowns.reviewers}>
+                                        <div class="role-dropdown">
+                                            <template
+                                                for:each={roleOptions.reviewers}
+                                                for:item="option"
+                                            >
+                                                <div
+                                                    key={option.id}
+                                                    class="role-option"
+                                                    onclick={handleRoleSelection}
+                                                    data-role="reviewers"
+                                                    data-label={option.label}
+                                                    data-value={option.value}
+                                                >
+                                                    {option.label}
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
                             <div>
                                 <div
                                     class="info-label"
                                     onclick={handleLabelClick}
-                                    data-role="Viewers"
+                                    data-role="viewers"
                                 >
                                     Viewers
                                 </div>
@@ -284,19 +403,37 @@
                                         class="role-search-input"
                                         type="text"
                                         placeholder="Select an Option..."
-                                        readonly={isViewerReadonly}
+                                        value={selectedRoles.viewers}
+                                        readonly
+                                        onclick={handleRoleDropdownToggle}
+                                        data-role="viewers"
                                     />
-                                    <span class="role-search-icon">
-                                        <svg
-                                            class="slds-icon slds-icon_x-small"
-                                            aria-hidden="true"
-                                            style="width: 18px; height: 18px"
-                                        >
-                                            <use
-                                                xlink:href="/assets/icons/utility-sprint/svg/incon8-search.svg#icon8-search"
-                                            ></use>
-                                        </svg>
+                                    <span
+                                        class="role-search-icon"
+                                        onclick={handleRoleDropdownToggle}
+                                        data-role="viewers"
+                                    >
+                                        ▼
                                     </span>
+                                    <template if:true={showDropdowns.viewers}>
+                                        <div class="role-dropdown">
+                                            <template
+                                                for:each={roleOptions.viewers}
+                                                for:item="option"
+                                            >
+                                                <div
+                                                    key={option.id}
+                                                    class="role-option"
+                                                    onclick={handleRoleSelection}
+                                                    data-role="viewers"
+                                                    data-label={option.label}
+                                                    data-value={option.value}
+                                                >
+                                                    {option.label}
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
                         </div>
