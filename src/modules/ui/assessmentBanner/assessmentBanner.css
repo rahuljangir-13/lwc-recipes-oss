@@ -1,0 +1,83 @@
+:host {
+    display: block;
+    width: 100%;
+    font-family: 'Roboto', Arial, sans-serif;
+}
+
+.assessment-banner {
+    background-color: #fff;
+    padding: 16px 0;
+    border-bottom: 1px solid #e5e5e5;
+    margin-bottom: 24px;
+    font-family: 'Roboto', Arial, sans-serif;
+}
+
+.banner-content {
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+}
+
+.banner-icon {
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.assessment-icon {
+    display: inline-block;
+    width: 42px;
+    height: 42px;
+    background-color: #6a31ea;
+    border-radius: 50%;
+    position: relative;
+}
+
+.assessment-icon:before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 11px;
+    left: 11px;
+    background-image: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path fill="%23FFFFFF" d="M10 0c-5.5 0-10 4.5-10 10s4.5 10 10 10 10-4.5 10-10-4.5-10-10-10zm-3 12c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>');
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.banner-text {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.banner-label {
+    color: #706e6b;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+
+.banner-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #181818;
+}
+
+.banner-actions {
+    flex-shrink: 0;
+}
+
+.delete-button {
+    border: 1px solid #dddbda;
+    background-color: white;
+    color: #181818;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.delete-button:hover {
+    background-color: #f4f6f9;
+}

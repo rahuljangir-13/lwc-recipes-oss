@@ -1,0 +1,71 @@
+<template>
+    <div class="assessment-list-container">
+        <div class="header">
+            <h2 class="title">Assessment List</h2>
+            <p class="subtitle">
+                View all assessments with their current status and details
+            </p>
+        </div>
+
+        <div class="table-container">
+            <table class="assessment-table">
+                <thead>
+                    <tr>
+                        <th>Assessment Name</th>
+                        <th>Checklist Name</th>
+                        <th>Associated Customer</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr
+                        for:each={formattedAssessments}
+                        for:item="assessment"
+                        key={assessment.id}
+                    >
+                        <td data-label="Assessment Name">
+                            <div class="cell-content">
+                                <strong>{assessment.assessmentName}</strong>
+                            </div>
+                        </td>
+                        <td data-label="Checklist Name">
+                            <div class="cell-content">
+                                {assessment.checklistName}
+                            </div>
+                        </td>
+                        <td data-label="Associated Customer">
+                            <div class="cell-content">
+                                {assessment.associatedCustomer}
+                            </div>
+                        </td>
+                        <td data-label="Start Date">
+                            <div class="cell-content">
+                                {assessment.formattedStartDate}
+                            </div>
+                        </td>
+                        <td data-label="End Date">
+                            <div class="cell-content">
+                                {assessment.formattedEndDate}
+                            </div>
+                        </td>
+                        <td data-label="Status">
+                            <div class="cell-content">
+                                <span class={assessment.statusClass}>
+                                    {assessment.status}
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="footer">
+            <p class="record-count">
+                Showing {formattedAssessments.length} assessments
+            </p>
+        </div>
+    </div>
+</template>
