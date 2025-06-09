@@ -2294,6 +2294,9 @@ body {
 .panel-content {
     flex: 1;
     padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* Comments section styles */
@@ -3037,30 +3040,73 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 10px 16px;
+    padding: 8px 16px;
     border-radius: 4px;
     font-weight: 600;
     font-size: 13px;
     cursor: pointer;
-    background-color: #0176d3; /* Use Salesforce Blue */
-    color: white; /* White text */
-    border: 1px solid #0176d3; /* Match border */
+    background-color: #0176d3; /* Salesforce Brand Blue */
+    color: white;
+    border: 1px solid #0176d3;
     transition: all 0.2s ease;
-    margin-top: 15px; /* Space from content above */
+    margin: 15px auto;
+    text-align: center;
+    line-height: 1.5rem;
+    min-height: 32px;
+    text-decoration: none;
+    white-space: nowrap;
+    -webkit-appearance: none;
+    box-shadow: none;
+    letter-spacing: 0.02em;
+    width: 80%;
+    max-width: 250px;
 }
 
 .create-button:hover {
-    background-color: #005fb2; /* Darker blue on hover */
-    border-color: #005fb2; /* Darker blue border */
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    color: white; /* Keep text white */
+    background-color: #0057a3; /* Slightly darker blue on hover */
+    border-color: #0057a3;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.create-button:focus {
+    outline: none;
+    box-shadow: 0 0 3px 1px #0070d2;
+    border-color: #0070d2;
+}
+
+/* Add specific styling for .slds-button when used in our component */
+.slds-button.slds-button_brand {
+    /* Ensure SLDS buttons in our component match our .create-button */
+    background-color: #0176d3 !important;
+    border-color: #0176d3 !important;
+    color: white !important;
+    padding: 8px 16px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+    letter-spacing: 0.02em !important;
+    margin: 15px auto !important;
+    display: block !important;
+    width: 80% !important;
+    max-width: 250px !important;
+}
+
+.slds-button.slds-button_brand:hover {
+    background-color: #0057a3 !important;
+    border-color: #0057a3 !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-1px) !important;
 }
 
 /* Ensure buttons stack on small screens if needed */
 @media (max-width: 576px) {
     .create-button {
-        width: 100%; /* Full width on small screens */
+        width: 90%; /* Slightly less than full width on small screens */
         justify-content: center;
+        margin: 10px auto 5px;
+        padding: 8px 10px;
     }
 }
 
@@ -3261,7 +3307,7 @@ body {
 .findings-tasks-section h3 {
     margin-top: 0;
     margin-bottom: 15px;
-    color: #5a3e84;
+    color: #0176d3;
     font-size: 1.1rem;
     border-bottom: 1px solid #e0e6ed;
     padding-bottom: 8px;
@@ -3269,7 +3315,18 @@ body {
 
 /* Style for the create task button - same as create finding button */
 .create-task-btn {
-    /* No special styling - use the default create-button style */
+    background-color: #0176d3;
+    color: white;
+    border: 1px solid #0176d3;
+    box-shadow: none;
+    letter-spacing: 0.02em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    margin: 15px auto;
+    width: 80%;
+    max-width: 250px;
 }
 
 /* Add styling for assessment header info */
