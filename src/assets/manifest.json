@@ -1,0 +1,37 @@
+{
+    "name": "Salesforce LWC Mobile",
+    "short_name": "SF LWC",
+    "icons": [
+        {
+            "src": "./images/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "./images/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#0070d2",
+    "background_color": "#ffffff",
+    "display": "fullscreen",
+    "start_url": "/",
+    "scope": "/",
+    "description": "Salesforce-like CRM built with Lightning Web Components Open Source",
+    "orientation": "portrait",
+    "display_override": ["window-controls-overlay"],
+    "categories": ["business", "productivity"],
+    "shortcuts": [
+        {
+            "name": "View Accounts",
+            "url": "/?view=accounts",
+            "description": "View your accounts"
+        },
+        {
+            "name": "View Contacts",
+            "url": "/?view=contacts",
+            "description": "View your contacts"
+        }
+    ]
+}

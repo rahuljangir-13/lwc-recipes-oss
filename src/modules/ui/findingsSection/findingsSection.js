@@ -675,5 +675,18 @@ export default class ResponseSection extends LightningElement {
 
     handleNewFinding() {
         this.showNewFindingsForm = true;
+=======
+export default class FindingsSection extends LightningElement {
+    @api recordId;
+
+    @track findings = [];
+
+    get findingsCount() {
+        return this.findings.length;
+    }
+
+    handleNewFinding() {
+        // In a real app, this would open a modal to create a new finding
+        console.log('Creating new finding...');
     }
 }

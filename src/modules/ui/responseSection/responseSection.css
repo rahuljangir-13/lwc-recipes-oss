@@ -1282,4 +1282,47 @@
 .header-row .action-buttons {
     display: flex;
     gap: 0.5rem;
+=======
+.response-section {
+    font-family: 'Roboto', Arial, sans-serif;
+}
+
+.section-header {
+    margin-bottom: 16px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #181818;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #6a31ea;
+}
+
+.slds-progress-bar_small {
+    height: 4px;
+}
+
+.slds-badge_success {
+    background-color: #4caf50;
+    color: white;
+}
+
+.slds-badge_warning {
+    background-color: #ff9800;
+    color: white;
+}
+
+.slds-table_header-fixed {
+    border-top: 0;
+}
+
+.slds-is-sortable .slds-th__action:hover {
+    background-color: #f3f3f3;
+    cursor: pointer;
+}
+
+.slds-is-sortable .slds-th__action:hover .slds-icon {
+    display: inline-block;
+    fill: #0176d3;
 }

@@ -4,8 +4,7 @@ import { isOnline } from 'c/utils';
 // Placeholder for your Apex REST API endpoint.
 // IMPORTANT: Replace this with your actual Salesforce Apex REST endpoint URL.
 const APEX_REST_ENDPOINT_URL =
-    'https://page-force-2690-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/amanaccounts';
-//    'https://customization-app-1405-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/lwcossaccounts';
+    'https://customization-app-1405-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/lwcossaccounts';
 
 // Mock data for accounts
 const mockAccounts = [
