@@ -1,0 +1,182 @@
+:host {
+    display: block;
+    width: 100%;
+    font-family: 'Roboto', Arial, sans-serif;
+    background-color: #f0f0f0;
+    color: #000000;
+}
+
+.sidebar-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #ffffff;
+    padding: 24px 0;
+    box-shadow: 1px 0 4px rgba(0, 0, 0, 0.05);
+    border-right: 1px solid #eaeaea;
+}
+
+.sidebar-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 8px;
+}
+
+.sidebar-tab {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    border: 1px solid transparent;
+}
+
+.tab-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.tab-icon {
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(124, 58, 237, 0.08);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    transition: background 0.2s;
+}
+
+.tab-icon svg {
+    width: 18px;
+    height: 18px;
+    fill: #7c3aed;
+}
+
+.tab-label {
+    font-size: 1.08rem;
+    font-weight: 500;
+    color: #000000;
+    transition: color 0.2s;
+}
+
+/* Hover state */
+.sidebar-tab:hover:not(.active) {
+    background-color: rgba(81, 85, 92, 0.08);
+}
+
+.sidebar-tab:hover:not(.active) .tab-label {
+    color: #000000;
+}
+
+.sidebar-tab:hover:not(.active) .tab-icon {
+    background: rgba(59, 130, 246, 0.12);
+}
+
+/* Active state */
+.sidebar-tab.active {
+    background-color: #7c3aed;
+    box-shadow: 0 4px 8px rgba(124, 58, 237, 0.3);
+    transform: translateY(-1px);
+    border: 1px solid #6422ea;
+}
+
+.sidebar-tab.active .tab-icon {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+.sidebar-tab.active .tab-label {
+    color: white;
+    font-weight: 600;
+}
+
+.sidebar-tab.active .tab-icon svg {
+    fill: #ffffff;
+}
+
+/* Ensure normal state is restored when not active or hovered */
+.sidebar-tab:not(.active):not(:hover) {
+    background-color: transparent;
+    box-shadow: none;
+    transform: translateY(0);
+    border: 1px solid transparent;
+}
+
+.sidebar-tab:not(.active):not(:hover) .tab-icon {
+    background: rgba(124, 58, 237, 0.08);
+    transform: scale(1);
+}
+
+.sidebar-tab:not(.active):not(:hover) .tab-label {
+    color: #000000 !important;
+    font-weight: 500;
+}
+
+.sidebar-tab:not(.active):not(:hover) .tab-icon svg {
+    fill: #7c3aed;
+}
+
+/* Force black color for inactive tabs */
+.sidebar-tab:not(.active) .tab-label {
+    color: #000000 !important;
+}
+
+.sidebar-tab:not(.active):hover .tab-label {
+    color: #000000 !important;
+}
+
+.selection-indicator {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3px;
+    height: 100%;
+    background: #ffffff;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.sidebar-tab.active .selection-indicator {
+    opacity: 1;
+}
+
+/* Filter section */
+.filter-container {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-top: 1px solid #eaeaea;
+    background: #f5f5f5;
+}
+
+.filter-text {
+    font-size: 0.813rem;
+    color: #666;
+    font-weight: 400;
+}
+
+.filter-icon-custom {
+    width: 18px;
+    height: 18px;
+    background-image: url('/assets/icons/utility-sprite/svg/symbols.svg#filterlist');
+    background-repeat: no-repeat;
+    background-position: center;
+    display: inline-block;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.filter-icon-custom:hover {
+    opacity: 1;
+}

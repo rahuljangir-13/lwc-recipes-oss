@@ -73,6 +73,10 @@ const DB_VERSION = 1;
 export const STORE_NAMES = {
     ACCOUNTS: 'accounts',
     CONTACTS: 'contacts',
+    OPPORTUNITIES: 'opportunities',
+    CASES: 'cases',
+    LEADS: 'leads',
+    ASSESSMENTS: 'assessments',
     PENDING_OPERATIONS: 'pendingOperations'
 };
 
@@ -100,13 +104,33 @@ function initDB() {
         request.onupgradeneeded = (event) => {
             const db = event.target.result;
 
-            // Create object stores for accounts and contacts
+            // Create object stores for all data types
             if (!db.objectStoreNames.contains(STORE_NAMES.ACCOUNTS)) {
                 db.createObjectStore(STORE_NAMES.ACCOUNTS, { keyPath: 'id' });
             }
 
             if (!db.objectStoreNames.contains(STORE_NAMES.CONTACTS)) {
                 db.createObjectStore(STORE_NAMES.CONTACTS, { keyPath: 'id' });
+            }
+
+            if (!db.objectStoreNames.contains(STORE_NAMES.OPPORTUNITIES)) {
+                db.createObjectStore(STORE_NAMES.OPPORTUNITIES, {
+                    keyPath: 'id'
+                });
+            }
+
+            if (!db.objectStoreNames.contains(STORE_NAMES.CASES)) {
+                db.createObjectStore(STORE_NAMES.CASES, { keyPath: 'id' });
+            }
+
+            if (!db.objectStoreNames.contains(STORE_NAMES.LEADS)) {
+                db.createObjectStore(STORE_NAMES.LEADS, { keyPath: 'id' });
+            }
+
+            if (!db.objectStoreNames.contains(STORE_NAMES.ASSESSMENTS)) {
+                db.createObjectStore(STORE_NAMES.ASSESSMENTS, {
+                    keyPath: 'id'
+                });
             }
 
             // Create object store for pending operations (offline actions)
