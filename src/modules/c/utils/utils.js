@@ -69,15 +69,10 @@ export function generateId() {
 // --------------- IndexedDB Storage ---------------
 
 const DB_NAME = 'salesforceOfflineDB';
-const DB_VERSION = 2;
+const DB_VERSION = 1;
 export const STORE_NAMES = {
     ACCOUNTS: 'accounts',
     CONTACTS: 'contacts',
-    OPPORTUNITIES: 'opportunities',
-    CASES: 'cases',
-    LEADS: 'leads',
-    ASSESSMENTS: 'assessments',
-    CHECKLISTS: 'CHECKLISTS',
     PENDING_OPERATIONS: 'pendingOperations'
 };
 
@@ -105,36 +100,13 @@ function initDB() {
         request.onupgradeneeded = (event) => {
             const db = event.target.result;
 
-            // Create object stores for all data types
+            // Create object stores for accounts and contacts
             if (!db.objectStoreNames.contains(STORE_NAMES.ACCOUNTS)) {
                 db.createObjectStore(STORE_NAMES.ACCOUNTS, { keyPath: 'id' });
             }
 
             if (!db.objectStoreNames.contains(STORE_NAMES.CONTACTS)) {
                 db.createObjectStore(STORE_NAMES.CONTACTS, { keyPath: 'id' });
-            }
-            if (!db.objectStoreNames.contains(STORE_NAMES.CHECKLISTS)) {
-                db.createObjectStore(STORE_NAMES.CHECKLISTS, { keyPath: 'id' }); // ✅ ADD THIS
-            }
-
-            if (!db.objectStoreNames.contains(STORE_NAMES.OPPORTUNITIES)) {
-                db.createObjectStore(STORE_NAMES.OPPORTUNITIES, {
-                    keyPath: 'id'
-                });
-            }
-
-            if (!db.objectStoreNames.contains(STORE_NAMES.CASES)) {
-                db.createObjectStore(STORE_NAMES.CASES, { keyPath: 'id' });
-            }
-
-            if (!db.objectStoreNames.contains(STORE_NAMES.LEADS)) {
-                db.createObjectStore(STORE_NAMES.LEADS, { keyPath: 'id' });
-            }
-
-            if (!db.objectStoreNames.contains(STORE_NAMES.ASSESSMENTS)) {
-                db.createObjectStore(STORE_NAMES.ASSESSMENTS, {
-                    keyPath: 'id'
-                });
             }
 
             // Create object store for pending operations (offline actions)
