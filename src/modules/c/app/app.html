@@ -12,11 +12,6 @@
             <!-- Connectivity status bar -->
             <c-connectivity-status></c-connectivity-status>
 
-            <!-- PubSub Test Components -->
-            <!-- <div class="pubsub-test slds-m-around_medium">
-                <c-comp-a></c-comp-a>
-            </div> -->
-
             <!-- Account view -->
             <!-- <template lwc:if={isAccountView}>
                 <div class="search-box-container">
@@ -222,11 +217,7 @@
                 <div class="nav-icon contacts-icon"></div>
                 <div class="nav-label">Contacts</div>
             </div>
-            <div class={checklistTabClass} onclick={handleViewChecklists}>
-                <div class="nav-icon checklist-icon"></div>
-                <div class="nav-label">Checklists</div>
-            </div>
-            <div class={assessmentTabClass} onclick={handleViewAssessments}>
+            <div class="nav-item" onclick={handleViewAssessments}>
                 <div class="nav-icon assessments-icon"></div>
                 <div class="nav-label">Assessments</div>
             </div>
