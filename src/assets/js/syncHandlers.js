@@ -26,7 +26,7 @@ export async function syncCREATE_ASSESSMENT(data) {
     }
 
     const sessionId =
-        '00D7z00000P3CKp!AQEAQOVQIkoHIawh0ULeO64_o.lnrBfzv5KGfj4.rZkOqZR7K7gRKMPoibN84yZoh19BKBjz0XgNiB04.LGcmrLc.8_1rkRU';
+        '00D7z00000P3CKp!AQEAQCsPxH.m8oGy2HOfqKWmVqQ5pi9BrOW4guOQnCRxSgNxYXUOG5n4osK2vwGWXM3h1FUZwf.fY6rFnltcfxfWmHh7bhlA';
     const APEX_REST_ENDPOINT_URL =
         'https://nosoftware-ability-6323-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/lwcossassessments/';
 
