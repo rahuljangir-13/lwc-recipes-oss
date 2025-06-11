@@ -1,0 +1,107 @@
+:host {
+    display: block;
+    height: 100%;
+    width: 100%;
+    flex: 1 1 100%;
+    font-family: 'Roboto', Arial, sans-serif;
+}
+
+.assessment-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    font-family: 'Roboto', Arial, sans-serif;
+    padding: 16px;
+    max-width: calc(100% - 32px);
+    margin: 0 auto;
+}
+
+/* The banner component is now separate */
+
+/* Main content section */
+.assessment-page {
+    display: flex;
+    flex-direction: row;
+    height: auto;
+    min-height: 0;
+    flex: 1 1 100%;
+    gap: 16px;
+    overflow-y: visible !important;
+}
+
+.sidebar-wrapper {
+    background-color: #f3f3f3;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow-y: visible !important;
+    width: 280px;
+    flex: 0 0 280px;
+}
+
+.details-wrapper {
+    background-color: #ffffff;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow-y: visible !important;
+    flex: 1;
+    min-width: 0;
+}
+
+.assessment-subtabs-row {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    margin: 0 0 18px 0;
+    padding-left: 8px;
+    border-bottom: 1.5px solid #e5e5e5;
+    background: transparent;
+}
+
+.assessment-subtab-btn {
+    background: none;
+    border: none;
+    outline: none;
+    font-size: 1.08rem;
+    font-weight: 500;
+    color: #222;
+    padding: 12px 22px 10px 22px;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    transition:
+        background 0.18s,
+        color 0.18s;
+    margin-bottom: -2px;
+}
+
+.assessment-subtab-btn.active {
+    background: #fff;
+    color: #7c3aed;
+    border-bottom: 2.5px solid #7c3aed;
+    font-weight: 700;
+    z-index: 1;
+}
+
+.assessment-subtab-btn:hover {
+    background: #f6f8fa;
+    color: #7c3aed;
+}
+
+@media (max-width: 768px) {
+    .assessment-page {
+        flex-direction: column;
+    }
+
+    .sidebar-wrapper {
+        width: 100% !important;
+        flex: none;
+        height: auto;
+    }
+
+    .details-wrapper {
+        width: 100% !important;
+        flex: 1;
+    }
+}

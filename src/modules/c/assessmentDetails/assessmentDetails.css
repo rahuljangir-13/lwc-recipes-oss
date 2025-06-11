@@ -1,0 +1,257 @@
+:host {
+    display: block;
+    height: 100%;
+    width: 100%;
+    font-family: 'Roboto', Arial, sans-serif;
+}
+
+.details-container {
+    height: 100%;
+    overflow-y: auto;
+    padding: 16px;
+    font-family: 'Roboto', Arial, sans-serif;
+}
+
+/* Card-style tabs */
+.card-tabs-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding: 4px 2px;
+}
+
+.card-tab {
+    background: white;
+    border-radius: 8px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e5e5e5;
+    transition: all 0.2s ease;
+    flex: 1;
+    min-width: 180px;
+    max-width: 300px;
+}
+
+.card-tab:hover {
+    box-shadow: 0 3px 8px rgba(163, 16, 16, 0.1);
+    transform: translateY(-2px);
+    border-color: #d8dde6;
+}
+
+.card-tab.active {
+    box-shadow:
+        0 8px 25px rgba(124, 58, 237, 0.25),
+        0 4px 10px rgba(0, 0, 0, 0.1);
+    border-color: #7c3aed;
+    border-bottom: 3px solid #7c3aed;
+    background-color: #ffffff;
+    transform: translateY(-3px);
+    z-index: 10;
+    position: relative;
+}
+
+.card-tab-icon {
+    background-color: #f5f0ff;
+    border-radius: 8px;
+    width: 46px;
+    height: 46px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 16px;
+    flex-shrink: 0;
+    transition: background-color 0.2s;
+}
+
+.card-tab.active .card-tab-icon {
+    background-color: rgba(124, 58, 237, 0.18);
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
+}
+
+.card-tab-icon .slds-icon {
+    width: 22px;
+    height: 22px;
+    fill: #7c3aed;
+}
+
+.card-tab-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-tab-title {
+    font-weight: 500;
+    font-size: 1rem;
+    margin-bottom: 4px;
+    color: #222;
+    transition:
+        font-weight 0.2s,
+        color 0.2s;
+}
+
+.card-tab.active .card-tab-title {
+    font-weight: 600;
+    color: #000;
+}
+
+.card-tab-subtitle {
+    color: #666;
+    font-size: 0.813rem;
+}
+
+.tab-content-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e5e5e5;
+    min-height: 300px;
+    padding: 20px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .card-tabs-container {
+        flex-direction: column;
+    }
+
+    .card-tab {
+        max-width: 100%;
+    }
+}
+
+.assessment-subtabs-row {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    margin: 0 0 18px 0;
+    padding-left: 8px;
+    border-bottom: 1.5px solid #e5e5e5;
+    background: transparent;
+}
+
+.assessment-subtab-btn {
+    background: none;
+    border: none;
+    outline: none;
+    font-size: 1.08rem;
+    font-weight: 500;
+    color: #222;
+    padding: 12px 22px 10px 22px;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    transition:
+        background 0.18s,
+        color 0.18s;
+    margin-bottom: -2px;
+}
+
+.assessment-subtab-btn.active {
+    background: #fff;
+    color: #7c3aed;
+    border-bottom: 2.5px solid #7c3aed;
+    font-weight: 700;
+    z-index: 1;
+}
+
+.assessment-subtab-btn:hover {
+    background: #f6f8fa;
+    color: #7c3aed;
+}
+
+.info-panel {
+    margin: 16px 0;
+}
+
+/* Tab header styling */
+.tab-header {
+    font-size: 18px;
+    font-weight: 700;
+    color: #181818;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #6a31ea;
+}
+
+/* Panel styling */
+.info-panel {
+    background-color: #f7f7f7;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    border: 1px solid #e5e5e5;
+    overflow: hidden;
+}
+
+.panel-header {
+    background-color: #f7f7f7;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.panel-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #181818;
+}
+
+.panel-body {
+    background-color: #ffffff;
+    padding: 16px;
+}
+
+/* Form layout */
+.form-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 8px;
+}
+
+.form-label {
+    font-size: 12px;
+    color: #444;
+    margin-bottom: 4px;
+}
+
+.form-value {
+    font-size: 14px;
+    color: #181818;
+}
+
+/* Status badge */
+.status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    color: white;
+}
+
+.status-closed {
+    background-color: #4bca81;
+}
+
+/* For assign tab */
+.sub-tab-content {
+    padding: 8px 16px 8px 24px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* Box styling */
+.slds-box {
+    background-color: #f7f7f7;
+    padding: 12px;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    margin-top: 16px;
+}

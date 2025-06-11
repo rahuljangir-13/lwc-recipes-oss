@@ -83,7 +83,7 @@ export function getContacts() {
 
         // IMPORTANT: Ensure sessionId is current and valid
         const sessionId =
-            '00DO500000ZIhWy!AQMAQKMQqDr21S6dSyL_oN9jR7Q43pUcjvYRvagpTQrTkgk8MfDrI.PZBRCVDTkB_Dik7IJ.AjC8aw2KLWnRXdkGW2zPITZy'; // Keep this updated - UPDATED TO MATCH CREATE FUNCTION
+            '00D7z00000P3CKp!AQEAQIMyD3k_iMTZVUWMArr.hwUFwl.DprNgTqJtGSxb.x.Qa1.5SC6CMC9ciVGG_kyN1CGymuWZGeBzjo1N0tMOwGwf5a7N'; // Keep this updated - UPDATED TO MATCH CREATE FUNCTION
 
         if (!sessionId || sessionId === 'YOUR_SALESFORCE_SESSION_ID') {
             console.error(
@@ -236,7 +236,7 @@ export function createContact(contactData) {
         // IMPORTANT: Ensure sessionId is current and valid - Get a fresh session ID from Salesforce
         // Get this by running UserInfo.getSessionId() in Developer Console Execute Anonymous window
         const sessionId =
-            '00DO500000ZIhWy!AQMAQKMQqDr21S6dSyL_oN9jR7Q43pUcjvYRvagpTQrTkgk8MfDrI.PZBRCVDTkB_Dik7IJ.AjC8aw2KLWnRXdkGW2zPITZy'; // <-- UPDATED SESSION ID
+            '00D7z00000P3CKp!AQEAQIMyD3k_iMTZVUWMArr.hwUFwl.DprNgTqJtGSxb.x.Qa1.5SC6CMC9ciVGG_kyN1CGymuWZGeBzjo1N0tMOwGwf5a7N'; // <-- UPDATED SESSION ID
 
         if (!sessionId || sessionId === 'YOUR_SALESFORCE_SESSION_ID') {
             console.error(

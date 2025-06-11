@@ -1,6 +1,7 @@
 import { LightningElement, track } from 'lwc';
 import * as accountService from 'c/accountService';
 import * as contactService from 'c/contactService';
+// import { debugSyncAssessments } from 'c/utils';
 
 export default class App extends LightningElement {
     @track currentView = 'accounts'; // Default view
@@ -13,6 +14,7 @@ export default class App extends LightningElement {
 
     connectedCallback() {
         // Initialize offline storage with mock data
+        // ();debugSyncAssessments
         this.initializeOfflineStorage().then(() => {
             // Ensure both components load their data from storage
             setTimeout(() => {
