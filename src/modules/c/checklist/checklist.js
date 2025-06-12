@@ -170,7 +170,7 @@ export default class Checklist extends LightningElement {
             // Get an OAuth token or session ID
             // In a real app, you would have a proper OAuth flow
             const sessionId =
-                '00D7z00000P3CKp!AQEAQCsPxH.m8oGy2HOfqKWmVqQ5pi9BrOW4guOQnCRxSgNxYXUOG5n4osK2vwGWXM3h1FUZwf.fY6rFnltcfxfWmHh7bhlA';
+                '00D7z00000P3CKp!AQEAQCtrY9Kynj.f79u97STKSYrXof9VFqSPMDKBrhRwgwIYYvOCv_Vje0jsywKCPZFRDzMsHt8gA_3axJ1_6TQF4qum1z_O';
             const headers = {
                 Authorization: `Bearer ${sessionId}`,
                 'Content-Type': 'application/json'

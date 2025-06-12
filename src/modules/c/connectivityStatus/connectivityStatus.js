@@ -11,7 +11,7 @@ import {
  */
 export default class ConnectivityStatus extends LightningElement {
     @track isOnline = true;
-    @track syncStatus = 'idle'; // idle, syncing, completed, error
+    // @track syncStatus = 'idle'; // idle, syncing, completed, error
     @track syncMessage = '';
     @track showToast = false;
     @track pendingOperationsCount = 0;
@@ -49,8 +49,8 @@ export default class ConnectivityStatus extends LightningElement {
     @api
     handleOnline() {
         this.isOnline = true;
-        this.showToast = true;
-        this.syncMessage = 'You are back online. Syncing changes...';
+        this.showToast = false;
+        // this.syncMessage = 'You are back online. Syncing changes...';
 
         // Hide toast after 5 seconds
         setTimeout(() => {
@@ -94,24 +94,26 @@ export default class ConnectivityStatus extends LightningElement {
     @api
     handleSyncStart() {
         this.syncStatus = 'syncing';
-        this.syncMessage = 'Syncing your changes...';
-        this.showToast = true;
+        // this.syncMessage = 'Syncing your changes...';
+        this.showToast = false;
         console.log('🔄 [ConnectivityStatus] Sync started');
     }
 
     @api
     handleSyncComplete(event) {
         console.log('✅ [ConnectivityStatus] Sync complete', event);
-        const { synced, total, message, variant } = event.detail || {
-            synced: 0,
-            total: 0
-        };
+        const { message, variant } =
+            event.detail ||
+            {
+                // synced: 0,
+                // total: 0
+            };
 
         // If message is provided, use it as a custom notification
         if (message) {
             this.syncStatus = variant || 'completed';
-            this.syncMessage = message;
-            this.showToast = true;
+            // this.syncMessage = message;
+            this.showToast = false;
 
             // Hide toast after delay
             setTimeout(() => {
@@ -122,8 +124,8 @@ export default class ConnectivityStatus extends LightningElement {
         }
 
         this.syncStatus = 'completed';
-        this.syncMessage = `Successfully synced ${synced} of ${total} changes.`;
-        this.showToast = true;
+        // this.syncMessage = `Successfully synced ${synced} of ${total} changes.`;
+        this.showToast = false;
 
         // Refresh pending operations count
         this.checkPendingOperations();
@@ -138,11 +140,11 @@ export default class ConnectivityStatus extends LightningElement {
     @api
     handleSyncError(event) {
         console.error('❌ [ConnectivityStatus] Sync error', event);
-        const { message } = event.detail || { message: 'Unknown error' };
+        // const { message } = event.detail || { message: 'Unknown error' };
 
         this.syncStatus = 'error';
-        this.syncMessage = `Sync error: ${message}`;
-        this.showToast = true;
+        // this.syncMessage = `Sync error: ${message}`;
+        this.showToast = false;
 
         // Hide toast after 5 seconds
         setTimeout(() => {

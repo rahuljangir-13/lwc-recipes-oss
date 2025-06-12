@@ -1,12 +1,12 @@
 //checklistModal.js
 import { LightningElement, track } from 'lwc';
-import { isOnline } from 'c/utils';
+import { isOnline, getAll, saveItems } from 'c/utils';
 import { STORE_NAMES } from 'c/utils';
 import { saveOfflineAndQueue } from 'c/offlineService';
 
 // Endpoints for getting users and assessment types
-const USERS_ENDPOINT =
-    'https://nosoftware-ability-6323-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/findings/?operation=getAllUsers';
+// const USERS_ENDPOINT =
+//     'https://nosoftware-ability-6323-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/findings/?operation=getAllUsers';
 const ASSESSMENT_TYPES_ENDPOINT =
     'https://nosoftware-ability-6323-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/findings/?operation=getAllAssessmentType';
 
@@ -198,26 +198,59 @@ export default class ChecklistModal extends LightningElement {
 
     fetchUsers() {
         this.isLoading = true;
+        this.error = null;
+
+        const populateUserOptions = (accounts) => {
+            const data = Array.isArray(accounts) ? accounts : [];
+            this.processUsersData(data);
+        };
 
         if (!isOnline()) {
-            this.error = 'You are currently offline. Cannot fetch users.';
-            this.isLoading = false;
-            this.loadSampleUsers();
+            console.warn('📴 Offline: Loading accounts from IndexedDB');
+
+            getAll(STORE_NAMES.LOOKUP)
+                .then((all) => {
+                    const offlineAccounts = all.filter(
+                        (item) => item.type === 'ACCOUNT'
+                    );
+
+                    if (offlineAccounts.length === 0) {
+                        throw new Error('No offline account records found.');
+                    }
+
+                    console.log(
+                        '📦 Loaded accounts from IndexedDB:',
+                        offlineAccounts
+                    );
+                    populateUserOptions(offlineAccounts);
+                })
+                .catch((err) => {
+                    console.error('❌ Failed to load accounts offline:', err);
+                    this.error =
+                        'You are offline and no account data is available.';
+                    this.loadSampleUsers();
+                })
+                .finally(() => {
+                    this.isLoading = false;
+                });
+
             return;
         }
 
-        // In a real app, you would have a proper OAuth flow
+        // 🌐 Online: Fetch from API
         const sessionId =
-            '00D7z00000P3CKp!AQEAQGSNaMfLNbnlNRboHASSwSmukK7U8rXWt_oczvIGeWu2vIVDhORo.ID1bpF6SWVy.zZWiLp6G3BqzsWa4ai8wqRe9FSl';
+            '00D7z00000P3CKp!AQEAQCtrY9Kynj.f79u97STKSYrXof9VFqSPMDKBrhRwgwIYYvOCv_Vje0jsywKCPZFRDzMsHt8gA_3axJ1_6TQF4qum1z_O';
+        const APEX_REST_ENDPOINT_URL =
+            'https://nosoftware-ability-6323-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/fetchData/';
+
         const headers = {
             Authorization: `Bearer ${sessionId}`,
             'Content-Type': 'application/json'
         };
 
-        fetch(USERS_ENDPOINT, {
+        fetch(APEX_REST_ENDPOINT_URL, {
             method: 'GET',
-            headers: headers,
-            credentials: 'same-origin'
+            headers
         })
             .then((response) => {
                 if (!response.ok) {
@@ -226,12 +259,29 @@ export default class ChecklistModal extends LightningElement {
                 return response.json();
             })
             .then((data) => {
-                console.log('Fetched users data:', data);
-                this.processUsersData(data);
+                if (!Array.isArray(data.accounts)) {
+                    throw new Error('Invalid response: accounts[] not found');
+                }
+
+                const accountRecords = data.accounts.map((a) => ({
+                    ...a,
+                    id: a.Id,
+                    type: 'ACCOUNT'
+                }));
+
+                return saveItems(STORE_NAMES.LOOKUP, accountRecords).then(
+                    () => {
+                        return data.accounts;
+                    }
+                );
+            })
+            .then((accounts) => {
+                console.log('🌐 Fetched and saved accounts:', accounts);
+                populateUserOptions(accounts);
             })
             .catch((error) => {
-                console.error('Error fetching users:', error);
-                this.error = `Failed to fetch users: ${error.message}`;
+                console.error('❌ Error fetching accounts:', error);
+                this.error = `Failed to fetch accounts: ${error.message}`;
                 this.loadSampleUsers();
             })
             .finally(() => {
@@ -271,9 +321,9 @@ export default class ChecklistModal extends LightningElement {
                 console.log('Fetched assessment types data:', data);
                 this.processAssessmentTypesData(data);
             })
-            .catch((error) => {
-                console.error('Error fetching assessment types:', error);
-                this.error = `Failed to fetch assessment types: ${error.message}`;
+            .catch(() => {
+                // console.error('Error fetching assessment types:', error);
+                // this.error = `Failed to fetch assessment types: ${error.message}`;
                 this.loadSampleAssessmentTypes();
             })
             .finally(() => {

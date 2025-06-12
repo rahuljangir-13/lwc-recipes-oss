@@ -4,7 +4,7 @@ import * as contactService from 'c/contactService';
 // import { debugSyncAssessments } from 'c/utils';
 
 export default class App extends LightningElement {
-    @track currentView = 'accounts'; // Default view
+    @track currentView = 'checklists'; // Default view
     @track syncingAccounts = false;
     @track syncingContacts = false;
     @track contentClass = 'slds-m-around_medium';

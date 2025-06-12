@@ -696,7 +696,7 @@ export default class RtmvpcAssessmentDetail extends LightningElement {
             console.log('Fetching findings with params:', params.toString());
 
             const sessionId =
-                '00D7z00000P3CKp!AQEAQCsPxH.m8oGy2HOfqKWmVqQ5pi9BrOW4guOQnCRxSgNxYXUOG5n4osK2vwGWXM3h1FUZwf.fY6rFnltcfxfWmHh7bhlA';
+                '00D7z00000P3CKp!AQEAQCtrY9Kynj.f79u97STKSYrXof9VFqSPMDKBrhRwgwIYYvOCv_Vje0jsywKCPZFRDzMsHt8gA_3axJ1_6TQF4qum1z_O';
 
             const headers = {
                 Authorization: `Bearer ${sessionId}`,
@@ -1229,7 +1229,7 @@ export default class RtmvpcAssessmentDetail extends LightningElement {
             const TASK_ENDPOINT =
                 'https://nosoftware-ability-6323-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/findings/';
             const sessionId =
-                '00D7z00000P3CKp!AQEAQCsPxH.m8oGy2HOfqKWmVqQ5pi9BrOW4guOQnCRxSgNxYXUOG5n4osK2vwGWXM3h1FUZwf.fY6rFnltcfxfWmHh7bhlA';
+                '00D7z00000P3CKp!AQEAQCtrY9Kynj.f79u97STKSYrXof9VFqSPMDKBrhRwgwIYYvOCv_Vje0jsywKCPZFRDzMsHt8gA_3axJ1_6TQF4qum1z_O';
 
             // Modify the payload to match the Apex method's expected format
             const modifiedPayload = {
@@ -1533,7 +1533,7 @@ export default class RtmvpcAssessmentDetail extends LightningElement {
             'https://nosoftware-ability-6323-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/lwcossaccounts/?operation=getQuestions&recordId=a087z00000VgzJoAAJ';
         console.log('🌐 Online: Getting counts from Apex REST API');
         const sessionId =
-            '00D7z00000P3CKp!AQEAQCsPxH.m8oGy2HOfqKWmVqQ5pi9BrOW4guOQnCRxSgNxYXUOG5n4osK2vwGWXM3h1FUZwf.fY6rFnltcfxfWmHh7bhlA';
+            '00D7z00000P3CKp!AQEAQCtrY9Kynj.f79u97STKSYrXof9VFqSPMDKBrhRwgwIYYvOCv_Vje0jsywKCPZFRDzMsHt8gA_3axJ1_6TQF4qum1z_O';
 
         const headers = {
             Authorization: `Bearer ${sessionId}`,
