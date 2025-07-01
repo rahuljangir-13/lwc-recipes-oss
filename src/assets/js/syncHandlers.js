@@ -1,3 +1,91 @@
+/* eslint-disable no-await-in-loop */
+// import { getAll, deleteItem, STORE_NAMES } from 'c/utils';
+import { readFileFromDevice } from 'c/fileService';
+
+import { deleteItem, deleteOperation, STORE_NAMES } from 'c/utils';
+
+export async function syncUPLOAD_FILE(fileRecord) {
+    console.log('📦 Running syncUPLOAD_FILE', fileRecord);
+    try {
+        console.log('🔄 Syncing file:', fileRecord.name);
+
+        // 1. Read file from device
+        const base64Data = await readFileFromDevice(fileRecord.filePath);
+        if (!base64Data) {
+            throw new Error(
+                `Failed to read file from path: ${fileRecord.filePath}`
+            );
+        }
+
+        // 2. Get presigned URL
+        const presignResponse = await fetch(
+            'https://presign-rhythm.s3.amazonaws.com/getPresignedUrl',
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    fileName: fileRecord.name,
+                    contentType: fileRecord.type,
+                    folderPath: `Rahul`
+                })
+            }
+        );
+
+        if (!presignResponse.ok) {
+            throw new Error(
+                `Failed to get presigned URL: ${presignResponse.statusText}`
+            );
+        }
+
+        const { url } = await presignResponse.json();
+        console.log('🪪 Presigned URL received:', url);
+
+        // 3. Convert to Blob
+        const binary = atob(base64Data);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) {
+            bytes[i] = binary.charCodeAt(i);
+        }
+        const blob = new Blob([bytes], { type: fileRecord.type });
+
+        // 4. Upload to S3
+        const uploadResponse = await fetch(url, {
+            method: 'PUT',
+            headers: { 'Content-Type': fileRecord.type },
+            body: blob
+        });
+
+        if (!uploadResponse.ok) {
+            throw new Error(`Upload failed: ${uploadResponse.statusText}`);
+        }
+
+        console.log(`✅ Successfully uploaded file to S3: ${fileRecord.name}`);
+
+        // 5. Remove from IndexedDB
+        await deleteItem(STORE_NAMES.FILE_UPLOADS, fileRecord.id);
+        await deleteOperation(fileRecord.operationId || fileRecord.id); // support both
+
+        console.log(
+            `🧹 Removed uploaded file from IndexedDB & PendingOperations`
+        );
+
+        return { success: true };
+    } catch (error) {
+        console.error('❌ syncUPLOAD_FILE error:', error);
+        return { success: false, error };
+    }
+}
+
+// // Helper function to convert Blob to base64
+// function blobToBase64(blob) {
+//     return new Promise((resolve, reject) => {
+//         const reader = new FileReader();
+//         reader.onload = () => resolve(reader.result);
+//         reader.onerror = reject;
+//         reader.readAsDataURL(blob);
+//     });
+// }
+
 export async function syncCREATE_CHECKLIST(data) {
     console.log('🔄 Syncing checklist to server:', data.checklistName);
     return Promise.resolve();
@@ -26,7 +114,7 @@ export async function syncCREATE_ASSESSMENT(data) {
     }
 
     const sessionId =
-        '00D7z00000P3CKp!AQEAQGmWjeiGjFVULgH7hqZ.IXBtrIbqBmGkkM.k4aK.jD35ZlHrQCoTgmIoArOKLFjQmpg4kvgVT.fJXyhAt_SgZK_6k6oq';
+        '00D7z00000P3CKp!AQEAQAirVCQsXFCBCaXGEzFHZx62B7QCU2xUsoUvzfmtFZ6qc0OnG3108ABMZcG5pJfqO0zThniJ25nxSNpPULahCNd.Ibfb';
     const APEX_REST_ENDPOINT_URL =
         'https://nosoftware-ability-6323-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/lwcossassessments/';
 
@@ -98,5 +186,6 @@ window.syncHandlers = {
     syncCREATE_FINDING,
     syncCREATE_TASK,
     syncCREATE_RESPONSE,
-    syncCREATE_CHECKLIST
+    syncCREATE_CHECKLIST,
+    syncUPLOAD_FILE
 };

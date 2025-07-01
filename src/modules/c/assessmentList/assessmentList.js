@@ -1,12 +1,15 @@
-import { LightningElement, track } from 'lwc';
-import { isOnline, getAll, saveItems } from 'c/utils';
+import { LightningElement, track, api } from 'lwc';
+import { isOnline, getAll, saveItems, generateId } from 'c/utils';
 import { STORE_NAMES } from 'c/utils';
 import { saveOfflineAndQueue } from 'c/offlineService';
+import { updateFileRecordId } from 'c/offlineService';
+
 // import { loadLookup } from 'c/lookupService';
 // import { getPendingOperations, deletePendingOperation } from 'c/utils';
 // import { syncCREATE_ASSESSMENT } from './assets/js/syncHandlers.js';
 
 export default class AssessmentList extends LightningElement {
+    localAssessmentId = generateId();
     @track assessments = [];
     @track isLoading = true;
     @track error = null;
@@ -19,6 +22,11 @@ export default class AssessmentList extends LightningElement {
     @track showDetailPage = false;
     @track selectedAssessment = null;
     @track showDetailList = true;
+    @track recordId;
+    @track computedFolderPath;
+    @track formTempId;
+    @api formType;
+    formData = {};
 
     @track newAssessment = {
         assessmentName: '',
@@ -69,6 +77,7 @@ export default class AssessmentList extends LightningElement {
 
     async connectedCallback() {
         await this.syncPendingAssessments();
+
         // window.addEventListener('online', this.syncPendingAssessments.bind(this));
         //     this.checklistTemplateOptions = await loadLookup('TEMPLATE_OPTIONS');
         // this.associatedCustomerOptions = await loadLookup('ACCOUNT_OPTIONS');
@@ -123,7 +132,7 @@ export default class AssessmentList extends LightningElement {
                 }
 
                 const sessionId =
-                    '00D7z00000P3CKp!AQEAQGmWjeiGjFVULgH7hqZ.IXBtrIbqBmGkkM.k4aK.jD35ZlHrQCoTgmIoArOKLFjQmpg4kvgVT.fJXyhAt_SgZK_6k6oq';
+                    '00D7z00000P3CKp!AQEAQAirVCQsXFCBCaXGEzFHZx62B7QCU2xUsoUvzfmtFZ6qc0OnG3108ABMZcG5pJfqO0zThniJ25nxSNpPULahCNd.Ibfb';
                 const APEX_REST_ENDPOINT_URL =
                     'https://nosoftware-ability-6323-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/lwcossassessments/';
 
@@ -183,7 +192,7 @@ export default class AssessmentList extends LightningElement {
     getCountsData() {
         console.log('Fetching counts data from Salesforce...');
         const sessionId =
-            '00D7z00000P3CKp!AQEAQGmWjeiGjFVULgH7hqZ.IXBtrIbqBmGkkM.k4aK.jD35ZlHrQCoTgmIoArOKLFjQmpg4kvgVT.fJXyhAt_SgZK_6k6oq';
+            '00D7z00000P3CKp!AQEAQAirVCQsXFCBCaXGEzFHZx62B7QCU2xUsoUvzfmtFZ6qc0OnG3108ABMZcG5pJfqO0zThniJ25nxSNpPULahCNd.Ibfb';
         const APEX_REST_ENDPOINT_URL_3 =
             'https://nosoftware-ability-6323-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/lwcossassessments/?operation=getAllAssessments';
 
@@ -640,7 +649,7 @@ export default class AssessmentList extends LightningElement {
         }
 
         const sessionId =
-            '00D7z00000P3CKp!AQEAQGmWjeiGjFVULgH7hqZ.IXBtrIbqBmGkkM.k4aK.jD35ZlHrQCoTgmIoArOKLFjQmpg4kvgVT.fJXyhAt_SgZK_6k6oq'; // NEVER expose sessionId in client-side code in production
+            '00D7z00000P3CKp!AQEAQAirVCQsXFCBCaXGEzFHZx62B7QCU2xUsoUvzfmtFZ6qc0OnG3108ABMZcG5pJfqO0zThniJ25nxSNpPULahCNd.Ibfb'; // NEVER expose sessionId in client-side code in production
         const APEX_REST_ENDPOINT_URL =
             'https://nosoftware-ability-6323-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/lwcossassessments/';
 
@@ -672,6 +681,11 @@ export default class AssessmentList extends LightningElement {
             })
             .then((data) => {
                 if (data.success) {
+                    updateFileRecordId(
+                        'Assessment',
+                        this.formTempId,
+                        data.createdAssessment.Id
+                    );
                     // Find the display names for checklist and customer
                     const checklistOption = this.checklistTemplateOptions.find(
                         (opt) => opt.value === this.newAssessment.checklistId
@@ -857,7 +871,7 @@ export default class AssessmentList extends LightningElement {
 
         // 🌐 Online mode
         const sessionId =
-            '00D7z00000P3CKp!AQEAQGmWjeiGjFVULgH7hqZ.IXBtrIbqBmGkkM.k4aK.jD35ZlHrQCoTgmIoArOKLFjQmpg4kvgVT.fJXyhAt_SgZK_6k6oq';
+            '00D7z00000P3CKp!AQEAQAirVCQsXFCBCaXGEzFHZx62B7QCU2xUsoUvzfmtFZ6qc0OnG3108ABMZcG5pJfqO0zThniJ25nxSNpPULahCNd.Ibfb';
         const APEX_REST_ENDPOINT_URL =
             'https://nosoftware-ability-6323-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/fetchData/';
 
@@ -1035,6 +1049,11 @@ export default class AssessmentList extends LightningElement {
                 this.toastInfo = { ...this.toastInfo, visible: false };
             }, 3000);
         });
+    }
+    handleFileUploadSuccess(event) {
+        this.recordId = event.detail.recordId;
+        this.formData.recordId = this.recordId;
+        console.log('📎 FileUploader returned recordId:', this.recordId);
     }
 
     // Hide toast notification

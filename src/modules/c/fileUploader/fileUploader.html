@@ -1,0 +1,96 @@
+<template>
+    <div class="file-uploader">
+        <div class="uploader-header">
+            <h3>File Upload</h3>
+            <div class="status-indicator">
+                <template if:true={isOnlineStatus}>
+                    <span class="online">🌐 Online</span>
+                </template>
+                <template if:false={isOnlineStatus}>
+                    <span class="offline">📴 Offline</span>
+                </template>
+            </div>
+        </div>
+
+        <div class="upload-area">
+            <input
+                type="file"
+                class="file-input"
+                accept={acceptedFileTypes}
+                multiple={multiple}
+                onchange={handleFileChange}
+                hidden
+            />
+            <button
+                class="upload-button select-files"
+                onclick={handleSelectFiles}
+                disabled={isUploading}
+            >
+                📎 Select Files
+            </button>
+            <p class="upload-hint">
+                Max file size: {maxFileSizeLabel}<br />
+                Accepted types: {acceptedFileTypes}
+            </p>
+        </div>
+
+        <template if:true={errorMessage}>
+            <div class="error-message">❌ {errorMessage}</div>
+        </template>
+
+        <template if:true={hasSelectedFiles}>
+            <div class="selected-files">
+                <div class="section-header">
+                    <h4>Selected Files ({selectedFiles.length})</h4>
+                    <button class="clear-button" onclick={handleClearAll}>
+                        Clear All
+                    </button>
+                </div>
+                <div class="file-list">
+                    <template for:each={selectedFiles} for:item="file">
+                        <div key={file.name} class="file-item">
+                            <div class="file-info">
+                                <span class="file-name">📄 {file.name}</span>
+                                <span class="file-size"
+                                    >({file.readableSize})</span
+                                >
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+
+        <template if:true={hasUploadedFiles}>
+            <div class="uploaded-files">
+                <div class="section-header">
+                    <h4>Stored Files ({uploadedFiles.length})</h4>
+                </div>
+                <div class="file-list">
+                    <template for:each={uploadedFiles} for:item="file">
+                        <div key={file.name} class="file-item uploaded">
+                            <div class="file-info">
+                                <span class="file-name">✅ {file.name}</span>
+                                <span class="file-size"
+                                    >({file.readableSize})</span
+                                >
+                            </div>
+                            <span class="upload-status">
+                                <template if:true={isOnlineStatus}
+                                    >Syncing...</template
+                                >
+                                <template if:false={isOnlineStatus}
+                                    >Will sync when online</template
+                                >
+                            </span>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+
+        <div class="status-message">
+            <p>{statusMessage}</p>
+        </div>
+    </div>
+</template>

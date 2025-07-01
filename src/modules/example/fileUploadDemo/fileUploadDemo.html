@@ -1,0 +1,85 @@
+<template>
+    <div class="demo-container">
+        <h2>📎 File Upload Demo</h2>
+
+        <!-- Demo Controls -->
+        <div class="demo-controls">
+            <div class="control-group">
+                <label>Record ID:</label>
+                <input
+                    type="text"
+                    value={recordId}
+                    readonly
+                    class="record-id-input"
+                />
+                <button onclick={handleNewRecord} class="btn-new-record">
+                    🆔 New Record
+                </button>
+            </div>
+
+            <div class="control-group">
+                <label>Form Type:</label>
+                <select
+                    onchange={handleFormTypeChange}
+                    value={formType}
+                    class="form-type-select"
+                >
+                    <template for:each={formTypeOptions} for:item="option">
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                    </template>
+                </select>
+            </div>
+        </div>
+
+        <!-- Status Message -->
+        <template if:true={uploadMessage}>
+            <div class="status-message">{uploadMessage}</div>
+        </template>
+
+        <!-- File Uploader Component -->
+        <c-file-uploader
+            record-id={recordId}
+            form-type={formType}
+            accepted-file-types=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif"
+            max-file-size="10485760"
+            multiple="true"
+            onfilesadded={handleFilesAdded}
+        >
+        </c-file-uploader>
+
+        <!-- Usage Instructions -->
+        <div class="instructions">
+            <h3>📋 How it works:</h3>
+            <ol>
+                <li>
+                    <strong>Offline:</strong> Files are stored locally in
+                    IndexedDB
+                </li>
+                <li>
+                    <strong>Online:</strong> Files automatically sync to
+                    Salesforce as ContentVersion records
+                </li>
+                <li>
+                    <strong>Parent Linking:</strong> Files are linked to the
+                    specified Record ID
+                </li>
+                <li>
+                    <strong>Background Sync:</strong> Uses service worker for
+                    background sync when connection is restored
+                </li>
+            </ol>
+
+            <h3>🔧 Integration:</h3>
+            <pre><code>&lt;c-file-uploader
+    record-id="your-record-id"
+    form-type="assessment"
+    accepted-file-types=".pdf,.doc,.docx"
+    max-file-size="5242880"
+    multiple="true"
+    onfilesadded={handleFilesAdded}&gt;
+&lt;/c-file-uploader&gt;</code></pre>
+        </div>
+    </div>
+</template>

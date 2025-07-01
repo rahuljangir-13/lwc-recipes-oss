@@ -92,7 +92,7 @@ export function generateId() {
 // --------------- IndexedDB Storage ---------------
 
 const DB_NAME = 'salesforceOfflineDB';
-const DB_VERSION = 3;
+const DB_VERSION = 4;
 export const STORE_NAMES = {
     ACCOUNTS: 'accounts',
     CONTACTS: 'contacts',
@@ -102,7 +102,8 @@ export const STORE_NAMES = {
     FINDINGS: 'FINDINGS',
     TASKS: 'TASKS',
     RESPONSES: 'RESPONSES',
-    PENDING_OPERATIONS: 'pendingOperations'
+    PENDING_OPERATIONS: 'pendingOperations',
+    FILE_UPLOADS: 'fileUploads'
 };
 
 let dbInstance = null;
@@ -154,6 +155,12 @@ function initDB() {
             }
         };
     });
+}
+export async function updateItem(storeName, updatedRecord) {
+    // eslint-disable-next-line no-undef
+    const db = await getDb();
+    await db[storeName].put(updatedRecord); // 'put' adds or replaces by primary key (id)
+    console.log(`📝 Updated item in ${storeName}:`, updatedRecord);
 }
 
 // Common function to perform database operations
@@ -389,4 +396,25 @@ export function removeConnectivityListener(callback) {
         deletePendingOperation,
         isOnline
     };
+}
+
+export async function updateFileRecordId(recordType, localId, newRecordId) {
+    const storeName = STORE_NAMES.FILE_UPLOADS;
+    const files = await getAll(storeName);
+
+    const matchedFiles = files.filter(
+        (file) => file.formType === recordType && file.recordId === localId
+    );
+
+    if (!matchedFiles.length) return;
+
+    const updatedFiles = matchedFiles.map((file) => ({
+        ...file,
+        recordId: newRecordId
+    }));
+
+    await saveItems(storeName, updatedFiles);
+    console.log(
+        `🔗 Updated ${updatedFiles.length} files with new recordId ${newRecordId}`
+    );
 }
