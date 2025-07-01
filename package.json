@@ -80,7 +80,7 @@
         "npm": ">=8.0.0"
     },
     "lint-staged": {
-        "**/*.{cls,cmp,component,css,html,js,mjs,json,md,page,trigger,yaml,yml}": [
+        "**/*.{cmp,component,css,html,js,mjs,json,md,page,yaml,yml}": [
             "prettier --write"
         ],
         "**/src/**/*.js": [

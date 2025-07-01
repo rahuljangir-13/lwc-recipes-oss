@@ -83,7 +83,7 @@ export function getAccounts() {
         // TODO: Implement a secure way to obtain and manage the Salesforce session ID / access token.
         // IMPORTANT: Replace 'YOUR_SALESFORCE_SESSION_ID' with an active Session ID from your org for testing.
         const sessionId =
-            '00D7z00000P3CKp!AQEAQCtrY9Kynj.f79u97STKSYrXof9VFqSPMDKBrhRwgwIYYvOCv_Vje0jsywKCPZFRDzMsHt8gA_3axJ1_6TQF4qum1z_O'; // <--- REPLACE THIS!
+            '00D7z00000P3CKp!AQEAQGmWjeiGjFVULgH7hqZ.IXBtrIbqBmGkkM.k4aK.jD35ZlHrQCoTgmIoArOKLFjQmpg4kvgVT.fJXyhAt_SgZK_6k6oq'; // <--- REPLACE THIS!
 
         if (!sessionId || sessionId === 'YOUR_SALESFORCE_SESSION_ID') {
             console.error(
