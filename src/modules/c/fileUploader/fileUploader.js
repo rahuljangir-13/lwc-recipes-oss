@@ -1,4 +1,6 @@
 import { LightningElement, api, track } from 'lwc';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+
 import {
     generateId,
     saveItem,
@@ -150,5 +152,55 @@ export default class FileUploader extends LightningElement {
         const sizes = ['Bytes', 'KB', 'MB', 'GB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    async capturePhoto() {
+        try {
+            const image = await Camera.getPhoto({
+                quality: 90,
+                resultType: CameraResultType.Uri,
+                source: CameraSource.Camera,
+                saveToGallery: true
+            });
+
+            if (!image || !image.path) {
+                console.warn('No image path returned from camera');
+                return;
+            }
+
+            const fileName = image.path.split('/').pop();
+            const filePath = image.path;
+
+            const fileRecord = {
+                id: generateId(),
+                name: fileName,
+                type: 'image/jpeg',
+                size: 0, // Optional: if you want to read it using Filesystem plugin
+                filePath,
+                recordId: this.recordId,
+                formType: this.formType,
+                uploaded: false,
+                createdDate: new Date().toISOString(),
+                lastModifiedDate: new Date().toISOString(),
+                description: 'Photo captured via camera'
+            };
+
+            await saveItem(STORE_NAMES.FILE_UPLOADS, fileRecord);
+            await addPendingOperation({
+                id: generateId(),
+                type: 'UPLOAD_FILE',
+                timestamp: Date.now(),
+                data: fileRecord
+            });
+
+            this.uploadedFiles.push(fileRecord);
+            if (isOnline() && window.offlineSync) {
+                window.offlineSync.triggerSync();
+            }
+
+            console.log('📸 Captured and queued photo:', fileRecord);
+        } catch (err) {
+            console.error('❌ Camera capture failed:', err);
+        }
     }
 }

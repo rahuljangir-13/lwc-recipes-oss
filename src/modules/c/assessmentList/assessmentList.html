@@ -797,10 +797,14 @@
                                     ></textarea>
                                 </div>
                             </div>
-                            <c-file-uploader
-                                form-temp-id={formTempId}
-                                form-type="Assessment"
-                            ></c-file-uploader>
+                            <c-file-uploader></c-file-uploader>
+                            <button
+                                class="upload-button capture-photo"
+                                onclick={capturePhoto}
+                                disabled={isUploading}
+                            >
+                                📷 Capture Photo
+                            </button>
                         </form>
                     </div>
 
