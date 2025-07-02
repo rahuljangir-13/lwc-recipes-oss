@@ -1,8 +1,10 @@
+/* eslint-disable no-await-in-loop */
 import { LightningElement, track, api } from 'lwc';
 import { isOnline, getAll, saveItems, generateId } from 'c/utils';
 import { STORE_NAMES } from 'c/utils';
 import { saveOfflineAndQueue } from 'c/offlineService';
 import { updateFileRecordId } from 'c/offlineService';
+import { syncUPLOAD_FILE } from 'c/syncHandlers';
 
 // import { loadLookup } from 'c/lookupService';
 // import { getPendingOperations, deletePendingOperation } from 'c/utils';
@@ -77,7 +79,7 @@ export default class AssessmentList extends LightningElement {
 
     async connectedCallback() {
         await this.syncPendingAssessments();
-
+        await this.syncPendingFiles();
         // window.addEventListener('online', this.syncPendingAssessments.bind(this));
         //     this.checklistTemplateOptions = await loadLookup('TEMPLATE_OPTIONS');
         // this.associatedCustomerOptions = await loadLookup('ACCOUNT_OPTIONS');
@@ -132,7 +134,7 @@ export default class AssessmentList extends LightningElement {
                 }
 
                 const sessionId =
-                    '00D7z00000P3CKp!AQEAQAirVCQsXFCBCaXGEzFHZx62B7QCU2xUsoUvzfmtFZ6qc0OnG3108ABMZcG5pJfqO0zThniJ25nxSNpPULahCNd.Ibfb';
+                    '00D7z00000P3CKp!AQEAQMjoYdZsIS2gpTLQHsHGPmxQi._SclNYRgU7UpY1Wa22XjX3oOatvxrxUGRJiCB2G7FAo7dOxHaV06Yl6QXnrv1LmNZH';
                 const APEX_REST_ENDPOINT_URL =
                     'https://nosoftware-ability-6323-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/lwcossassessments/';
 
@@ -192,7 +194,7 @@ export default class AssessmentList extends LightningElement {
     getCountsData() {
         console.log('Fetching counts data from Salesforce...');
         const sessionId =
-            '00D7z00000P3CKp!AQEAQAirVCQsXFCBCaXGEzFHZx62B7QCU2xUsoUvzfmtFZ6qc0OnG3108ABMZcG5pJfqO0zThniJ25nxSNpPULahCNd.Ibfb';
+            '00D7z00000P3CKp!AQEAQMjoYdZsIS2gpTLQHsHGPmxQi._SclNYRgU7UpY1Wa22XjX3oOatvxrxUGRJiCB2G7FAo7dOxHaV06Yl6QXnrv1LmNZH';
         const APEX_REST_ENDPOINT_URL_3 =
             'https://nosoftware-ability-6323-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/lwcossassessments/?operation=getAllAssessments';
 
@@ -649,7 +651,7 @@ export default class AssessmentList extends LightningElement {
         }
 
         const sessionId =
-            '00D7z00000P3CKp!AQEAQAirVCQsXFCBCaXGEzFHZx62B7QCU2xUsoUvzfmtFZ6qc0OnG3108ABMZcG5pJfqO0zThniJ25nxSNpPULahCNd.Ibfb'; // NEVER expose sessionId in client-side code in production
+            '00D7z00000P3CKp!AQEAQMjoYdZsIS2gpTLQHsHGPmxQi._SclNYRgU7UpY1Wa22XjX3oOatvxrxUGRJiCB2G7FAo7dOxHaV06Yl6QXnrv1LmNZH'; // NEVER expose sessionId in client-side code in production
         const APEX_REST_ENDPOINT_URL =
             'https://nosoftware-ability-6323-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/lwcossassessments/';
 
@@ -871,7 +873,7 @@ export default class AssessmentList extends LightningElement {
 
         // 🌐 Online mode
         const sessionId =
-            '00D7z00000P3CKp!AQEAQAirVCQsXFCBCaXGEzFHZx62B7QCU2xUsoUvzfmtFZ6qc0OnG3108ABMZcG5pJfqO0zThniJ25nxSNpPULahCNd.Ibfb';
+            '00D7z00000P3CKp!AQEAQMjoYdZsIS2gpTLQHsHGPmxQi._SclNYRgU7UpY1Wa22XjX3oOatvxrxUGRJiCB2G7FAo7dOxHaV06Yl6QXnrv1LmNZH';
         const APEX_REST_ENDPOINT_URL =
             'https://nosoftware-ability-6323-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/fetchData/';
 
@@ -1065,5 +1067,31 @@ export default class AssessmentList extends LightningElement {
     // Compute toast class based on variant
     get toastClass() {
         return `toast-notification toast-${this.toastInfo.variant}`;
+    }
+
+    async syncPendingFiles() {
+        if (!navigator.onLine) {
+            console.log('📴 Offline, skipping file sync');
+            return;
+        }
+        const { getPendingOperations } = await import('c/utils');
+        const ops = await getPendingOperations();
+        console.log('📝 Checking pending ops for file uploads...', ops);
+
+        for (const op of ops) {
+            if (op.type === 'UPLOAD_FILE') {
+                console.log('📤 Syncing file upload:', op);
+                const result = await syncUPLOAD_FILE(op.data);
+                if (result?.success) {
+                    await window.offlineUtils.deletePendingOperation(op.id);
+                    console.log('✅ File upload synced and removed from queue');
+                } else {
+                    console.error(
+                        '❌ Failed to sync file upload',
+                        result?.error
+                    );
+                }
+            }
+        }
     }
 }

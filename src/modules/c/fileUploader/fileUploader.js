@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import { LightningElement, api, track } from 'lwc';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
@@ -8,7 +9,6 @@ import {
     STORE_NAMES,
     isOnline
 } from 'c/utils';
-import { saveFileToDevice } from 'c/fileService';
 
 export default class FileUploader extends LightningElement {
     @api recordId;
@@ -23,8 +23,8 @@ export default class FileUploader extends LightningElement {
     @track errorMessage = '';
 
     handleSelectFiles() {
-        const fileInput = this.template.querySelector('.file-input');
-        if (fileInput) fileInput.click();
+        const input = this.template.querySelector('.file-input');
+        if (input) input.click();
     }
 
     async handleFileChange(event) {
@@ -43,77 +43,51 @@ export default class FileUploader extends LightningElement {
                 name: file.name,
                 size: file.size,
                 type: file.type,
-                readableSize: this.formatFileSize(file.size)
+                readableSize: this.formatFileSize(file.size),
+                filePath: file.path || '' // File picker on native may include path
             });
         }
 
         this.selectedFiles = validFiles;
 
         for (const file of validFiles) {
-            const reader = new FileReader();
-            reader.onload = async () => {
-                const base64Data = reader.result.split(',')[1];
-                const uniqueFileName = `${Date.now()}_${file.name}`;
-
-                const { success, filePath, error } = await saveFileToDevice({
-                    fileName: uniqueFileName,
-                    data: base64Data,
-                    type: file.type
-                });
-
-                if (success) {
-                    const fileRecord = {
-                        id: generateId(),
-                        name: file.name,
-                        type: file.type,
-                        size: file.size,
-                        readableSize: file.readableSize,
-                        filePath,
-                        recordId: this.recordId,
-                        formType: this.formType,
-                        uploaded: false,
-                        createdDate: new Date().toISOString(),
-                        lastModifiedDate: new Date().toISOString(),
-                        description: `File uploaded from ${this.formType}`
-                    };
-
-                    await saveItem(STORE_NAMES.FILE_UPLOADS, fileRecord);
-                    if (isOnline() && window.offlineSync) {
-                        console.log('🌐 Online - syncing immediately');
-                        await window.offlineSync.syncUPLOAD_FILE(fileRecord);
-                    } else {
-                        console.log('📴 Offline - queuing for sync');
-                        await addPendingOperation({
-                            id: fileRecord.id, // reuse same id for cleanup
-                            type: 'UPLOAD_FILE',
-                            timestamp: Date.now(),
-                            data: fileRecord
-                        });
-                    }
-
-                    this.uploadedFiles.push(fileRecord);
-
-                    if (isOnline() && window.offlineSync) {
-                        window.offlineSync.triggerSync();
-                    }
-                } else {
-                    console.error(
-                        `❌ Failed to save file: ${file.name}`,
-                        error
-                    );
-                    this.errorMessage = `Failed to save file: ${file.name}`;
-                }
+            // Do NOT save the file — just reference path or name
+            const fileRecord = {
+                id: generateId(),
+                name: file.name,
+                type: file.type,
+                size: file.size,
+                readableSize: file.readableSize,
+                filePath: file.filePath || '', // May be empty for picker files
+                recordId: this.recordId,
+                formType: this.formType,
+                uploaded: false,
+                createdDate: new Date().toISOString(),
+                lastModifiedDate: new Date().toISOString(),
+                description: `File uploaded from ${this.formType}`
             };
 
-            reader.readAsDataURL(file.rawFile);
+            await saveItem(STORE_NAMES.FILE_UPLOADS, fileRecord);
+            await addPendingOperation({
+                id: fileRecord.id,
+                type: 'UPLOAD_FILE',
+                timestamp: Date.now(),
+                data: fileRecord
+            });
+
+            this.uploadedFiles.push(fileRecord);
+
+            if (isOnline() && window.offlineSync) {
+                window.offlineSync.triggerSync();
+            }
         }
 
         this.updateFileList();
     }
 
     updateFileList() {
-        const fileInput = this.template.querySelector('.file-input');
-        if (fileInput) fileInput.value = '';
+        const input = this.template.querySelector('.file-input');
+        if (input) input.value = '';
     }
 
     handleClearAll() {
@@ -135,9 +109,9 @@ export default class FileUploader extends LightningElement {
     }
 
     get statusMessage() {
-        if (this.isUploading) return 'Storing files...';
+        if (this.isUploading) return 'Uploading files...';
         if (this.uploadedFiles.length > 0) {
-            return `${this.uploadedFiles.length} file(s) stored ${this.isOnlineStatus ? '(syncing...)' : '(will sync when online)'}`;
+            return `${this.uploadedFiles.length} file(s) stored ${this.isOnlineStatus ? '(syncing...)' : '(queued)'}`;
         }
         return 'No files selected';
     }
@@ -163,8 +137,8 @@ export default class FileUploader extends LightningElement {
                 saveToGallery: true
             });
 
-            if (!image || !image.path) {
-                console.warn('No image path returned from camera');
+            if (!image?.path) {
+                this.errorMessage = 'Camera failed to return path';
                 return;
             }
 
@@ -175,19 +149,19 @@ export default class FileUploader extends LightningElement {
                 id: generateId(),
                 name: fileName,
                 type: 'image/jpeg',
-                size: 0, // Optional: if you want to read it using Filesystem plugin
+                size: 0,
                 filePath,
                 recordId: this.recordId,
                 formType: this.formType,
                 uploaded: false,
                 createdDate: new Date().toISOString(),
                 lastModifiedDate: new Date().toISOString(),
-                description: 'Photo captured via camera'
+                description: 'Captured via camera'
             };
 
             await saveItem(STORE_NAMES.FILE_UPLOADS, fileRecord);
             await addPendingOperation({
-                id: generateId(),
+                id: fileRecord.id,
                 type: 'UPLOAD_FILE',
                 timestamp: Date.now(),
                 data: fileRecord
@@ -198,9 +172,10 @@ export default class FileUploader extends LightningElement {
                 window.offlineSync.triggerSync();
             }
 
-            console.log('📸 Captured and queued photo:', fileRecord);
+            console.log('📸 Captured photo saved to queue:', fileRecord);
         } catch (err) {
-            console.error('❌ Camera capture failed:', err);
+            console.error('❌ Error capturing photo:', err);
+            this.errorMessage = 'Photo capture failed.';
         }
     }
 }

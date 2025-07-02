@@ -239,7 +239,7 @@ export default class ChecklistModal extends LightningElement {
 
         // 🌐 Online: Fetch from API
         const sessionId =
-            '00D7z00000P3CKp!AQEAQAirVCQsXFCBCaXGEzFHZx62B7QCU2xUsoUvzfmtFZ6qc0OnG3108ABMZcG5pJfqO0zThniJ25nxSNpPULahCNd.Ibfb';
+            '00D7z00000P3CKp!AQEAQMjoYdZsIS2gpTLQHsHGPmxQi._SclNYRgU7UpY1Wa22XjX3oOatvxrxUGRJiCB2G7FAo7dOxHaV06Yl6QXnrv1LmNZH';
         const APEX_REST_ENDPOINT_URL =
             'https://nosoftware-ability-6323-dev-ed.scratch.my.salesforce.com/services/apexrest/Rhythm/fetchData/';
 

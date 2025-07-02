@@ -65,7 +65,7 @@ export default class ChecklistQuestionsTree extends LightningElement {
 
         // Get a session ID from your Salesforce org
         const sessionId =
-            '00D7z00000P3CKp!AQEAQAirVCQsXFCBCaXGEzFHZx62B7QCU2xUsoUvzfmtFZ6qc0OnG3108ABMZcG5pJfqO0zThniJ25nxSNpPULahCNd.Ibfb';
+            '00D7z00000P3CKp!AQEAQMjoYdZsIS2gpTLQHsHGPmxQi._SclNYRgU7UpY1Wa22XjX3oOatvxrxUGRJiCB2G7FAo7dOxHaV06Yl6QXnrv1LmNZH';
 
         const headers = {
             Authorization: `Bearer ${sessionId}`,
