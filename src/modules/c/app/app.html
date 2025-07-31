@@ -1,0 +1,155 @@
+<template>
+    <div class="app-container">
+        <!-- Login Page - Show when not logged in -->
+        <template if:true={showLogin}>
+            <c-login onlogin={handleLoginSuccess}></c-login>
+        </template>
+
+        <!-- Main Application - Show when logged in -->
+        <template if:true={isLoggedIn}>
+            <div class="main-layout">
+                <!-- Left Menu -->
+                <c-left-menu
+                    onmenuchange={handleMenuChange}
+                    onlogout={handleLogout}
+                ></c-left-menu>
+
+                <!-- Content Area -->
+                <div class="content-area">
+                    <!-- Incident View -->
+                    <template if:true={showIncident}>
+                        <div class="view-container">
+                            <div class="view-header">
+                                <div class="header-content">
+                                    <div class="header-title">
+                                        <div>
+                                            <h1>Incident Management</h1>
+                                            <div class="header-subtitle">
+                                                Track and manage workplace
+                                                incidents
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Search Bar -->
+                                    <div class="search-container">
+                                        <div class="search-wrapper">
+                                            <svg
+                                                class="search-icon"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                                                ></path>
+                                            </svg>
+                                            <input
+                                                type="text"
+                                                class="search-input"
+                                                placeholder="Search incidents by title, description, or date..."
+                                                value={searchTerm}
+                                                oninput={handleSearch}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="content-scroll">
+                                <c-incident
+                                    object-api-name={objectApiName}
+                                ></c-incident>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- Hazard View -->
+                    <template if:true={showHazard}>
+                        <div class="view-container">
+                            <div class="view-header">
+                                <div class="header-content">
+                                    <div class="header-title">
+                                        <div>
+                                            <h1>Hazard Management</h1>
+                                            <div class="header-subtitle">
+                                                Identify and mitigate workplace
+                                                hazards
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Search Bar -->
+                                    <div class="search-container">
+                                        <div class="search-wrapper">
+                                            <svg
+                                                class="search-icon"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                                                ></path>
+                                            </svg>
+                                            <input
+                                                type="text"
+                                                class="search-input"
+                                                placeholder="Search hazards by title, description, or location..."
+                                                value={searchTerm}
+                                                oninput={handleSearch}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="content-scroll">
+                                <c-hazard
+                                    object-api-name={objectApiName}
+                                ></c-hazard>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- Floating Action Button -->
+                    <button
+                        class="fab"
+                        onclick={handleFabClick}
+                        title="Add New"
+                    >
+                        <svg
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            width="24"
+                            height="24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 4v16m8-8H4"
+                            ></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Safety Event Form Modal -->
+                <c-safety-event-form
+                    object-api-name={objectApiName}
+                    is-visible={showForm}
+                    oncancel={handleFormCancel}
+                    onsuccess={handleFormSuccess}
+                >
+                </c-safety-event-form>
+            </div>
+        </template>
+    </div>
+</template>

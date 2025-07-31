@@ -1,0 +1,141 @@
+<template>
+    <div class="hazard-container">
+        <!-- Loading spinner -->
+        <template if:true={isLoading}>
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+                <div class="loading-text">Loading hazards...</div>
+            </div>
+        </template>
+
+        <!-- Error message -->
+        <template if:true={error}>
+            <div class="error-message">
+                <div class="error-icon">⚠️</div>
+                <div class="error-text">{error}</div>
+            </div>
+        </template>
+
+        <!-- Desktop View: Table Layout -->
+        <div class="desktop-view">
+            <table class="hazard-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Date Reported</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template if:true={hasItems}>
+                        <template for:each={hazards} for:item="item">
+                            <tr key={item.id}>
+                                <td>
+                                    <a
+                                        href="javascript:void(0)"
+                                        onclick={handleHazardClick}
+                                        data-id={item.id}
+                                        class="hazard-name-link"
+                                        >{item.name}</a
+                                    >
+                                </td>
+                                <td>{item.title}</td>
+                                <td>{item.description}</td>
+                                <td>
+                                    <template if:true={item.dateReported}>
+                                        {item.formattedDateReported}
+                                    </template>
+                                </td>
+                                <td>
+                                    <span class={item.statusClass}
+                                        >{item.status}</span
+                                    >
+                                </td>
+                            </tr>
+                        </template>
+                    </template>
+                </tbody>
+            </table>
+            <div if:true={noData} class="no-data">No hazard items found.</div>
+        </div>
+
+        <!-- Mobile View: Card Layout -->
+        <div class="mobile-view">
+            <template if:true={hasItems}>
+                <template for:each={visibleItems} for:item="item">
+                    <div key={item.id} class="hazard-card">
+                        <div class="card-content">
+                            <div class="card-icon">
+                                <svg viewBox="0 0 24 24" class="hazard-icon">
+                                    <path
+                                        d="M13 14h-2v-4H9v2H7v2h2v2h2v-4h2v4h2v-2h-2V9h-2v5zm-1-5c0-1.1.9-2 2-2s2 .9 2 2-2 2-2-2z"
+                                    />
+                                </svg>
+                            </div>
+                            <div class="card-details">
+                                <h3 class="card-title">
+                                    <a
+                                        href="javascript:void(0)"
+                                        onclick={handleHazardClick}
+                                        data-id={item.id}
+                                        class="hazard-name-link"
+                                        >{item.title}</a
+                                    >
+                                </h3>
+                                <div class="card-metadata">
+                                    <div class="card-description">
+                                        {item.description}
+                                    </div>
+                                    <div class="card-date">
+                                        {item.formattedDateReported}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <span class={item.statusClass}>{item.status}</span>
+                            <div class="card-menu">
+                                <div class="dropdown">
+                                    <span
+                                        class="three-dots"
+                                        onclick={handleToggleMenu}
+                                        data-id={item.id}
+                                        >&#8230;</span
+                                    >
+                                    <div
+                                        class="dropdown-content"
+                                        data-id={item.id}
+                                    >
+                                        <div
+                                            class="dropdown-item"
+                                            onclick={handleEdit}
+                                            data-id={item.id}
+                                        >
+                                            Edit
+                                        </div>
+                                        <div
+                                            class="dropdown-item"
+                                            onclick={handleDelete}
+                                            data-id={item.id}
+                                        >
+                                            Delete
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <!-- View More Button -->
+                <div if:true={showViewMoreButton} class="view-more-container">
+                    <button class="view-more-button" onclick={handleViewMore}>
+                        View More
+                    </button>
+                </div>
+            </template>
+            <div if:true={noData} class="no-data">No hazard items found.</div>
+        </div>
+    </div>
+</template>

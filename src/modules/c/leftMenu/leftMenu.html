@@ -1,0 +1,34 @@
+<template>
+    <!-- Mobile menu toggle button -->
+    <button class="mobile-menu-toggle" onclick={handleMobileToggle}>☰</button>
+
+    <!-- Sidebar - Always rendered, visibility controlled by CSS -->
+    <div class={sidebarClass}>
+        <ul class="menu-list">
+            <li
+                class={incidentClass}
+                data-id="incident"
+                onclick={handleMenuClick}
+            >
+                <i class="las la-exclamation-triangle"></i>
+                <span></span>
+            </li>
+            <li
+                class={incidentClass}
+                data-id="incident"
+                onclick={handleMenuClick}
+            >
+                <i class="las la-exclamation-triangle"></i>
+                <span>Incident</span>
+            </li>
+            <li class={hazardClass} data-id="hazard" onclick={handleMenuClick}>
+                <i class="las la-bolt"></i>
+                <span>Hazard</span>
+            </li>
+            <li class={logoutClass} data-id="logout" onclick={handleMenuClick}>
+                <i class="las la-sign-out-alt"></i>
+                <span>Logout</span>
+            </li>
+        </ul>
+    </div>
+</template>

@@ -1,0 +1,373 @@
+<template>
+    <template if:true={isVisible}>
+        <!-- Modal Overlay -->
+        <div class="modal-overlay" onclick={handleCancel}>
+            <!-- Modal Container -->
+            <div class="modal-container" onclick={handleModalClick}>
+                <!-- Modal Header -->
+                <header class="modal-header">
+                    <h2 class="modal-title">{formTitle}</h2>
+                    <button
+                        class="close-button"
+                        onclick={handleCancel}
+                        title="Close"
+                    >
+                        <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"
+                            />
+                        </svg>
+                    </button>
+                </header>
+
+                <!-- Loading State -->
+                <template if:true={isLoading}>
+                    <div class="loading-container">
+                        <div class="spinner"></div>
+                        <p class="loading-text">
+                            Loading form configuration...
+                        </p>
+                    </div>
+                </template>
+
+                <!-- Error State -->
+                <template if:true={error}>
+                    <div class="error-container">
+                        <div class="error-icon">⚠️</div>
+                        <p class="error-text">{error}</p>
+                    </div>
+                </template>
+
+                <!-- Form Content -->
+                <template if:false={isLoading}>
+                    <template if:false={error}>
+                        <div class="modal-content">
+                            <!-- Required Fields Note -->
+                            <div class="required-note">
+                                <span class="asterisk">*</span> indicates
+                                required fields
+                            </div>
+
+                            <!-- Form Sections -->
+                            <div class="safety-form">
+                                <template
+                                    for:each={renderedSections}
+                                    for:item="section"
+                                >
+                                    <div
+                                        key={section.name}
+                                        class="form-section"
+                                    >
+                                        <h3 class="section-title">
+                                            {section.label}
+                                        </h3>
+
+                                        <div class="fields-grid">
+                                            <template
+                                                for:each={section.fields}
+                                                for:item="field"
+                                            >
+                                                <div
+                                                    key={field.fieldApi}
+                                                    class="field-container"
+                                                >
+                                                    <!-- Text Input Fields -->
+                                                    <template
+                                                        if:true={field.isText}
+                                                    >
+                                                        <div class="form-group">
+                                                            <label
+                                                                class="field-label"
+                                                                for={field.fieldApi}
+                                                            >
+                                                                {field.label}
+                                                                <template
+                                                                    if:true={field.required}
+                                                                >
+                                                                    <span
+                                                                        class="asterisk"
+                                                                        >*</span
+                                                                    >
+                                                                </template>
+                                                            </label>
+                                                            <input
+                                                                id={field.fieldApi}
+                                                                type={field.inputType}
+                                                                class="form-input"
+                                                                data-field={field.fieldApi}
+                                                                value={field.value}
+                                                                required={field.required}
+                                                                onchange={handleFieldChange}
+                                                                placeholder={field.label}
+                                                            />
+                                                        </div>
+                                                    </template>
+
+                                                    <!-- Textarea Fields -->
+                                                    <template
+                                                        if:true={field.isTextarea}
+                                                    >
+                                                        <div class="form-group">
+                                                            <label
+                                                                class="field-label"
+                                                                for={field.fieldApi}
+                                                            >
+                                                                {field.label}
+                                                                <template
+                                                                    if:true={field.required}
+                                                                >
+                                                                    <span
+                                                                        class="asterisk"
+                                                                        >*</span
+                                                                    >
+                                                                </template>
+                                                            </label>
+                                                            <textarea
+                                                                id={field.fieldApi}
+                                                                class="form-textarea"
+                                                                data-field={field.fieldApi}
+                                                                value={field.value}
+                                                                required={field.required}
+                                                                onchange={handleFieldChange}
+                                                                placeholder={field.label}
+                                                                rows="3"
+                                                            ></textarea>
+                                                        </div>
+                                                    </template>
+
+                                                    <!-- Checkbox Fields -->
+                                                    <template
+                                                        if:true={field.isCheckbox}
+                                                    >
+                                                        <div
+                                                            class="form-group checkbox-group"
+                                                        >
+                                                            <label
+                                                                class="checkbox-label"
+                                                            >
+                                                                <input
+                                                                    type="checkbox"
+                                                                    class="form-checkbox"
+                                                                    data-field={field.fieldApi}
+                                                                    checked={field.checkedValue}
+                                                                    onchange={handleCheckboxChange}
+                                                                />
+                                                                <span
+                                                                    class="checkbox-text"
+                                                                >
+                                                                    {field.label}
+                                                                    <template
+                                                                        if:true={field.required}
+                                                                    >
+                                                                        <span
+                                                                            class="asterisk"
+                                                                            >*</span
+                                                                        >
+                                                                    </template>
+                                                                </span>
+                                                            </label>
+                                                        </div>
+                                                    </template>
+
+                                                    <!-- Select/Picklist Fields -->
+                                                    <template
+                                                        if:true={field.isSelect}
+                                                    >
+                                                        <div class="form-group">
+                                                            <label
+                                                                class="field-label"
+                                                                for={field.fieldApi}
+                                                            >
+                                                                {field.label}
+                                                                <template
+                                                                    if:true={field.required}
+                                                                >
+                                                                    <span
+                                                                        class="asterisk"
+                                                                        >*</span
+                                                                    >
+                                                                </template>
+                                                            </label>
+                                                            <select
+                                                                id={field.fieldApi}
+                                                                class="form-select"
+                                                                data-field={field.fieldApi}
+                                                                value={field.value}
+                                                                required={field.required}
+                                                                onchange={handleFieldChange}
+                                                            >
+                                                                <option
+                                                                    value=""
+                                                                >
+                                                                    -- Select
+                                                                    {field.label}
+                                                                    --
+                                                                </option>
+                                                                <template
+                                                                    for:each={field.options}
+                                                                    for:item="option"
+                                                                >
+                                                                    <option
+                                                                        key={option.value}
+                                                                        value={option.value}
+                                                                    >
+                                                                        {option.label}
+                                                                    </option>
+                                                                </template>
+                                                            </select>
+                                                        </div>
+                                                    </template>
+
+                                                    <!-- Date Fields -->
+                                                    <template
+                                                        if:true={field.isDate}
+                                                    >
+                                                        <div class="form-group">
+                                                            <label
+                                                                class="field-label"
+                                                                for={field.fieldApi}
+                                                            >
+                                                                {field.label}
+                                                                <template
+                                                                    if:true={field.required}
+                                                                >
+                                                                    <span
+                                                                        class="asterisk"
+                                                                        >*</span
+                                                                    >
+                                                                </template>
+                                                            </label>
+                                                            <input
+                                                                id={field.fieldApi}
+                                                                type={field.inputType}
+                                                                class="form-input"
+                                                                data-field={field.fieldApi}
+                                                                value={field.value}
+                                                                required={field.required}
+                                                                onchange={handleFieldChange}
+                                                            />
+                                                        </div>
+                                                    </template>
+
+                                                    <!-- DateTime Fields -->
+                                                    <template
+                                                        if:true={field.isDateTime}
+                                                    >
+                                                        <div class="form-group">
+                                                            <label
+                                                                class="field-label"
+                                                                for={field.fieldApi}
+                                                            >
+                                                                {field.label}
+                                                                <template
+                                                                    if:true={field.required}
+                                                                >
+                                                                    <span
+                                                                        class="asterisk"
+                                                                        >*</span
+                                                                    >
+                                                                </template>
+                                                            </label>
+                                                            <input
+                                                                id={field.fieldApi}
+                                                                type={field.inputType}
+                                                                class="form-input"
+                                                                data-field={field.fieldApi}
+                                                                value={field.value}
+                                                                required={field.required}
+                                                                onchange={handleFieldChange}
+                                                            />
+                                                        </div>
+                                                    </template>
+
+                                                    <!-- Number Fields -->
+                                                    <template
+                                                        if:true={field.isNumber}
+                                                    >
+                                                        <div class="form-group">
+                                                            <label
+                                                                class="field-label"
+                                                                for={field.fieldApi}
+                                                            >
+                                                                {field.label}
+                                                                <template
+                                                                    if:true={field.required}
+                                                                >
+                                                                    <span
+                                                                        class="asterisk"
+                                                                        >*</span
+                                                                    >
+                                                                </template>
+                                                            </label>
+                                                            <input
+                                                                id={field.fieldApi}
+                                                                type={field.inputType}
+                                                                class="form-input"
+                                                                data-field={field.fieldApi}
+                                                                value={field.value}
+                                                                required={field.required}
+                                                                onchange={handleFieldChange}
+                                                                step="0.01"
+                                                            />
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+
+                                <!-- File Upload Section -->
+                                <div class="form-section">
+                                    <h3 class="section-title">Attachments</h3>
+                                    <div class="file-upload-container">
+                                        <!-- <c-file-uploader 
+                                            form-type={objectApiName}
+                                            max-file-size="10485760"
+                                            accepted-file-types={acceptedFormats}
+                                            multiple="true">
+                                        </c-file-uploader> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal Footer -->
+                        <footer class="modal-footer">
+                            <button
+                                type="button"
+                                class="button button-secondary"
+                                onclick={handleCancel}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="button"
+                                class="button button-primary"
+                                onclick={handleSubmit}
+                                disabled={showSpinner}
+                            >
+                                <template if:true={showSpinner}>
+                                    <div class="button-spinner"></div>
+                                    Saving...
+                                </template>
+                                <template if:false={showSpinner}>
+                                    Save Report
+                                </template>
+                            </button>
+                        </footer>
+                    </template>
+                </template>
+            </div>
+        </div>
+    </template>
+</template>
